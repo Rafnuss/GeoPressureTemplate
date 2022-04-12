@@ -96,15 +96,15 @@ GeoPressureTemplate
 ### Create your project
 
 - Create your project repo by clicking on "[Use this template](https://github.com/Rafnuss/GeoPressureTemplate/generate)" button on the github page.
-- Rename the project to something specific to your research. This will become the name of your folder on your computer. 
+- Choose a project name (`my_tracking_study_name`) which is specific to your research. Note that `my_tracking_study_name`  will become the name of your folder on your computer too. Add a description of your study.
 - Done!
 
 ### Make yourself at home
 
-- Rename `GeoPressureTemplate.Rproj` to match the name for of your project.
+- Rename `GeoPressureTemplate.Rproj` to `my_tracking_study_name.Rproj`.
 - Edit the `DESCRIPTION` file (see https://r-pkgs.org/description.html for details)
 - Delete the content of `README.md` and start writing your research objective, describe our basic data, method etc...
-- Put your PAM data in `data/0_PAM/` in a folder with the GDL_ID code (e.g. `data/0_PAM/18LX/`)
+- Delete the content `data/` (but keep the directory tree). Put your PAM data in `data/0_PAM/` in a folder with the GDL_ID code (e.g. `data/0_PAM/18LX/`)
 - Write the information you already have about your track in the `gdl_setting.xlsx` spreadsheet. You can add new columns based on your bird equiped.
 
 ## Start analysing the data
