@@ -1,28 +1,28 @@
 # GeoPressureTemplate
 
-Analysing geolocator data with pressure is full of potential, but the the path is long and the journey is dificult. `GeoPressureTemplate` is a [Github reposiotry template](https://docs.github.com/articles/creating-a-repository-from-a-template/) for a startup R project to help you make that journey more easy.
+Analysing geolocator data with pressure is full of potential, but the the path is long and the journey can be challenging. `GeoPressureTemplate` is a [Github repository template](https://docs.github.com/articles/creating-a-repository-from-a-template/) for a startup R project to make that journey easier.
 
-## What is this template and how is it address for?
+## What is this template and who is it for? :mag_right:
 
-`GeoPressureTemplate` aims to help researcher to start analyse their geolocator data with [`GeoPressureR`](https://raphaelnussbaumer.com/GeoPressureR/). It provides you with the backbone R code containing the folder structure and code to label correctly your data and produce basic trajectory figure. 
+`GeoPressureTemplate` aims to help researchers analyse their geolocator data with [`GeoPressureR`](https://raphaelnussbaumer.com/GeoPressureR/). It provides the backbone R code containing the folder structure and code to correctly label your data and produce basic trajectory figures. 
 
-In essence, it contains the code from all [GeoPressureR vignettes](https://raphaelnussbaumer.com/GeoPressureR/articles/) written in `.R` file to make if easier for you to apply your own data. 
+In essence, it contains the code from all the [GeoPressureR vignettes](https://raphaelnussbaumer.com/GeoPressureR/articles/) packaged in an `.R` file to make it easy for you to apply it to your own data. 
 
-## What do you need to use this template?
+## What do you need to use this template? :computer:
 
-- Have gelocator data containing pressure, light and activity data.
-- Have read the [GeoPressureR vignettes](https://raphaelnussbaumer.com/GeoPressureR/articles/) (:warning: You really need to be familar with the full process involved before starting with your own project)
-- Some basic R experience. 
+- Geolocator data containing pressure, light and activity data.
+- Have read the [GeoPressureR vignettes](https://raphaelnussbaumer.com/GeoPressureR/articles/) (:warning: You should be familar with the **full process involved** before starting with your own project)
+- Basic R experience
 - A Github account
 
 
-## Structure of this project
+## Project structure :file_folder:
 
-Following the recommendation of [rrrpkg](https://github.com/ropensci/rrrpkg), we structure the project with:
-- Standard description files at the root (`DESCRIPTION`, `.Rproj`, `README.md`, `LICENCES`,...)
-- `data/` containing the raw geolocator data, the pressure and light labeled file and the data generated with the code from `analysis/`. Note that you could put the geolocator and labelization file in a `raw-data`, following `usethis()` standard. 
-- `analysis/` contains all the `.R` code used by your project.
-- `report/` reads the data generated and produce sharable result (figures, html page, manuscript etc...)
+Following the recommendations of [rrrpkg](https://github.com/ropensci/rrrpkg), the project contains:
+1. Standard description files at the root (`DESCRIPTION`, `.Rproj`, `README.md`, `LICENCES`,...)
+2. `data/` folder containing the raw geolocator data, the pressure and light labelled files and the data generated with the code from `analysis/`. Note that you could put the geolocator and labelization files in `raw-data`, following `usethis()` standard 
+3. `analysis/` contains all the `.R` code used for your project
+4. `report/` reads the data generated and produces sharable results (figures, html page, manuscript, etc...)
 <details>
   <summary>See directory tree</summary>
 
@@ -91,25 +91,25 @@ GeoPressureTemplate
 ```
 </details>
 
-## Where to start ?
+## Where to start? :bulb:
 
-### Create your project
+### Create your project 
 
-- Create your project repo by clicking on "[Use this template](https://github.com/Rafnuss/GeoPressureTemplate/generate)" button on the github page.
-- Choose a project name (`my_tracking_study_name`) which is specific to your research. Note that `my_tracking_study_name`  will become the name of your folder on your computer too. Add a description of your study.
-- Done!
+- Create your project repo by clicking on "[Use this template](https://github.com/Rafnuss/GeoPressureTemplate/generate)" button on the Github page.
+- Choose a project name (`my_tracking_study_name`) specific to your research. Note that `my_tracking_study_name`  will become the name of your folder on your computer too. Add a description of your study.
+- Done! :tada:
 
-### Make yourself at home
+### Make yourself at home :house:
 
 - Rename `GeoPressureTemplate.Rproj` to `my_tracking_study_name.Rproj`.
 - Edit the `DESCRIPTION` file (see https://r-pkgs.org/description.html for details)
-- Delete the content of `README.md` and start writing your research objective, describe our basic data, method etc...
-- Delete the content `data/` (but keep the directory tree). Put your PAM data in `data/0_PAM/` in a folder with the GDL_ID code (e.g. `data/0_PAM/18LX/`)
-- Write the information you already have about your track in the `gdl_setting.xlsx` spreadsheet. You can add new columns based on your bird equiped.
+- Delete the content of `README.md` and start writing your research objectives, describing your basic data, method etc.
+- Delete the content of `data/` (but keep the directory tree). Put your PAM data in `data/0_PAM/` in a folder with the GDL_ID code (e.g. `data/0_PAM/18LX/`)
+- Enter the information you already have about your track in the `gdl_setting.xlsx` spreadsheet. You can add new columns if needed.
 
-## Start analysing the data
+## Start analysing the data :chart_with_upwards_trend:
 
-Now that you are set-up, it's time to start the serious work. Follow the order of the `.R` code in the `analysis/` folder. They follow the same order than the vignettes (but with different enumeration).
+Now that you are set-up, it's time to start the serious work. :grimacing: Follow the order of the `.R` code in the `analysis/` folder. They follow the same order as the vignettes (but with different numerotation).
 
 |  GeoPressureTemplate analysis |  GeoPressureR vignettes  |
 |---|---|
@@ -119,13 +119,13 @@ Now that you are set-up, it's time to start the serious work. Follow the order o
 |  `4-basic-graph.R` |  [Modeling trajectory with a graph](https://raphaelnussbaumer.com/GeoPressureR/articles/basic-graph.html) |
 
 
-## Generate Report
+## Generate Report :page_facing_up:
+Coming soon!
 
 
+## Advanced options :link:
 
-## Advence options
-
-- Generate DOI with [Zenodo](https://zenodo.org/).
-- Generate citation file with [`usethis::use_citation`](https://usethis.r-lib.org/reference/use_citation.html) and [`cffr`](https://github.com/ropensci/cffr)
+- Generate your DOI with [Zenodo](https://zenodo.org/).
+- Generate a citation file with [`usethis::use_citation`](https://usethis.r-lib.org/reference/use_citation.html) and [`cffr`](https://github.com/ropensci/cffr).
 - Use [`renv`](https://rstudio.github.io/renv/index.html) to make your work reproducable.
 - Export your data on [Movebank](https://www.movebank.org/cms/movebank-content/import-custom-tabular-data).
