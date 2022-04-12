@@ -1,12 +1,11 @@
-Package: my_tracking_study_name
-Title: What do you study (One Line, Title Case)
+Package: GeoPressureTemplate
+Title: These are the Goal of my Study (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What do you study (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Raphaël", "Nussbaumer", , "rafnuss@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-8185-1020"))
+Description: More detailed description of my research objective with my dataset available (one paragraph).
+License: GPL (>= 3)
 URL: https://github.com/Rafnuss/GeoPressureTemplate
 Depends: 
     R (>= 3.5.0)
@@ -26,6 +25,8 @@ Imports:
     RColorBrewer,
     readr,
     readxl
+Remotes: 
+    rafnuss/GeoPressureR
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

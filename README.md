@@ -97,13 +97,22 @@ GeoPressureTemplate
 
 - Create your project repo by clicking on "[Use this template](https://github.com/Rafnuss/GeoPressureTemplate/generate)" button on the Github page.
 - Choose a project name (`my_tracking_study_name`) specific to your research. Note that `my_tracking_study_name`  will become the name of your folder on your computer too. Add a description of your study.
+- Clone the repository on your computer
 - Done! :tada:
 
 ### Make yourself at home :house:
 
 - Rename `GeoPressureTemplate.Rproj` to `my_tracking_study_name.Rproj`.
-- Edit the `DESCRIPTION` file (see https://r-pkgs.org/description.html for details)
+- Open the R project file with RStudio. 
+- Edit the `DESCRIPTION` file (see https://r-pkgs.org/description.html for details). Start the version to `0.0.1` or `0.1.0`.
 - Delete the content of `README.md` and start writing your research objectives, describing your basic data, method etc.
+- Install the dependencies needed with
+
+```
+devtools::install()
+```
+
+
 - Delete the content of `data/` (but keep the directory tree). Put your PAM data in `data/0_PAM/` in a folder with the GDL_ID code (e.g. `data/0_PAM/18LX/`)
 - Enter the information you already have about your track in the `gdl_setting.xlsx` spreadsheet. You can add new columns if needed.
 
