@@ -1,0 +1,117 @@
+---
+title: "Basic Trajectory"
+author: "Document Author"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: "journal"
+    code_folding: hide
+params:
+  gdl_id: "18LX"
+---
+
+```{r setup, message=F}
+library(GeoPressureR)
+library(leaflet)
+library(leaflet.extras)
+library(raster)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+knitr::opts_chunk$set(echo = params$printcode)
+```
+
+```{r}
+load(paste0("../data/6_basic_graph/", params$gdl_id, "_basic_graph.Rdata"))
+load(paste0("../data/5_static_prob/", params$gdl_id, "_static_prob.Rdata"))
+```
+
+
+## Pressure timeserie
+```{r}
+pressure_na <- pam$pressure %>%
+  mutate(obs = ifelse(isoutliar | sta_id == 0, NA, obs))
+p <- ggplot() +
+  geom_line(data = pam$pressure, aes(x = date, y = obs), colour = "grey") +
+  # geom_point(data = subset(pam$pressure, isoutliar), aes(x = date, y = obs), colour = "black") +
+  geom_line(data = pressure_na, aes(x = date, y = obs, color = factor(sta_id)), size = 0.5) +
+  geom_line(data = do.call("rbind", shortest_path_timeserie), aes(x = date, y = pressure0, col = factor(sta_id)), linetype = 2) +
+  theme_bw() +
+  scale_colour_manual(values = col) +
+  scale_y_continuous(name = "Pressure(hPa)")
+
+ggplotly(p, dynamicTicks = T) %>% layout(showlegend = F)
+```
+
+
+## Alitude
+
+```{r}
+p <- ggplot() +
+  # geom_line(data = pam$pressure, aes(x = date, y = obs), colour = "grey") +
+  geom_line(data = do.call("rbind", shortest_path_timeserie), aes(x = date, y = altitude, col = factor(sta_id))) +
+  theme_bw() +
+  scale_colour_manual(values = col) +
+  scale_y_continuous(name = "Altitude (m)")
+
+ggplotly(p, dynamicTicks = T) %>% layout(showlegend = F)
+```
+
+
+## Shortest path and simulated path
+
+```{r}
+sta_duration <- unlist(lapply(static_prob_marginal, function(x) {
+  as.numeric(difftime(metadata(x)$temporal_extent[2], metadata(x)$temporal_extent[1], units = "days"))
+}))
+pal <- colorFactor(col, as.factor(seq_len(length(col))))
+m <- leaflet(width = "100%") %>%
+  addProviderTiles(providers$Stamen.TerrainBackground) %>%
+  addFullscreenControl() %>%
+  addPolylines(lng = grl$shortest_path$lon, lat = grl$shortest_path$lat, opacity = 1, color = "#808080", weight = 3) %>%
+  addCircles(lng = grl$shortest_path$lon, lat = grl$shortest_path$lat, opacity = 1, color = pal(factor(grl$shortest_path$sta_id, levels = pam$sta$sta_id)), weight = sta_duration^(0.3) * 10)
+
+for (i in seq_len(nrow(path_sim$lon))) {
+  m <- m %>%
+    addPolylines(lng = path_sim$lon[i, ], lat = path_sim$lat[i, ], opacity = 0.5, weight = 1, color = "#808080") %>%
+    addCircles(lng = path_sim$lon[i, ], lat = path_sim$lat[i, ], opacity = .7, weight = 1, color = pal(factor(grl$shortest_path$sta_id, levels = pam$sta$sta_id)))
+}
+m
+```
+
+## Marginal probability map
+
+```{r, warning=F}
+li_s <- list()
+l <- leaflet(width = "100%") %>%
+  addProviderTiles(providers$Stamen.TerrainBackground) %>%
+  addFullscreenControl()
+for (i_r in seq_len(length(static_prob_marginal))) {
+  i_s <- metadata(static_prob_marginal[[i_r]])$sta_id
+  info <- metadata(static_prob_marginal[[i_r]])$temporal_extent
+  info_str <- paste0(i_s, " | ", info[1], "->", info[2])
+  li_s <- append(li_s, info_str)
+  l <- l %>%
+    addRasterImage(static_prob_marginal[[i_r]], colors = "OrRd", opacity = 0.8, group = info_str) %>%
+    addCircles(lng = grl$shortest_path$lon[i_s], lat = grl$shortest_path$lat[i_s], opacity = 1, color = "#000", weight = 10, group = info_str)
+}
+l %>%
+  addLayersControl(
+    overlayGroups = li_s,
+    options = layersControlOptions(collapsed = FALSE)
+  ) %>%
+  hideGroup(tail(li_s, length(li_s) - 1))
+```
+
+
+## Appendix 
+
+### Stationay period information
+```{r}
+pam$sta
+```
+
+### Parameter used for the simulation
+```{r}
+set
+```

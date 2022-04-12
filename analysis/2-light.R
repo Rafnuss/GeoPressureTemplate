@@ -1,0 +1,194 @@
+library(GeoPressureR)
+library(leaflet)
+library(leaflet.providers)
+library(leaflet.extras)
+library(ggplot2)
+library(plotly)
+library(RColorBrewer)
+library(raster)
+library(dplyr)
+library(readxl)
+library(lubridate)
+library(GeoLocTools)
+setupGeolocation()
+
+# Define the geolocator data logger id to use
+gdl <- "18LX"
+
+# Load the pressure file, also contains set, pam, col
+load(paste0("data/3_pressure_prob/", gdl, "_pressure_prob.Rdata"))
+
+# Define calibration period ----
+while (!is.POSIXct(set$calib_1_start) | is.na(set$calib_1_start)) {
+  message("First and last stationary period:")
+  print(pam$sta[c(1, nrow(pam$sta)), ])
+  invisible(readline(prompt = paste0(
+    "Add the calib_1_start and calib_1_end in ata/gpr_settings.xlsx",
+    ". Once it's done, press [enter] to proceed: "
+  )))
+  set <- read_excel("data/gpr_settings.xlsx") %>%
+    filter(set$gdl_id == gdl_id)
+}
+
+# Compute twilight
+twl <- find_twilights(pam$light, shift_k = set$shift_k)
+
+# convert to geolight format for ploting
+raw_geolight <- pam$light %>%
+  transmute(
+    Date = date,
+    Light = obs
+  )
+
+# Check shift_k value
+lightImage(
+  tagdata = raw_geolight,
+  offset = set$shift_k / 60 / 60
+)
+tsimageDeploymentLines(raw_geolight$Date,
+  lon = set$calib_lon, lat = set$calib_lat,
+  offset = set$shift_k / 60 / 60, lwd = 3, col = adjustcolor("orange", alpha.f = 0.5)
+)
+
+abline(v = set$calib_2_start, lty = 1, col = "firebrick", lwd = 1.5)
+abline(v = set$calib_1_start, lty = 1, col = "firebrick", lwd = 1.5)
+abline(v = set$calib_2_end, lty = 2, col = "firebrick", lwd = 1.5)
+abline(v = set$calib_1_end, lty = 2, col = "firebrick", lwd = 1.5)
+
+
+# Add calibration period
+if (!file.exists(paste0("data/2_light_labels/", set$gdl_id, "_light-labeled.csv"))) {
+  # Write the label file
+  write.csv(
+    data.frame(
+      series = ifelse(twl$rise, "Rise", "Set"),
+      timestamp = strftime(twl$twilight, "%Y-%m-%dT00:00:00Z", tz = "UTC"),
+      value = as.numeric(format(twl$twilight, "%H")) * 60 + as.numeric(format(twl$twilight, "%M")),
+      label = ifelse(is.null(twl$delete), "", ifelse(twl$delete, "Delete", ""))
+    ),
+    paste0("data/2_light_labels/", set$gdl_id, "_light.csv"),
+    row.names = FALSE
+  )
+  browseURL("https://trainset.geocene.com/")
+  invisible(readline(prompt = paste0(
+    "Edit the label file data/2_light_labels/", set$gdl_id,
+    "_light.csv. \n Once you've exported ", set$gdl_id,
+    "_light-labeled.csv, press [enter] to proceed"
+  )))
+}
+
+# Read the labeled file and update twilight
+csv <- read.csv(paste0("data/2_light_labels/", set$gdl_id, "_light-labeled.csv"))
+twl$deleted <- !csv$label == ""
+
+
+# Subset calibration period
+lightImage(
+  tagdata = raw_geolight,
+  offset = set$shift_k / 60 / 60
+)
+tsimagePoints(twl$twilight,
+  offset = set$shift_k / 60 / 60, pch = 16, cex = 1.2,
+  col = ifelse(twl$deleted, "grey20", ifelse(twl$rise, "firebrick", "cornflowerblue"))
+)
+
+twl_calib <- twl %>%
+  filter(!deleted) %>%
+  filter(
+    (twilight >= set$calib_1_start & twilight <= set$calib_1_end) |
+      (twilight >= set$calib_2_start & twilight <= set$calib_2_end)
+  )
+
+
+# Add twilight information on
+tmp <- which(mapply(function(start, end) {
+  start < twl$twilight & twl$twilight < end
+}, pam$sta$start, pam$sta$end), arr.ind = TRUE)
+twl$sta_id <- 0
+twl$sta_id[tmp[, 1]] <- tmp[, 2]
+
+
+# Fit distribution of zenith angle ----
+sun <- solar(twl_calib$twilight)
+z <- refracted(zenith(sun, set$calib_lon, set$calib_lat))
+fit_z <- density(z, adjust = 1.4, from = 60, to = 120)
+hist(z, freq = F)
+lines(fit_z, col = "red")
+
+
+# Get grid information to create proability map identical to pressure
+g <- as.data.frame(pressure_prob[[1]], xy = TRUE)
+g$layer <- NA
+
+
+# Compute the elevation angle of all twilight ----
+twl_clean <- subset(twl, !deleted)
+sun <- solar(twl_clean$twilight)
+pgz <- apply(g, 1, function(x) {
+  z <- refracted(zenith(sun, x[1], x[2]))
+  approx(fit_z$x, fit_z$y, z, yleft = 0, yright = 0)$y
+})
+
+# Define the log-linear pooling value
+w <- set$prob_light_w
+
+# Create the probability map
+light_prob <- c()
+for (i_s in seq_len(nrow(pam$sta))) {
+  id <- twl_clean$sta_id == pam$sta$sta_id[i_s]
+  if (sum(id) > 1) {
+    g$layer <- exp(colSums(w * log(pgz[id, ]))) # Log-linear equation express in log
+  } else if (sum(id) == 1) {
+    g$layer <- pgz[id, ]
+  } else {
+    g$layer <- 1
+  }
+  gr <- rasterFromXYZ(g)
+  crs(gr) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+  metadata(gr) <- list(
+    sta_id = pam$sta$sta_id[i_s],
+    nb_sample = sum(id)
+  )
+  light_prob[[i_s]] <- gr
+}
+
+# Compute the most likely path
+path <- geopressure_map2path(light_prob)
+path$duration <- as.numeric(difftime(pam$sta$end, pam$sta$start, units = "days"))
+path <- subset(path, duration > 2)
+
+pal <- colorFactor(col, as.factor(seq_len(length(col))))
+leaflet() %>%
+  addProviderTiles(providers$Stamen.TerrainBackground) %>%
+  addFullscreenControl() %>%
+  addPolylines(lng = path$lon, lat = path$lat, opacity = 0.7, weight = 1, color = "#808080") %>%
+  addCircles(lng = path$lon, lat = path$lat, opacity = 1, color = pal(factor(path$sta_id, levels = pam$sta$sta_id)), weight = path$duration^(0.3) * 10)
+
+
+# plot probability map
+li_s <- list()
+l <- leaflet() %>%
+  addProviderTiles(providers$Stamen.TerrainBackground) %>%
+  addFullscreenControl()
+for (i_r in seq_len(length(light_prob))) {
+  i_s <- metadata(light_prob[[i_r]])$sta_id
+  info <- pam$sta[pam$sta$sta_id == i_s, ]
+  info_str <- paste0(i_s, " | ", info$start, "->", info$end)
+  li_s <- append(li_s, info_str)
+  l <- l %>% addRasterImage(light_prob[[i_r]], opacity = 0.8, colors = "OrRd", group = info_str)
+}
+l %>%
+  addCircles(lng = set$calib_lon, lat = set$calib_lat, color = "black", opacity = 1) %>%
+  addLayersControl(
+    overlayGroups = li_s,
+    options = layersControlOptions(collapsed = FALSE)
+  ) %>%
+  hideGroup(tail(li_s, length(li_s) - 1))
+
+
+# Save ----
+save(twl,
+  light_prob,
+  set,
+  file = paste0("data/4_light_prob/", set$gdl_id, "_light_prob.Rdata")
+)
