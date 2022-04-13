@@ -13,31 +13,31 @@ library(readxl)
 gdl <- "18LX"
 
 # Read its information from gpr_settings.xlsx
-set <- read_excel("data/gdl_settings.xlsx") %>%
+gpr <- read_excel("data/gpr_settings.xlsx") %>%
   filter(gdl_id == gdl)
 
 # assert gdl in setting
 
 # Read, classify and label ----
-pam <- pam_read(paste0("data/0_PAM/", set$gdl_id),
-  crop_start = set$crop_start,
-  crop_end = set$crop_end
+pam <- pam_read(paste0("data/0_PAM/", gpr$gdl_id),
+  crop_start = gpr$crop_start,
+  crop_end = gpr$crop_end
 )
 
-# Auto classication + writing, only done the first time
-if (!file.exists(paste0("data/1_act_pres_labels/", set$gdl_id, "_act_pres-labeled.csv"))) {
+# Auto classification + writing, only done the first time
+if (!file.exists(paste0("data/1_pressure/labels/", gpr$gdl_id, "_act_pres-labeled.csv"))) {
   pam <- pam_classify(pam)
-  trainset_write(pam, "data/1_act_pres_labels/")
+  trainset_write(pam, "data/1_pressure/labels/")
   browseURL("https://trainset.geocene.com/")
   invisible(readline(prompt = paste0(
-    "Edit the label file data/1_act_pres_labels/", set$gdl_id,
-    "_act_pres.csv.\n Once you've exported ", set$gdl_id,
+    "Edit the label file data/1_pressure/labels/", gpr$gdl_id,
+    "_act_pres.csv.\n Once you've exported ", gpr$gdl_id,
     "_act_pres-labeled.csv, press [enter] to proceed"
   )))
 }
 
 # Read the label and compute the stationary info
-pam <- trainset_read(pam, "data/1_act_pres_labels/")
+pam <- trainset_read(pam, "data/1_pressure/labels/")
 pam <- pam_sta(pam)
 
 # define the discrete colorscale. Used at multiple places.
@@ -73,7 +73,7 @@ ggplotly(p, dynamicTicks = T) %>% layout(showlegend = F)
 
 
 # Filter stationary period based on the number of pressure datapoint available
-thr_dur <- set$thr_dur # 24*4 # duration in hour. Decrease this value down to set$thr_dur
+thr_dur <- gpr$thr_dur # 24*4 # duration in hour. Decrease this value down to gpr$thr_dur
 res <- as.numeric(difftime(pam$pressure$date[2], pam$pressure$date[1], units = "hours"))
 sta_id_keep <- pam$pressure %>%
   filter(!isoutliar & sta_id > 0) %>%
@@ -89,25 +89,22 @@ pam_short$pressure <- pam_short$pressure %>%
 # Query pressure map
 # We overwrite the setting parameter for resolution to make query faster at first
 pressure_maps <- geopressure_map(pam_short$pressure,
-  extent = c(set$extent_N, set$extent_W, set$extent_S, set$extent_E),
-  scale = set$map_scale,
-  max_sample = set$map_max_sample,
-  margin = set$map_margin
+  extent = c(gpr$extent_N, gpr$extent_W, gpr$extent_S, gpr$extent_E),
+  scale = gpr$map_scale,
+  max_sample = gpr$map_max_sample,
+  margin = gpr$map_margin
 )
 # Convert to probability map
 pressure_prob <- geopressure_prob_map(pressure_maps,
-  s = set$prob_map_s,
-  thr = set$prob_map_thr
+  s = gpr$prob_map_s,
+  thr = gpr$prob_map_thr
 )
 
 # Compute the path of the most likely position
 path <- geopressure_map2path(pressure_prob)
 
-# Fix for altitude
-# path$lat[path$sta_id==55] <- path$lat[path$sta_id==55] + 1
-
 # Query timeserie of pressure based on these path
-pressure_timeserie <- geopressure_ts_path(path, pam_short$pressure)
+pressure_timeserie <- geopressure_ts_path(path, pam_short$pressure, include_flight = c(0,1))
 
 # Test 3 ----
 p <- ggplot() +
@@ -151,6 +148,6 @@ save(pressure_timeserie,
   pressure_prob,
   pam,
   col,
-  set,
-  file = paste0("data/3_pressure_prob/", set$gdl_id, "_pressure_prob.Rdata")
+  gpr,
+  file = paste0("data/1_pressure/", gpr$gdl_id, "_pressure_prob.Rdata")
 )

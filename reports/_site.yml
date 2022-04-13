@@ -1,0 +1,19 @@
+name: "GeoPressureTemplate"
+description: |
+  These are the Goal of my Study
+output_dir: "../docs"
+navbar:
+  title: "Template for GeoPressureR"
+  left:
+    - text: "List of reports"
+      href: "/index.html"
+  right:
+    - icon: fa-envelope fa-lg
+      href: mailto:<rafnuss@gmail.com>
+    - icon: fa-github fa-lg
+      href: https://github.com/Rafnuss/GeoPressureTemplate
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 2
+    code_folding: true

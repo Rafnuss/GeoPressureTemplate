@@ -13,11 +13,11 @@ library(readxl)
 gdl <- "18LX"
 
 # Load the pressure file, also contains set, pam, col
-load(paste0("data/3_pressure_prob/", gdl, "_pressure_prob.Rdata"))
-load(paste0("data/4_light_prob/", gdl, "_light_prob.Rdata"))
+load(paste0("data/1_pressure/", gdl, "_pressure_prob.Rdata"))
+load(paste0("data/2_light/", gdl, "_light_prob.Rdata"))
 
 # Defint the threashold of the stationay period to consider
-thr_sta_dur <- set$thr_dur # in hours
+thr_sta_dur <- gpr$thr_dur # in hours
 
 sta_pres <- unlist(lapply(pressure_prob, function(x) raster::metadata(x)$sta_id))
 sta_light <- unlist(lapply(light_prob, function(x) raster::metadata(x)$sta_id))
@@ -73,8 +73,8 @@ lat <- lat[seq_len(length(lat) - 1)] + diff(lat[1:2]) / 2
 lon <- seq(raster::xmin(static_prob[[1]]), raster::xmax(static_prob[[1]]), length.out = ncol(static_prob[[1]]) + 1)
 lon <- lon[seq_len(length(lon) - 1)] + diff(lon[1:2]) / 2
 
-lon_calib_id <- which.min(abs(set$calib_lon - lon))
-lat_calib_id <- which.min(abs(set$calib_lat - lat))
+lon_calib_id <- which.min(abs(gpr$calib_lon - lon))
+lat_calib_id <- which.min(abs(gpr$calib_lat - lat))
 
 stopifnot(metadata(static_prob[[1]])$sta_id == 1)
 tmp <- as.matrix(static_prob[[1]])
@@ -82,10 +82,10 @@ tmp[!is.na(tmp)] <- 0
 tmp[lat_calib_id, lon_calib_id] <- 1
 values(static_prob[[1]]) <- tmp
 
-if (!is.na(set$calib_2_start)) {
-  if (!is.na(set$calib_2_lat)) {
-    lon_calib_id <- which.min(abs(set$calib_2_lon - lon))
-    lat_calib_id <- which.min(abs(set$calib_2_lat - lat))
+if (!is.na(gpr$calib_2_start)) {
+  if (!is.na(gpr$calib_2_lat)) {
+    lon_calib_id <- which.min(abs(gpr$calib_2_lon - lon))
+    lat_calib_id <- which.min(abs(gpr$calib_2_lat - lat))
   }
   tmp <- as.matrix(static_prob[[length(static_prob)]])
   tmp[!is.na(tmp)] <- 0
@@ -161,9 +161,8 @@ for (i_s in seq_len(length(static_prob) - 1)) {
 ## Save
 save(pam,
   col,
-  set,
-  gdl,
+  gpr,
   static_prob,
   static_timeserie,
-  file = paste0("data/5_static_prob/", set$gdl_id, "_static_prob.Rdata")
+  file = paste0("data/3_static/", gpr$gdl_id, "_static_prob.Rdata")
 )

@@ -1,0 +1,131 @@
+---
+site: distill::distill_website
+params:
+  gdl_id: "18LX"
+---
+---
+title: `r params$gdl_id`
+description: | 
+  Technical details
+---
+
+
+```{r setup, message=F}
+library(GeoPressureR)
+library(leaflet)
+library(leaflet.extras)
+library(raster)
+library(dplyr)
+library(ggplot2)
+library(kableExtra)
+library(plotly)
+library(GeoLocTools)
+setupGeolocation()
+knitr::opts_chunk$set(echo = FALSE)
+load(paste0("../data/1_pressure/", params$gdl_id, "_pressure_prob.Rdata"))
+load(paste0("../data/2_light/", params$gdl_id, "_light_prob.Rdata"))
+load(paste0("../data/3_static/", params$gdl_id, "_static_prob.Rdata"))
+load(paste0("../data/4_basic_graph/", params$gdl_id, "_basic_graph.Rdata"))
+```
+
+## Settings used
+
+```{r}
+kable(gpr)
+```
+
+## Pressure timeserie
+```{r, layout="l-page"}
+pressure_na <- pam$pressure %>%
+  mutate(obs = ifelse(isoutliar | sta_id == 0, NA, obs))
+p <- ggplot() +
+  geom_line(data = pam$pressure, aes(x = date, y = obs), colour = "grey") +
+  geom_point(data = subset(pam$pressure, isoutliar), aes(x = date, y = obs), colour = "black") +
+  # geom_line(data = pressure_na, aes(x = date, y = obs, color = factor(sta_id)), size = 0.5) +
+  geom_line(data = do.call("rbind", shortest_path_timeserie) %>% filter(sta_id>0), aes(x = date, y = pressure0, col = factor(sta_id))) +
+  theme_bw() +
+  scale_colour_manual(values = col) +
+  scale_y_continuous(name = "Pressure(hPa)")
+
+ggplotly(p, dynamicTicks = T) %>% layout(showlegend = F)
+```
+
+## Light
+
+```{r,  eval=F, layout="l-page"}
+raw_geolight <- pam$light %>%
+  transmute(
+    Date = date,
+    Light = obs
+  )
+lightImage(tagdata = raw_geolight, offset = 0)
+tsimagePoints(twl$twilight,
+  offset = 0, pch = 16, cex = 1.2,
+  col = ifelse(twl$deleted, "grey20", ifelse(twl$rise, "firebrick", "cornflowerblue"))
+)
+abline(v = gpr$calib_2_start, lty = 1, col = "firebrick", lwd = 1.5)
+abline(v = gpr$calib_1_start, lty = 1, col = "firebrick", lwd = 1.5)
+abline(v = gpr$calib_2_end, lty = 2, col = "firebrick", lwd = 1.5)
+abline(v = gpr$calib_1_end, lty = 2, col = "firebrick", lwd = 1.5)
+```
+
+```{r}
+hist(z, freq = F)
+lines(fit_z, col = "red")
+```
+
+```{r, layout="l-page"}
+li_s <- list()
+l <- leaflet(width = "100%") %>%
+  addProviderTiles(providers$Stamen.TerrainBackground) %>%
+  addFullscreenControl()
+for (i_r in seq_len(length(light_prob))) {
+  i_s <- metadata(light_prob[[i_r]])$sta_id
+  info <- pam$sta[pam$sta$sta_id == i_s, ]
+  info_str <- paste0(i_s, " | ", info$start, "->", info$end)
+  li_s <- append(li_s, info_str)
+  l <- l %>% addRasterImage(light_prob[[i_r]], opacity = 0.8, colors = "OrRd", group = info_str)
+}
+l %>%
+  addCircles(lng = gpr$calib_lon, lat = gpr$calib_lat, color = "black", opacity = 1) %>%
+  addLayersControl(
+    overlayGroups = li_s,
+    options = layersControlOptions(collapsed = FALSE)
+  ) %>%
+  hideGroup(tail(li_s, length(li_s) - 1))
+```
+
+### GeoPressureViz
+
+To visualize the path on GeoPressureViz, you will need to also load the pressure and light probability map and align them first with the code below. 
+```{r,  eval=F, layout="l-page"}
+sta_marginal <- unlist(lapply(static_prob_marginal, function(x) raster::metadata(x)$sta_id))
+sta_pres <- unlist(lapply(pressure_prob, function(x) raster::metadata(x)$sta_id))
+sta_light <- unlist(lapply(light_prob, function(x) raster::metadata(x)$sta_id))
+pressure_prob <- pressure_prob[sta_pres %in% sta_marginal]
+light_prob <- light_prob[sta_light %in% sta_marginal]
+```
+
+The code below will open with the shortest path computed with the graph approach. You can change it to 
+
+```{r, eval = F, class.source = 'fold-show'}
+geopressureviz <- list(
+  pam_data = pam,
+  static_prob = static_prob,
+  static_prob_marginal = static_prob_marginal,
+  pressure_prob = pressure_prob,
+  light_prob = light_prob,
+  pressure_timeserie = shortest_path_timeserie
+)
+save(geopressureviz, file = "~/geopressureviz.RData")
+
+shiny::runApp(system.file("geopressureviz", package = "GeoPressureR"),
+  launch.browser = getOption("browser")
+)
+```
+
+
+### Stationay period information
+```{r}
+pam$sta %>% kable()
+```

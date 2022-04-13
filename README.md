@@ -12,8 +12,8 @@ In essence, it contains the code from all the [GeoPressureR vignettes](https://r
 
 - Geolocator data containing pressure, light and activity data.
 - Have read the [GeoPressureR vignettes](https://raphaelnussbaumer.com/GeoPressureR/articles/) (:warning: You should be familar with the **full process involved** before starting with your own project)
-- Basic R experience
-- A Github account
+- Basic R experience (I'm using the [tidyverse](https://www.tidyverse.org/) syntax here).
+- A [Github account](https://github.com/signup).
 
 
 ## Project structure :file_folder:
@@ -22,17 +22,17 @@ Following the recommendations of [rrrpkg](https://github.com/ropensci/rrrpkg), t
 1. Standard description files at the root (`DESCRIPTION`, `.Rproj`, `README.md`, `LICENCES`,...)
 2. `data/` folder containing the raw geolocator data, the pressure and light labelled files and the data generated with the code from `analysis/`. Note that you could put the geolocator and labelization files in `raw-data`, following `usethis()` standard 
 3. `analysis/` contains all the `.R` code used for your project
-4. `report/` reads the data generated and produces sharable results (figures, html page, manuscript, etc...)
+4. `report/` reads the data generated and produces sharable results (figures, html page, manuscript, etc...).
 <details>
   <summary>See directory tree</summary>
 
 ```
 GeoPressureTemplate
-├── DESCRIPTION          		# project metadata and dependencies
-├── README.md            		# top-level description of content and guide to users
-├── GeoPressureTemplate.Rproj    # R project file
-├── data
-│   ├── 0_PAM
+├── DESCRIPTION          		                # project metadata and dependencies
+├── README.md            		                # top-level description of content and guide to users
+├── GeoPressureTemplate.Rproj               # R project file
+├── data                                    # Folder structured by order of use
+│   ├── 0_PAM                               # Folder with raw geolocator data grouped by gdl_id
 │   │   ├── 18LX
 │   │   │   ├── 18LX_20180725.acceleration
 │   │   │   ├── 18LX_20180725.data
@@ -43,19 +43,19 @@ GeoPressureTemplate
 │   │   │   └── 18LX_20180725.settings
 │   │   └── 22BT
 │   │       └── ...
-│   ├── 1_act_pres_labels
+│   ├── 1_act_pres_labels                   # Data generated with analyis/1-pressure.R
 │   │   ├── 18LX_act_pres-labeled.csv
 │   │   ├── 18LX_act_pres.csv
 │   │   ├── 22BT_act_pres-labeled.csv
 │   │   ├── 22BT_act_pres.csv
 │   │   └── ...
-│   ├── 2_light_labels
+│   ├── 2_light_labels                      # Data generated with analyis/1-pressure.R
 │   │   ├── 18LX_light-labeled.csv
 │   │   ├── 18LX_light.csv
 │   │   ├── 22BT_light-labeled.csv
 │   │   ├── 22BT_light.csv
 │   │   └── ...
-│   ├── 3_pressure_prob
+│   ├── 3_pressure_prob                    # Data generated with analyis/1-pressure.R
 │   │   ├── 18LX_pressure_prob.Rdata
 │   │   ├── 22BT_pressure_prob.Rdata
 │   │   └── ...
@@ -82,12 +82,14 @@ GeoPressureTemplate
 │   ├── 3-static.R
 │   ├── 4-basic-graph.R
 │   └── 5-wind-graph.R
-└── report
-    ├── 1-pressure.R
-    ├── 2-light.R
-    ├── 3-static.R
-    ├── 4-basic-graph.R
-    └── 99-combined.R
+└── reports
+    ├── make_reports.R
+    ├── index.Rmd
+    ├── _site.yml
+    ├── _reaport1.Rmd
+    └── html
+        ├──	report1_18LX.html
+        └── ...
 ```
 </details>
 
@@ -112,9 +114,8 @@ GeoPressureTemplate
 devtools::install()
 ```
 
-
 - Delete the content of `data/` (but keep the directory tree). Put your PAM data in `data/0_PAM/` in a folder with the GDL_ID code (e.g. `data/0_PAM/18LX/`)
-- Enter the information you already have about your track in the `gdl_setting.xlsx` spreadsheet. You can add new columns if needed.
+- Enter the information you already have about your track in the `gpr_setting.xlsx` spreadsheet. You can add new columns if needed.
 
 ## Start analysing the data :chart_with_upwards_trend:
 

@@ -24,7 +24,9 @@ Imports:
     raster,
     RColorBrewer,
     readr,
-    readxl
+    readxl,
+    rmarkdown,
+    distill
 Remotes: 
     rafnuss/GeoPressureR
 VignetteBuilder: 

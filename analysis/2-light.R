@@ -16,10 +16,10 @@ setupGeolocation()
 gdl <- "18LX"
 
 # Load the pressure file, also contains set, pam, col
-load(paste0("data/3_pressure_prob/", gdl, "_pressure_prob.Rdata"))
+load(paste0("data/1_pressure/", gdl, "_pressure_prob.Rdata"))
 
 # Define calibration period ----
-while (!is.POSIXct(set$calib_1_start) | is.na(set$calib_1_start)) {
+while (!is.POSIXct(gpr$calib_1_start) | is.na(gpr$calib_1_start)) {
   message("First and last stationary period:")
   print(pam$sta[c(1, nrow(pam$sta)), ])
   invisible(readline(prompt = paste0(
@@ -27,11 +27,11 @@ while (!is.POSIXct(set$calib_1_start) | is.na(set$calib_1_start)) {
     ". Once it's done, press [enter] to proceed: "
   )))
   set <- read_excel("data/gpr_settings.xlsx") %>%
-    filter(set$gdl_id == gdl_id)
+    filter(gpr$gdl_id == gdl_id)
 }
 
 # Compute twilight
-twl <- find_twilights(pam$light, shift_k = set$shift_k)
+twl <- find_twilights(pam$light, shift_k = gpr$shift_k)
 
 # convert to geolight format for ploting
 raw_geolight <- pam$light %>%
@@ -43,21 +43,21 @@ raw_geolight <- pam$light %>%
 # Check shift_k value
 lightImage(
   tagdata = raw_geolight,
-  offset = set$shift_k / 60 / 60
+  offset = gpr$shift_k / 60 / 60
 )
 tsimageDeploymentLines(raw_geolight$Date,
-  lon = set$calib_lon, lat = set$calib_lat,
-  offset = set$shift_k / 60 / 60, lwd = 3, col = adjustcolor("orange", alpha.f = 0.5)
+  lon = gpr$calib_lon, lat = gpr$calib_lat,
+  offset = gpr$shift_k / 60 / 60, lwd = 3, col = adjustcolor("orange", alpha.f = 0.5)
 )
 
-abline(v = set$calib_2_start, lty = 1, col = "firebrick", lwd = 1.5)
-abline(v = set$calib_1_start, lty = 1, col = "firebrick", lwd = 1.5)
-abline(v = set$calib_2_end, lty = 2, col = "firebrick", lwd = 1.5)
-abline(v = set$calib_1_end, lty = 2, col = "firebrick", lwd = 1.5)
+abline(v = gpr$calib_2_start, lty = 1, col = "firebrick", lwd = 1.5)
+abline(v = gpr$calib_1_start, lty = 1, col = "firebrick", lwd = 1.5)
+abline(v = gpr$calib_2_end, lty = 2, col = "firebrick", lwd = 1.5)
+abline(v = gpr$calib_1_end, lty = 2, col = "firebrick", lwd = 1.5)
 
 
 # Add calibration period
-if (!file.exists(paste0("data/2_light_labels/", set$gdl_id, "_light-labeled.csv"))) {
+if (!file.exists(paste0("data/2_light/labels/", gpr$gdl_id, "_light-labeled.csv"))) {
   # Write the label file
   write.csv(
     data.frame(
@@ -66,37 +66,37 @@ if (!file.exists(paste0("data/2_light_labels/", set$gdl_id, "_light-labeled.csv"
       value = as.numeric(format(twl$twilight, "%H")) * 60 + as.numeric(format(twl$twilight, "%M")),
       label = ifelse(is.null(twl$delete), "", ifelse(twl$delete, "Delete", ""))
     ),
-    paste0("data/2_light_labels/", set$gdl_id, "_light.csv"),
+    paste0("data/2_light/labels/", gpr$gdl_id, "_light.csv"),
     row.names = FALSE
   )
   browseURL("https://trainset.geocene.com/")
   invisible(readline(prompt = paste0(
-    "Edit the label file data/2_light_labels/", set$gdl_id,
-    "_light.csv. \n Once you've exported ", set$gdl_id,
+    "Edit the label file data/2_light_labels/", gpr$gdl_id,
+    "_light.csv. \n Once you've exported ", gpr$gdl_id,
     "_light-labeled.csv, press [enter] to proceed"
   )))
 }
 
 # Read the labeled file and update twilight
-csv <- read.csv(paste0("data/2_light_labels/", set$gdl_id, "_light-labeled.csv"))
+csv <- read.csv(paste0("data/2_light/labels/", gpr$gdl_id, "_light-labeled.csv"))
 twl$deleted <- !csv$label == ""
 
 
 # Subset calibration period
 lightImage(
   tagdata = raw_geolight,
-  offset = set$shift_k / 60 / 60
+  offset = gpr$shift_k / 60 / 60
 )
 tsimagePoints(twl$twilight,
-  offset = set$shift_k / 60 / 60, pch = 16, cex = 1.2,
+  offset = gpr$shift_k / 60 / 60, pch = 16, cex = 1.2,
   col = ifelse(twl$deleted, "grey20", ifelse(twl$rise, "firebrick", "cornflowerblue"))
 )
 
 twl_calib <- twl %>%
   filter(!deleted) %>%
   filter(
-    (twilight >= set$calib_1_start & twilight <= set$calib_1_end) |
-      (twilight >= set$calib_2_start & twilight <= set$calib_2_end)
+    (twilight >= gpr$calib_1_start & twilight <= gpr$calib_1_end) |
+      (twilight >= gpr$calib_2_start & twilight <= gpr$calib_2_end)
   )
 
 
@@ -110,7 +110,7 @@ twl$sta_id[tmp[, 1]] <- tmp[, 2]
 
 # Fit distribution of zenith angle ----
 sun <- solar(twl_calib$twilight)
-z <- refracted(zenith(sun, set$calib_lon, set$calib_lat))
+z <- refracted(zenith(sun, gpr$calib_lon, gpr$calib_lat))
 fit_z <- density(z, adjust = 1.4, from = 60, to = 120)
 hist(z, freq = F)
 lines(fit_z, col = "red")
@@ -130,7 +130,7 @@ pgz <- apply(g, 1, function(x) {
 })
 
 # Define the log-linear pooling value
-w <- set$prob_light_w
+w <- gpr$prob_light_w
 
 # Create the probability map
 light_prob <- c()
@@ -178,7 +178,7 @@ for (i_r in seq_len(length(light_prob))) {
   l <- l %>% addRasterImage(light_prob[[i_r]], opacity = 0.8, colors = "OrRd", group = info_str)
 }
 l %>%
-  addCircles(lng = set$calib_lon, lat = set$calib_lat, color = "black", opacity = 1) %>%
+  addCircles(lng = gpr$calib_lon, lat = gpr$calib_lat, color = "black", opacity = 1) %>%
   addLayersControl(
     overlayGroups = li_s,
     options = layersControlOptions(collapsed = FALSE)
@@ -189,6 +189,8 @@ l %>%
 # Save ----
 save(twl,
   light_prob,
-  set,
-  file = paste0("data/4_light_prob/", set$gdl_id, "_light_prob.Rdata")
+  gpr,
+  z,
+  fit_z,
+  file = paste0("data/2_light/", gpr$gdl_id, "_light_prob.Rdata")
 )
