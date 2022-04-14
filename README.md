@@ -40,22 +40,22 @@ GeoPressureTemplate
 │   │   │   └── ...
 │   │   └── 22BT
 │   │       └── ...
-│   ├── 1_pressure                   # Data generated with analyis/1-pressure.R
+│   ├── 1_pressure                          # Data generated with analyis/1-pressure.R
 │   │   ├── 18LX_pressure_prob.Rdata
 │   │   └── labels
 │   │       ├── 18LX_act_pres-labeled.csv
 │   │       ├── 18LX_act_pres.csv
-│   │       └── ...                    # Data generated with analyis/1-pressure.R
-│   ├── 2_light
+│   │       └── ...                    
+│   ├── 2_light                             # Data generated with analyis/2-light.R
 │   │   ├── 18LX_light_prob.Rdata
 │   │   └── labels
 │   │       ├── 18LX_light-labeled.csv
 │   │       ├── 18LX_light.csv
 │   │       └── ...    
-│   ├── 3_static
+│   ├── 3_static                            # Data generated with analyis/3-static.R
 │   │   ├── 18LX_static_prob.Rdata
 │   │   └── ...
-│   ├── 4_basic_graph
+│   ├── 4_basic_graph                       # Data generated with analyis/3-basic_graph.R
 │   │   ├── 18LX_basic_graph.Rdata
 │   │   └── ...
 │   ├── 5_wind_graph
@@ -63,13 +63,13 @@ GeoPressureTemplate
 │   │       ├──
 │   │       └── ...
 │   └── gpr_settings.xlsx
-├── analysis
+├── analysis                                # R code used to analyse your data. Follow the order
 │   ├── 1-pressure.R
 │   ├── 2-light.R
 │   ├── 3-static.R
 │   ├── 4-basic-graph.R
 │   └── 5-wind-graph.R
-└── reports
+└── reports                                 # Generate HTML report to be shared (see below for details)
 │   ├── _basic_trajectory.Rmd
 │   ├── _site.yml
 │   ├── _technical_details.Rmd
@@ -77,7 +77,7 @@ GeoPressureTemplate
 │   │   └── 18LX.html
 │   ├── index.Rmd
 │   └── make_reports.R
-└── docs
+└── docs                                      # Folder where your reports will be served as a website on Github Page
     └── ...
 ```
 </details>
@@ -122,6 +122,15 @@ Now that you are set-up, it's time to start the serious work. :grimacing: Follow
 
 Using the data generated, you can produce standardized reports in html and serve them on your github page repository. 
 You can access the demo for 18LX at [https://raphaelnussbaumer.com/GeoPressureTemplate/].
+
+The main idea is to produce report templates (`_name_of_the_report_template.Rmd`) which can be used for multiple tracks at once. We generate the HTML page for each tracks-reports separatly and puts them together into a website which can be serve on Github Page (and accessible for anywone!).
+
+1. Developed your report template. Start from an exisitng one and change `gdl_id: "18LX"` to your species. You can visualize the output by [clicking the `knit` button in Rstudio](https://rmarkdown.rstudio.com/authoring_quick_tour.html).
+2. Edit the website configuration file `_site.yml`. (Search online if you need help)
+3. Look at `make_reports.R` script to see how you can generate the HTML for multiple tracks and reports templates at once. 
+4. Edit `index.Rmd` as you wishes
+5. Run `{r} render_site('./reports')` (also provided at the bottom of  `make_reports.R`) to generate the full website in `docs/`.
+6. Push your changes on Gihub and create your [Github Page](https://rstudio.github.io/distill/publish_website.html#github-pages).
 
 
 ## Advanced options :link:
