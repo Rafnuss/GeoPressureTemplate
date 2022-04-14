@@ -10,11 +10,11 @@ navbar:
     - text: "Basic Trajectory"
       menu:
         - text: "18LX"
-          href: basic_trajectory/18LX.html
+          href: "/GeoPressureTemplate/basic_trajectory/18LX.html"
     - text: "Technical Details"
       menu:
         - text: "18LX"
-          href: technical_details/18LX.html
+          href: "/GeoPressureTemplate/technical_details/18LX.html"
   right:
     - icon: fa-envelope fa-lg
       href: mailto:<rafnuss@gmail.com>

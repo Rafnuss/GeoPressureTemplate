@@ -12,8 +12,8 @@ report_list <- c("basic_trajectory", "technical_details")
 # Generate the following report for each tracks
 # This will produce an HTML file for each reports
 for (report in report_list){
-  dir.create(paste0('reports/',report))
-  for (gdl in set$gdl_id ){
+  dir.create(paste0('reports/',report), showWarnings = F)
+  for (gdl in gdl_list ){
    render(paste0('reports/_',report,'.Rmd'),
           output_file = paste0(report, '/' ,gdl,'.html'),
           params = list(

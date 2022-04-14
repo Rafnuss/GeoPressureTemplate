@@ -6,7 +6,7 @@
       "description": "List of Reports\n",
       "author": [],
       "contents": "\nThis is an example of the reports generated based on the GeoPressureTemplate.\nYou can navigate from this page to all the report generated.\n\n\nShow code\n\n# List all the html file found on in the reports/html folder\nf <- list.files(path = \".\", patter=\"*.html\",recursive = TRUE)\n\nf_dirname <- lapply(f,dirname)\nf_basename <- lapply(f,basename)\n\nfor (i_f_dir in unique(f_dirname)){\n  cat(paste(\"## \",i_f_dir), sep=\"\\n\\n\")\n  for (i_f in seq_len(length(f))){\n    if (f_dirname[[i_f]]==i_f_dir){\n      cat(paste(\"* <a href='\", f[[i_f]],\"'>\",f_basename[[i_f]],\"<\/a>\"), sep=\"\\n\")\n    }\n  }\n  cat(\"\\n\")\n}\n\n\nbasic_trajectory\n 18LX.html \ntechnical_details\n 18LX.html \n\n\n\n\n",
-      "last_modified": "2022-04-13T20:50:57-04:00"
+      "last_modified": "2022-04-13T22:21:56-04:00"
     }
   ],
   "collections": []
