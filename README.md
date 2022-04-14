@@ -35,47 +35,34 @@ GeoPressureTemplate
 │   ├── 0_PAM                               # Folder with raw geolocator data grouped by gdl_id
 │   │   ├── 18LX
 │   │   │   ├── 18LX_20180725.acceleration
-│   │   │   ├── 18LX_20180725.data
 │   │   │   ├── 18LX_20180725.glf
-│   │   │   ├── 18LX_20180725.log
-│   │   │   ├── 18LX_20180725.magnetic
 │   │   │   ├── 18LX_20180725.pressure 
-│   │   │   └── 18LX_20180725.settings
+│   │   │   └── ...
 │   │   └── 22BT
 │   │       └── ...
-│   ├── 1_act_pres_labels                   # Data generated with analyis/1-pressure.R
-│   │   ├── 18LX_act_pres-labeled.csv
-│   │   ├── 18LX_act_pres.csv
-│   │   ├── 22BT_act_pres-labeled.csv
-│   │   ├── 22BT_act_pres.csv
-│   │   └── ...
-│   ├── 2_light_labels                      # Data generated with analyis/1-pressure.R
-│   │   ├── 18LX_light-labeled.csv
-│   │   ├── 18LX_light.csv
-│   │   ├── 22BT_light-labeled.csv
-│   │   ├── 22BT_light.csv
-│   │   └── ...
-│   ├── 3_pressure_prob                    # Data generated with analyis/1-pressure.R
+│   ├── 1_pressure                   # Data generated with analyis/1-pressure.R
 │   │   ├── 18LX_pressure_prob.Rdata
-│   │   ├── 22BT_pressure_prob.Rdata
-│   │   └── ...
-│   ├── 4_light_prob
+│   │   └── labels
+│   │       ├── 18LX_act_pres-labeled.csv
+│   │       ├── 18LX_act_pres.csv
+│   │       └── ...                    # Data generated with analyis/1-pressure.R
+│   ├── 2_light
 │   │   ├── 18LX_light_prob.Rdata
-│   │   ├── 22BT_light_prob.Rdata
-│   │   └── ...
-│   ├── 5_static_prob
+│   │   └── labels
+│   │       ├── 18LX_light-labeled.csv
+│   │       ├── 18LX_light.csv
+│   │       └── ...    
+│   ├── 3_static
 │   │   ├── 18LX_static_prob.Rdata
-│   │   ├── 22BT_static_prob.Rdata
 │   │   └── ...
-│   ├── 6_basic_graph
-│   │   ├──	18LX_basic_prob.Rdata
-│   │   ├── 22BT_basic_prob.Rdata
+│   ├── 4_basic_graph
+│   │   ├── 18LX_basic_graph.Rdata
 │   │   └── ...
-│   ├── 7_wind_graph
-│   │   ├──	18LX_wind_prob.Rdata
-│   │   ├── 22BT_wind_prob.Rdata
-│   │   └── ...
-│   └── gdl_settings.xlsx
+│   ├── 5_wind_graph
+│   │   └── ERA5_wind
+│   │       ├──
+│   │       └── ...
+│   └── gpr_settings.xlsx
 ├── analysis
 │   ├── 1-pressure.R
 │   ├── 2-light.R
@@ -83,13 +70,15 @@ GeoPressureTemplate
 │   ├── 4-basic-graph.R
 │   └── 5-wind-graph.R
 └── reports
-    ├── make_reports.R
-    ├── index.Rmd
-    ├── _site.yml
-    ├── _reaport1.Rmd
-    └── html
-        ├──	report1_18LX.html
-        └── ...
+│   ├── _basic_trajectory.Rmd
+│   ├── _site.yml
+│   ├── _technical_details.Rmd
+│   ├── basic_trajectory
+│   │   └── 18LX.html
+│   ├── index.Rmd
+│   └── make_reports.R
+└── docs
+    └── ...
 ```
 </details>
 
@@ -130,7 +119,9 @@ Now that you are set-up, it's time to start the serious work. :grimacing: Follow
 
 
 ## Generate Report :page_facing_up:
-Coming soon!
+
+Using the data generated, you can produce standardized reports in html and serve them on your github page repository. 
+You can access the demo for 18LX at [https://raphaelnussbaumer.com/GeoPressureTemplate/].
 
 
 ## Advanced options :link:

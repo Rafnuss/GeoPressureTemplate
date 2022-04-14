@@ -52,7 +52,7 @@ ggplotly(p, dynamicTicks = T) %>% layout(showlegend = F)
 
 ## Light
 
-```{r,  eval=F, layout="l-page"}
+```{r, layout="l-page"}
 raw_geolight <- pam$light %>%
   transmute(
     Date = date,
@@ -95,9 +95,10 @@ l %>%
   hideGroup(tail(li_s, length(li_s) - 1))
 ```
 
-### GeoPressureViz
+## GeoPressureViz
 
 To visualize the path on GeoPressureViz, you will need to also load the pressure and light probability map and align them first with the code below. 
+
 ```{r,  eval=F, layout="l-page"}
 sta_marginal <- unlist(lapply(static_prob_marginal, function(x) raster::metadata(x)$sta_id))
 sta_pres <- unlist(lapply(pressure_prob, function(x) raster::metadata(x)$sta_id))
@@ -125,7 +126,8 @@ shiny::runApp(system.file("geopressureviz", package = "GeoPressureR"),
 ```
 
 
-### Stationay period information
+## Stationay period information
+
 ```{r}
 pam$sta %>% kable()
 ```
