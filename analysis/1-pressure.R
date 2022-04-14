@@ -104,7 +104,7 @@ pressure_prob <- geopressure_prob_map(pressure_maps,
 path <- geopressure_map2path(pressure_prob)
 
 # Query timeserie of pressure based on these path
-pressure_timeserie <- geopressure_ts_path(path, pam_short$pressure, include_flight = c(0,1))
+pressure_timeserie <- geopressure_ts_path(path, pam_short$pressure, include_flight = c(0, 1))
 
 # Test 3 ----
 p <- ggplot() +

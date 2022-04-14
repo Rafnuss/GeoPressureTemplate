@@ -101,7 +101,7 @@ m
 
 
 shortest_path_df <- as.data.frame(shortest_path)
-shortest_path_timeserie <- geopressure_ts_path(shortest_path_df, pam$pressure, include_flight = c(0,1))
+shortest_path_timeserie <- geopressure_ts_path(shortest_path_df, pam$pressure, include_flight = c(0, 1))
 
 
 # In depth analysis with GeoPressureViz
@@ -116,7 +116,7 @@ light_prob <- light_prob[sta_light %in% sta_marginal]
 
 geopressureviz <- list(
   pam_data = pam,
-  static_prob=static_prob,
+  static_prob = static_prob,
   static_prob_marginal = static_prob_marginal,
   pressure_prob = pressure_prob,
   light_prob = light_prob,
@@ -130,7 +130,7 @@ shiny::runApp(system.file("geopressureviz", package = "GeoPressureR"),
 
 
 # Save
-save(# grl, we are excluding grl because of its size on this repo. Feel free to keep it in your own project
+save( # grl, we are excluding grl because of its size on this repo. Feel free to keep it in your own project
   path_sim,
   shortest_path,
   static_prob_marginal,
