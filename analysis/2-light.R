@@ -12,6 +12,8 @@ library(lubridate)
 library(GeoLocTools)
 setupGeolocation()
 
+debug <- T
+
 # Define the geolocator data logger id to use
 gdl <- "18LX"
 
@@ -33,27 +35,29 @@ while (!is.POSIXct(gpr$calib_1_start) | is.na(gpr$calib_1_start)) {
 # Compute twilight
 twl <- find_twilights(pam$light, shift_k = gpr$shift_k)
 
-# convert to geolight format for ploting
-raw_geolight <- pam$light %>%
-  transmute(
-    Date = date,
-    Light = obs
+if (debug) {
+  # convert to geolight format for ploting
+  raw_geolight <- pam$light %>%
+    transmute(
+      Date = date,
+      Light = obs
+    )
+
+  # Check shift_k value
+  lightImage(
+    tagdata = raw_geolight,
+    offset = gpr$shift_k / 60 / 60
+  )
+  tsimageDeploymentLines(raw_geolight$Date,
+    lon = gpr$calib_lon, lat = gpr$calib_lat,
+    offset = gpr$shift_k / 60 / 60, lwd = 3, col = adjustcolor("orange", alpha.f = 0.5)
   )
 
-# Check shift_k value
-lightImage(
-  tagdata = raw_geolight,
-  offset = gpr$shift_k / 60 / 60
-)
-tsimageDeploymentLines(raw_geolight$Date,
-  lon = gpr$calib_lon, lat = gpr$calib_lat,
-  offset = gpr$shift_k / 60 / 60, lwd = 3, col = adjustcolor("orange", alpha.f = 0.5)
-)
-
-abline(v = gpr$calib_2_start, lty = 1, col = "firebrick", lwd = 1.5)
-abline(v = gpr$calib_1_start, lty = 1, col = "firebrick", lwd = 1.5)
-abline(v = gpr$calib_2_end, lty = 2, col = "firebrick", lwd = 1.5)
-abline(v = gpr$calib_1_end, lty = 2, col = "firebrick", lwd = 1.5)
+  abline(v = gpr$calib_2_start, lty = 1, col = "firebrick", lwd = 1.5)
+  abline(v = gpr$calib_1_start, lty = 1, col = "firebrick", lwd = 1.5)
+  abline(v = gpr$calib_2_end, lty = 2, col = "firebrick", lwd = 1.5)
+  abline(v = gpr$calib_1_end, lty = 2, col = "firebrick", lwd = 1.5)
+}
 
 
 # Add calibration period
@@ -82,16 +86,18 @@ csv <- read.csv(paste0("data/2_light/labels/", gpr$gdl_id, "_light-labeled.csv")
 twl$deleted <- !csv$label == ""
 
 
-# Subset calibration period
-lightImage(
-  tagdata = raw_geolight,
-  offset = gpr$shift_k / 60 / 60
-)
-tsimagePoints(twl$twilight,
-  offset = gpr$shift_k / 60 / 60, pch = 16, cex = 1.2,
-  col = ifelse(twl$deleted, "grey20", ifelse(twl$rise, "firebrick", "cornflowerblue"))
-)
+if (debug) {
+  lightImage(
+    tagdata = raw_geolight,
+    offset = gpr$shift_k / 60 / 60
+  )
+  tsimagePoints(twl$twilight,
+    offset = gpr$shift_k / 60 / 60, pch = 16, cex = 1.2,
+    col = ifelse(twl$deleted, "grey20", ifelse(twl$rise, "firebrick", "cornflowerblue"))
+  )
+}
 
+# Subset calibration period
 twl_calib <- twl %>%
   filter(!deleted) %>%
   filter(
@@ -112,8 +118,11 @@ twl$sta_id[tmp[, 1]] <- tmp[, 2]
 sun <- solar(twl_calib$twilight)
 z <- refracted(zenith(sun, gpr$calib_lon, gpr$calib_lat))
 fit_z <- density(z, adjust = 1.4, from = 60, to = 120)
-hist(z, freq = F)
-lines(fit_z, col = "red")
+if (debug) {
+  hist(z, freq = F)
+  lines(fit_z, col = "red")
+}
+
 
 
 # Get grid information to create proability map identical to pressure
@@ -152,39 +161,40 @@ for (i_s in seq_len(nrow(pam$sta))) {
   light_prob[[i_s]] <- gr
 }
 
-# Compute the most likely path
-path <- geopressure_map2path(light_prob)
-path$duration <- as.numeric(difftime(pam$sta$end, pam$sta$start, units = "days"))
-path <- subset(path, duration > 2)
+if (debug) {
+  # Compute the most likely path
+  path <- geopressure_map2path(light_prob)
+  path$duration <- as.numeric(difftime(pam$sta$end, pam$sta$start, units = "days"))
+  path <- subset(path, duration > 2)
 
-pal <- colorFactor(col, as.factor(seq_len(length(col))))
-leaflet() %>%
-  addProviderTiles(providers$Stamen.TerrainBackground) %>%
-  addFullscreenControl() %>%
-  addPolylines(lng = path$lon, lat = path$lat, opacity = 0.7, weight = 1, color = "#808080") %>%
-  addCircles(lng = path$lon, lat = path$lat, opacity = 1, color = pal(factor(path$sta_id, levels = pam$sta$sta_id)), weight = path$duration^(0.3) * 10)
+  pal <- colorFactor(col, as.factor(seq_len(length(col))))
+  leaflet() %>%
+    addProviderTiles(providers$Stamen.TerrainBackground) %>%
+    addFullscreenControl() %>%
+    addPolylines(lng = path$lon, lat = path$lat, opacity = 0.7, weight = 1, color = "#808080") %>%
+    addCircles(lng = path$lon, lat = path$lat, opacity = 1, color = pal(factor(path$sta_id, levels = pam$sta$sta_id)), weight = path$duration^(0.3) * 10)
 
 
-# plot probability map
-li_s <- list()
-l <- leaflet() %>%
-  addProviderTiles(providers$Stamen.TerrainBackground) %>%
-  addFullscreenControl()
-for (i_r in seq_len(length(light_prob))) {
-  i_s <- metadata(light_prob[[i_r]])$sta_id
-  info <- pam$sta[pam$sta$sta_id == i_s, ]
-  info_str <- paste0(i_s, " | ", info$start, "->", info$end)
-  li_s <- append(li_s, info_str)
-  l <- l %>% addRasterImage(light_prob[[i_r]], opacity = 0.8, colors = "OrRd", group = info_str)
+  # plot probability map
+  li_s <- list()
+  l <- leaflet() %>%
+    addProviderTiles(providers$Stamen.TerrainBackground) %>%
+    addFullscreenControl()
+  for (i_r in seq_len(length(light_prob))) {
+    i_s <- metadata(light_prob[[i_r]])$sta_id
+    info <- pam$sta[pam$sta$sta_id == i_s, ]
+    info_str <- paste0(i_s, " | ", info$start, "->", info$end)
+    li_s <- append(li_s, info_str)
+    l <- l %>% addRasterImage(light_prob[[i_r]], opacity = 0.8, colors = "OrRd", group = info_str)
+  }
+  l %>%
+    addCircles(lng = gpr$calib_lon, lat = gpr$calib_lat, color = "black", opacity = 1) %>%
+    addLayersControl(
+      overlayGroups = li_s,
+      options = layersControlOptions(collapsed = FALSE)
+    ) %>%
+    hideGroup(tail(li_s, length(li_s) - 1))
 }
-l %>%
-  addCircles(lng = gpr$calib_lon, lat = gpr$calib_lat, color = "black", opacity = 1) %>%
-  addLayersControl(
-    overlayGroups = li_s,
-    options = layersControlOptions(collapsed = FALSE)
-  ) %>%
-  hideGroup(tail(li_s, length(li_s) - 1))
-
 
 # Save ----
 save(twl,
