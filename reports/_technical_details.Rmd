@@ -30,11 +30,16 @@ load(paste0("../data/4_basic_graph/", params$gdl_id, "_basic_graph.Rdata"))
 
 ## Settings used
 
-```{r}
-kable(gpr)
+All the results produced here are generated with (1) the raw geolocator data, (2) the labeled files of pressure and light and (3) the parameters listed below.
+
+```{r layout="l-page"}
+kable(gpr) %>% scroll_box(width = "100%")
 ```
 
 ## Pressure timeserie
+
+The labeling of pressure data is illustrated with this figure. The black dots indicates the pressure datapoint not considered in the matching. Each stationary period is illustrated by a different colored line.
+
 ```{r, layout="l-page"}
 pressure_na <- pam$pressure %>%
   mutate(obs = ifelse(isoutliar | sta_id == 0, NA, obs))
@@ -74,6 +79,8 @@ hist(z, freq = F)
 lines(fit_z, col = "red")
 ```
 
+The probability map resulting from light data alone can be seen below.
+
 ```{r, layout="l-page"}
 li_s <- list()
 l <- leaflet(width = "100%") %>%
@@ -95,6 +102,56 @@ l %>%
   hideGroup(tail(li_s, length(li_s) - 1))
 ```
 
+
+## Light vs Pressure
+
+We can compare light and pressure location at long stationary stopover (>5 days). By assuming the best match of the pressure to be the truth, we can plot the histogram of the zenith angle and compare to the fit of kernel density at the calibration site. 
+
+```{r, layout="l-page"}
+ raw_geolight <- pam$light %>%
+    transmute(
+      Date = date,
+      Light = obs
+    )
+ dur <- unlist(lapply(pressure_prob, function(x) difftime(metadata(x)$temporal_extent[2],metadata(x)$temporal_extent[1], units = "days" )))
+  long_id <- which(dur>5)
+
+  par(mfrow = c(2, 3))
+  for (i_s in long_id){
+    twl_fl <- twl %>%
+      filter(!deleted) %>%
+      filter(twilight>shortest_path_timeserie[[i_s]]$date[1] & twilight<tail(shortest_path_timeserie[[i_s]]$date,1))
+    sun <-  solar(twl_fl$twilight)
+    z_i <- refracted(zenith(sun, shortest_path_timeserie[[i_s]]$lon[1], shortest_path_timeserie[[i_s]]$lat[1]))
+    hist(z_i, freq = F, main = paste0("sta_id=",i_s, " | ",nrow(twl_fl),"twls"))
+    lines(fit_z, col = "red")
+    xlab("Zenith angle")
+  }
+```
+
+Similarly, we can plot the line of sunrise/sunset at the best match of pressure (yellow line) and compare to the raw and labeled light data.
+
+```{r, layout="l-page"}
+  lightImage(
+    tagdata = raw_geolight,
+    offset = gpr$shift_k / 60 / 60
+  )
+  tsimagePoints(twl$twilight,
+                offset = gpr$shift_k / 60 / 60, pch = 16, cex = 1.2,
+                col = ifelse(twl$deleted, "grey20", ifelse(twl$rise, "firebrick", "cornflowerblue"))
+  )
+  for (ts in shortest_path_timeserie){
+    twl_fl <- twl %>%
+      filter(twilight>ts$date[1] & twilight<tail(ts$date,1))
+    if (nrow(twl_fl)>0){
+    tsimageDeploymentLines(twl_fl$twilight,
+                           lon = ts$lon[1], ts$lat[1],
+                           offset = gpr$shift_k / 60 / 60, lwd = 3,col = adjustcolor("orange", alpha.f = 0.5))
+      
+    }
+  }
+```
+
 ## GeoPressureViz
 
 To visualize the path on GeoPressureViz, you will need to also load the pressure and light probability map and align them first with the code below. 
@@ -107,7 +164,7 @@ pressure_prob <- pressure_prob[sta_pres %in% sta_marginal]
 light_prob <- light_prob[sta_light %in% sta_marginal]
 ```
 
-The code below will open with the shortest path computed with the graph approach. You can change it to 
+The code below will open with the shortest path computed with the graph approach.
 
 ```{r, eval = F, class.source = 'fold-show'}
 geopressureviz <- list(

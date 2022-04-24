@@ -17,7 +17,7 @@ debug <- T
 # Define the geolocator data logger id to use
 gdl <- "18LX"
 
-# Load the pressure file, also contains set, pam, col
+# Load the pressure file, also contains gpr, pam, col
 load(paste0("data/1_pressure/", gdl, "_pressure_prob.Rdata"))
 
 # Define calibration period ----
@@ -28,7 +28,7 @@ while (!is.POSIXct(gpr$calib_1_start) | is.na(gpr$calib_1_start)) {
     "Add the calib_1_start and calib_1_end in ata/gpr_settings.xlsx",
     ". Once it's done, press [enter] to proceed: "
   )))
-  set <- read_excel("data/gpr_settings.xlsx") %>%
+  gpr <- read_excel("data/gpr_settings.xlsx") %>%
     filter(gpr$gdl_id == gdl_id)
 }
 
@@ -63,11 +63,16 @@ if (debug) {
 # Add calibration period
 if (!file.exists(paste0("data/2_light/labels/", gpr$gdl_id, "_light-labeled.csv"))) {
   # Write the label file
+  val <- (as.numeric(format(twl$twilight, "%H")) * 60 + as.numeric(format(twl$twilight, "%M"))
+    + gpr$shift_k / 60 + 60 * 12) %% (60 * 24)
+  plot(twl$twilight[twl$rise], val[twl$rise])
+
   write.csv(
     data.frame(
       series = ifelse(twl$rise, "Rise", "Set"),
       timestamp = strftime(twl$twilight, "%Y-%m-%dT00:00:00Z", tz = "UTC"),
-      value = as.numeric(format(twl$twilight, "%H")) * 60 + as.numeric(format(twl$twilight, "%M")),
+      value = (as.numeric(format(twl$twilight, "%H")) * 60 + as.numeric(format(twl$twilight, "%M"))
+        + gpr$shift_k / 60 + 60 * 12) %% (60 * 24),
       label = ifelse(is.null(twl$delete), "", ifelse(twl$delete, "Delete", ""))
     ),
     paste0("data/2_light/labels/", gpr$gdl_id, "_light.csv"),
@@ -117,13 +122,48 @@ twl$sta_id[tmp[, 1]] <- tmp[, 2]
 # Fit distribution of zenith angle ----
 sun <- solar(twl_calib$twilight)
 z <- refracted(zenith(sun, gpr$calib_lon, gpr$calib_lat))
-fit_z <- density(z, adjust = 1.4, from = 60, to = 120)
+fit_z <- density(z, adjust = gpr$kernel_adjust, from = 60, to = 120)
+
+
+
 if (debug) {
   hist(z, freq = F)
   lines(fit_z, col = "red")
+
+  # Compare with pressure
+  load(paste0("data/1_pressure/", gdl, "_pressure_prob.Rdata"))
+  dur <- unlist(lapply(pressure_prob, function(x) difftime(metadata(x)$temporal_extent[2], metadata(x)$temporal_extent[1], units = "days")))
+  long_id <- which(dur > 5)
+
+  par(mfrow = c(2, 3))
+  for (i_s in long_id) {
+    twl_fl <- twl %>%
+      filter(!deleted) %>%
+      filter(twilight > pressure_timeserie[[i_s]]$date[1] & twilight < tail(pressure_timeserie[[i_s]]$date, 1))
+    sun <- solar(twl_fl$twilight)
+    z_i <- refracted(zenith(sun, pressure_timeserie[[i_s]]$lon[1], pressure_timeserie[[i_s]]$lat[1]))
+    hist(z_i, freq = F, main = paste0("sta_id=", i_s, " n=", nrow(twl_fl)))
+    lines(fit_z, col = "red")
+  }
+
+  # Light comparison
+  lightImage(
+    tagdata = raw_geolight,
+    offset = gpr$shift_k / 60 / 60
+  )
+  tsimagePoints(twl$twilight,
+    offset = gpr$shift_k / 60 / 60, pch = 16, cex = 1.2,
+    col = ifelse(twl$deleted, "grey20", ifelse(twl$rise, "firebrick", "cornflowerblue"))
+  )
+  for (i_s in long_id) {
+    twl_fl <- twl %>%
+      filter(twilight > pressure_timeserie[[i_s]]$date[1] & twilight < tail(pressure_timeserie[[i_s]]$date, 1))
+    tsimageDeploymentLines(twl_fl$twilight,
+      lon = pressure_timeserie[[i_s]]$lon[1], pressure_timeserie[[i_s]]$lat[1],
+      offset = gpr$shift_k / 60 / 60, lwd = 3, col = adjustcolor("orange", alpha.f = 0.5)
+    )
+  }
 }
-
-
 
 # Get grid information to create proability map identical to pressure
 g <- as.data.frame(pressure_prob[[1]], xy = TRUE)

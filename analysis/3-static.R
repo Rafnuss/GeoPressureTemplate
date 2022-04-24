@@ -144,10 +144,10 @@ if (debug) {
     resolution <- mean(res(static_prob[[1]])) * 111 # assuming 1°= 111km
     thr_gs <- # Assuming a max groundspeed of 150km/h
       # Accepting a minimium of 3 grid resolution for noise/uncertainty.
-      flight_duration <- pmax(flight_duration, resolution * 3 / grl$thr_gs)
+      flight_duration <- pmax(flight_duration, resolution * 3 / gpr$thr_gs)
 
     # Check possible position at next stationary period
-    possible_next <- (EBImage::distmap(!cur) * resolution / flight_duration) < grl$thr_gs
+    possible_next <- (EBImage::distmap(!cur) * resolution / flight_duration) < gpr$thr_gs
 
     if (sum(possible_next & nex) == 0) {
       stop(paste("There are no possible transition from stationary period", i_s, "to", i_s + 1, ". Check part 1 process (light and pressure)", sep = " "))

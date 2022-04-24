@@ -18,6 +18,7 @@ library(dplyr)
 library(ggplot2)
 library(plotly)
 knitr::opts_chunk$set(echo = FALSE)
+load(paste0("../data/2_light/", params$gdl_id, "_light_prob.Rdata"))
 load(paste0("../data/3_static/", params$gdl_id, "_static_prob.Rdata"))
 load(paste0("../data/4_basic_graph/", params$gdl_id, "_basic_graph.Rdata"))
 ```
@@ -26,11 +27,14 @@ load(paste0("../data/4_basic_graph/", params$gdl_id, "_basic_graph.Rdata"))
 
 ## Alitude
 
+Altitudes are computed based on pressure measurement of the geolocation, corrected based on the assumed location of the shortest path. This correction accounts therefore for the natural variation of pressure as estimated by ERA-5. The vertical lines indicate the sunrise (dashed) and sunset (solid).
+
 ```{r, layout="l-page"}
 p <- ggplot() +
   # geom_line(data = pam$pressure, aes(x = date, y = obs), colour = "grey") +
   geom_line(data = do.call("rbind", shortest_path_timeserie), aes(x = date, y = altitude)) +
   geom_line(data = do.call("rbind", shortest_path_timeserie) %>% filter(sta_id > 0), aes(x = date, y = altitude, col = factor(sta_id))) +
+  geom_vline(data = twl, aes(xintercept = twilight, linetype = ifelse(rise, "dashed", "solid"), color="grey"), lwd=0.1) +
   theme_bw() +
   scale_colour_manual(values = col) +
   scale_y_continuous(name = "Altitude (m)")
@@ -40,6 +44,11 @@ ggplotly(p, dynamicTicks = T) %>% layout(showlegend = F)
 
 
 ## Shortest path and simulated path
+
+The large circles indicates the shortest path (overall most likely trajectory) estimated by the graph approach. The size is proportional to the duration of stay. The small dots and grey lines represents 10 possible trajeectories of the bird according to the model.
+
+Click on the full-screen mode button on the top-left of the map to see more details on the map.
+
 
 ```{r, layout="l-page"}
 sta_duration <- unlist(lapply(static_prob_marginal, function(x) {
@@ -61,6 +70,8 @@ m
 ```
 
 ## Marginal probability map
+
+The marginal probability map estimate the overall probability of position at each stationary period regardless of the trajectory taken by the bird. It is the most useful quantification of the uncertainty of the position of the bird.
 
 ```{r, warning=F, layout="l-page"}
 li_s <- list()

@@ -1,6 +1,6 @@
 name: "GeoPressureTemplate"
 description: |
-  These are the Goal of my Study
+  Template for GeoPressureR
 output_dir: "../docs"
 title: "Template for GeoPressureR"
 navbar:

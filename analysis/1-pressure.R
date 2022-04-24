@@ -98,6 +98,7 @@ pressure_maps <- geopressure_map(pam_short$pressure,
   max_sample = gpr$map_max_sample,
   margin = gpr$map_margin
 )
+
 # Convert to probability map
 pressure_prob <- geopressure_prob_map(pressure_maps,
   s = gpr$prob_map_s,
@@ -149,7 +150,7 @@ if (debug) {
 }
 
 # Export ----
-save(pressure_timeserie,
+save( # pressure_timeserie,
   pressure_prob,
   pam,
   col,
