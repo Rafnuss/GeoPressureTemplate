@@ -49,10 +49,35 @@ p <- ggplot() +
   # geom_line(data = pressure_na, aes(x = date, y = obs, color = factor(sta_id)), size = 0.5) +
   geom_line(data = do.call("rbind", shortest_path_timeserie) %>% filter(sta_id > 0), aes(x = date, y = pressure0, col = factor(sta_id))) +
   theme_bw() +
-  scale_colour_manual(values = col) +
+  scale_colour_manual(values = pam$sta$col) +
   scale_y_continuous(name = "Pressure(hPa)")
 
 ggplotly(p, dynamicTicks = T) %>% layout(showlegend = F)
+```
+
+## Pressure calibration
+
+```{r, layout="l-page"}
+sp_pressure = do.call("rbind", shortest_path_timeserie) %>% filter(sta_id > 0)
+
+sta_plot <- which(difftime(pam$sta$end,pam$sta$start,unit="days")>3)
+
+par(mfrow=c(2,3))
+for (i in seq_len(length(sta_plot))){
+  i_s = sta_plot[i]
+  pressure_s = pam$pressure %>% 
+    filter(sta_id==i_s & !isoutliar)
+  
+    err <- pressure_s %>% left_join(sp_pressure, by="date") %>% 
+      mutate(
+        err = obs-pressure-mean(obs-pressure)
+      ) %>% .$err
+    
+    hist(err, freq = F, main = paste0("sta_id=",i_s, " | ",nrow(pressure_s)," dtpts | std=",round(sd(err),2)))
+   xfit <- seq(min(err), max(err), length = 40) 
+    yfit <- dnorm(xfit, mean = mean(err), sd = sd(err)) 
+    lines(xfit, yfit, col = "red")
+}
 ```
 
 ## Light

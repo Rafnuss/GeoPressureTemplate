@@ -1,6 +1,6 @@
 Package: GeoPressureTemplate
 Title: These are the Goal of my Study (One Line, Title Case)
-Version: 0.2
+Version: 0.4
 Authors@R: 
     person("Raphaël", "Nussbaumer", , "rafnuss@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8185-1020"))
@@ -11,6 +11,7 @@ Depends:
     R (>= 3.5.0)
 Imports: 
     dplyr,
+    ecmwfr,
     GeoPressureR,
     ggplot2,
     igraph,

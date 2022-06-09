@@ -157,8 +157,6 @@ if (debug) {
 
 ## Save
 save(pam,
-  col,
-  gpr,
   static_prob,
   static_timeserie,
   file = paste0("data/3_static/", gpr$gdl_id, "_static_prob.Rdata")

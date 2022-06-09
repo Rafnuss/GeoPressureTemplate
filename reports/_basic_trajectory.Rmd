@@ -57,16 +57,16 @@ sta_duration <- unlist(lapply(static_prob_marginal, function(x) {
 pal <- colorFactor(col, as.factor(seq_len(length(col))))
 m <- leaflet(width = "100%") %>%
   addProviderTiles(providers$Stamen.TerrainBackground) %>%
-  addFullscreenControl() %>%
-  addPolylines(lng = shortest_path$lon, lat = shortest_path$lat, opacity = 1, color = "#808080", weight = 3) %>%
-  addCircles(lng = shortest_path$lon, lat = shortest_path$lat, opacity = 1, color = pal(factor(shortest_path$sta_id, levels = pam$sta$sta_id)), weight = sta_duration^(0.3) * 10)
+  addFullscreenControl()
 
 for (i in seq_len(nrow(path_sim$lon))) {
   m <- m %>%
     addPolylines(lng = path_sim$lon[i, ], lat = path_sim$lat[i, ], opacity = 0.5, weight = 1, color = "#808080") %>%
     addCircles(lng = path_sim$lon[i, ], lat = path_sim$lat[i, ], opacity = .7, weight = 1, color = pal(factor(shortest_path$sta_id, levels = pam$sta$sta_id)))
 }
-m
+m %>%
+  addPolylines(lng = shortest_path$lon, lat = shortest_path$lat, opacity = 1, color = "#808080", weight = 3) %>%
+  addCircles(lng = shortest_path$lon, lat = shortest_path$lat, opacity = 1, color = pal(factor(shortest_path$sta_id, levels = pam$sta$sta_id)), weight = sta_duration^(0.3) * 10, popup = paste0("sta_id=", shortest_path$sta_id))
 ```
 
 ## Marginal probability map
@@ -84,10 +84,11 @@ for (i_r in seq_len(length(static_prob_marginal))) {
   info_str <- paste0(i_s, " | ", info[1], "->", info[2])
   li_s <- append(li_s, info_str)
   l <- l %>%
-    addRasterImage(static_prob_marginal[[i_r]], colors = "OrRd", opacity = 0.8, group = info_str) %>%
-    addCircles(lng = shortest_path$lon[i_s], lat = shortest_path$lat[i_s], opacity = 1, color = "#000", weight = 10, group = info_str)
+    addRasterImage(static_prob_marginal[[i_r]], colors = "OrRd", opacity = 0.8, group = info_str)
 }
 l %>%
+  addPolylines(lng = shortest_path$lon, lat = shortest_path$lat, opacity = .5, color = "#808080", weight = 3) %>%
+  addCircles(lng = shortest_path$lon, lat = shortest_path$lat, opacity = .4, weight = sta_duration^(0.3) * 10, popup = paste0("sta_id=", shortest_path$sta_id), color = "#000") %>%
   addLayersControl(
     overlayGroups = li_s,
     options = layersControlOptions(collapsed = FALSE)

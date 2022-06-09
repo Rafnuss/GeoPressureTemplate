@@ -153,7 +153,6 @@ if (debug) {
 save( # pressure_timeserie,
   pressure_prob,
   pam,
-  col,
   gpr,
   file = paste0("data/1_pressure/", gpr$gdl_id, "_pressure_prob.Rdata")
 )

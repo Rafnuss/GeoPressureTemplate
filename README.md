@@ -19,9 +19,9 @@ In essence, it contains the code from all the [GeoPressureR vignettes](https://r
 ## Project structure :file_folder:
 
 Following the recommendations of [rrrpkg](https://github.com/ropensci/rrrpkg), the project contains:
-1. Standard description files at the root (`DESCRIPTION`, `.Rproj`, `README.md`, `LICENCES`,...)
-2. `data/` folder containing the raw geolocator data, the pressure and light labelled files and the data generated with the code from `analysis/`. Note that you could put the geolocator and labelization files in `raw-data`, following `usethis()` standard 
-3. `analysis/` contains all the `.R` code used for your project
+1. Standard description files at the root (`DESCRIPTION`, `.Rproj`, `README.md`, `LICENCES`,...).
+2. `data/` folder containing the raw geolocator data, the pressure and light labelled files and the data generated with the code from `analysis/`. Note that you could instead keep the geolocator and labelization files seperately in a `raw-data/` folder, following `usethis()` standard.
+3. `analysis/` contains all the `.R` code used for your project.
 4. `report/` reads the data generated and produces sharable results (figures, html page, manuscript, etc...).
 <details>
   <summary>See directory tree</summary>
@@ -68,12 +68,17 @@ GeoPressureTemplate
 │   ├── 2-light.R
 │   ├── 3-static.R
 │   ├── 4-basic-graph.R
-│   └── 5-wind-graph.R
+│   ├── 5-1-wind-graph_request.R
+│   ├── 5-2-wind-graph_transfer.R
+│   ├── 5-3-wind-graph.R
+│   └── 99-combined.R
 └── reports                                 # Generate HTML report to be shared (see below for details)
 │   ├── _basic_trajectory.Rmd
 │   ├── _site.yml
 │   ├── _technical_details.Rmd
 │   ├── basic_trajectory
+│   │   └── 18LX.html
+│   ├── technical_details
 │   │   └── 18LX.html
 │   ├── index.Rmd
 │   └── make_reports.R
@@ -116,7 +121,10 @@ Now that you are set-up, it's time to start the serious work. :grimacing: Follow
 |  `2-light.R` |  [Creating probability maps from light data](https://raphaelnussbaumer.com/GeoPressureR/articles/light-map.html) |
 |  `3-static.R` | [Preparing data for trajectory modelling](https://raphaelnussbaumer.com/GeoPressureR/articles/preparing-data.html)  |
 |  `4-basic-graph.R` |  [Modeling trajectory with a graph](https://raphaelnussbaumer.com/GeoPressureR/articles/basic-graph.html) |
-
+|  `5-1-wind-graph_request.R` |  [Improving the graph with wind | Request wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
+|  `5-2-wind-graph_transfer.R` |  [Improving the graph with wind | Download wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
+|  `5-3-wind-graph.R` |  [Improving the graph with wind](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html) |
+|  `99-combined.R` |  Run all steps for multiple tracks. |
 
 ## Generate Report :page_facing_up:
 

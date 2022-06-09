@@ -239,7 +239,6 @@ if (debug) {
 # Save ----
 save(twl,
   light_prob,
-  gpr,
   z,
   fit_z,
   file = paste0("data/2_light/", gpr$gdl_id, "_light_prob.Rdata")

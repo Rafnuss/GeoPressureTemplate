@@ -10,6 +10,7 @@ debug <- T
 gdl <- "18LX"
 
 # Load static prob
+load(paste0("data/1_pressure/", gdl, "_pressure_prob.Rdata"))
 load(paste0("data/3_static/", gdl, "_static_prob.Rdata"))
 
 # Build the graph ----
@@ -20,7 +21,7 @@ grl <- graph_create(static_prob,
 # If you get an error with trimming, use geopressureviz from end of 3.static.R
 
 # Add probability of each edge
-grl$p <- grl$ps * flight_prob(grl$gs, method = "gamma", shape = 7, scale = 7)
+grl$p <- grl$ps * flight_prob(grl$gs, method = "gamma", shape = 7, scale = 7, low_speed_fix = grl$low_speed_fix)
 
 
 
