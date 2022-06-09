@@ -121,8 +121,8 @@ Now that you are set-up, it's time to start the serious work. :grimacing: Follow
 |  `2-light.R` |  [Creating probability maps from light data](https://raphaelnussbaumer.com/GeoPressureR/articles/light-map.html) |
 |  `3-static.R` | [Preparing data for trajectory modelling](https://raphaelnussbaumer.com/GeoPressureR/articles/preparing-data.html)  |
 |  `4-basic-graph.R` |  [Modeling trajectory with a graph](https://raphaelnussbaumer.com/GeoPressureR/articles/basic-graph.html) |
-|  `5-1-wind-graph_request.R` |  [Improving the graph with wind | Request wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
-|  `5-2-wind-graph_transfer.R` |  [Improving the graph with wind | Download wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
+|  `5-1-wind-graph_request.R` |  [Improving the graph with wind - Request wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
+|  `5-2-wind-graph_transfer.R` |  [Improving the graph with wind - Download wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
 |  `5-3-wind-graph.R` |  [Improving the graph with wind](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html) |
 |  `99-combined.R` |  Run all steps for multiple tracks. |
 
