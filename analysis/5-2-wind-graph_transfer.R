@@ -16,7 +16,21 @@ dir.save <- paste0("data/5_wind_graph/", gdl)
 dir.create(dir.save, showWarnings = F)
 
 # Download a file for each stationary period
-for (i_s in seq_len(length(req))){
+for (i_s in seq(1,length(req))){
   filename = paste0(gdl,"_",i_s,".nc")
-  wf_transfer(url = req[[i_s]]$request_id, service = "cds", user = cds.user, path = dir.save, filename=filename)
+  # wf_transfer seems to fail for some reason with the following error
+  # error in curl::curl_fetch_disk(url, x$path, handle = handle) :
+  # HTTP/2 stream 0 was not closed cleanly: INTERNAL_ERROR (err 2))
+  # We try each request 3 times before continuing.
+  attempt <- 1
+  r <- NULL
+  while( is.null(r) && attempt <= 3 ) {
+    attempt <- attempt + 1
+    try(
+      r <- wf_transfer(url = req[[i_s]]$request_id, service = "cds", user = cds.user, path = dir.save, filename=filename)
+    )
+  }
+  if (is.null(r)){
+    paste0("data for stationary period ", i_s, " was not downloaded.")
+  }
 }
