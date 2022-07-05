@@ -70,7 +70,7 @@ if (debug) {
     # geom_point(data = subset(pam$pressure, isoutliar), aes(x = date, y = obs), colour = "black") +
     theme_bw() +
     scale_color_manual(values = col) +
-    scale_y_continuous(name = "Pressure(hPa)")
+    scale_y_continuous(name = "Pressure (hPa)")
 
   ggplotly(p, dynamicTicks = T) %>% layout(showlegend = F)
 }
@@ -149,7 +149,7 @@ if (debug) {
     addCircles(lng = path$lon, lat = path$lat, opacity = 1, color = pal(factor(path$sta_id, levels = pam$sta$sta_id)), weight = sta_duration^(0.3) * 10)
 }
 
-# Export ----
+# Save ----
 save( # pressure_timeserie,
   pressure_prob,
   pam,

@@ -155,7 +155,7 @@ if (debug) {
   }
 }
 
-## Save
+## Save ----
 save(pam,
   static_prob,
   static_timeserie,

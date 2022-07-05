@@ -70,7 +70,8 @@ GeoPressureTemplate
 │   ├── 4-basic-graph.R
 │   ├── 5-1-wind-graph_request.R
 │   ├── 5-2-wind-graph_transfer.R
-│   ├── 5-3-wind-graph.R
+│   ├── 5-3-wind-graph_create.R
+│   ├── 5-4-wind-graph_analyse.R
 │   └── 99-combined.R
 └── reports                                 # Generate HTML report to be shared (see below for details)
 │   ├── _basic_trajectory.Rmd
@@ -100,7 +101,7 @@ GeoPressureTemplate
 
 - Rename `GeoPressureTemplate.Rproj` to `my_tracking_study_name.Rproj`.
 - Open the R project file with RStudio. 
-- Edit the `DESCRIPTION` file (see https://r-pkgs.org/description.html for details). Start the version to `0.0.1` or `0.1.0`.
+- Edit the `DESCRIPTION` file (see https://r-pkgs.org/description.html for details).
 - Delete the content of `README.md` and start writing your research objectives, describing your basic data, method etc.
 - Install the dependencies needed with
 
