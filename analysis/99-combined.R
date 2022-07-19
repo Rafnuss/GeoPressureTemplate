@@ -1,13 +1,15 @@
+library(tidyverse)
 library(readxl)
-gdl_list <- read_excel("data/gpr_settings.xlsx") %>%
-   .$gdl_id
 
-for (i in seq(1,length(gdl_list))){
+gdl_list <- read_excel("data/gpr_settings.xlsx") %>%
+  .$gdl_id
+
+for (i in seq(1, length(gdl_list))) {
   gdl <- gdl_list[i]
-  source('analysis/1-pressure.R')
-  source('analysis/2-light.R')
-  source('analysis/3-static.R')
-  source('analysis/4-basic-graph.R')
+  source("analysis/1-pressure.R")
+  source("analysis/2-light.R")
+  source("analysis/3-static.R")
+  source("analysis/4-basic-graph.R")
 }
 
 ## Check with GeoPressureViz
@@ -34,43 +36,43 @@ geopressureviz <- list(
 save(geopressureviz, file = "~/geopressureviz.RData")
 
 shiny::runApp(system.file("geopressureviz", package = "GeoPressureR"),
-              launch.browser = getOption("browser")
+  launch.browser = getOption("browser")
 )
 
 
 
 # Add Wind
 # Create the request
-for (i in seq(6,length(gdl_list))){
+for (i in seq(6, length(gdl_list))) {
   gdl <- gdl_list[i]
-  source('analysis/5-1-wind-graph_request.R')
+  source("analysis/5-1-wind-graph_request.R")
 }
 
 # Download the file
-for (i in seq(1,length(gdl_list))){
+for (i in seq(1, length(gdl_list))) {
   gdl <- gdl_list[i]
-  source('analysis/5-2-wind-graph_transfer.R')
+  source("analysis/5-2-wind-graph_transfer.R")
 }
 
 # delete the Rdata file of the request (only once download completed)
-for (i in seq(1,length(gdl_list))){
+for (i in seq(1, length(gdl_list))) {
   gdl <- gdl_list[i]
   req_file <- paste0("data/5_wind_graph/", gdl, "_request.Rdata")
-  if (file.exists(req_file)){
+  if (file.exists(req_file)) {
     file.remove(req_file)
   }
 }
 
 # Create the graph with windspeed
-for (i in seq(1,length(gdl_list))){
+for (i in seq(1, length(gdl_list))) {
   gdl <- gdl_list[i]
-  source('analysis/5-3-wind-graph_create.R')
+  source("analysis/5-3-wind-graph_create.R")
 }
 
 # Compute marginal, simulate path, shortest path
-for (i in seq(1,length(gdl_list))){
+for (i in seq(1, length(gdl_list))) {
   gdl <- gdl_list[i]
-  source('analysis/5-4-wind-graph_analyse.R')
+  source("analysis/5-4-wind-graph_analyse.R")
 }
 
 
@@ -79,7 +81,7 @@ for (i in seq(1,length(gdl_list))){
 
 # Update gpr ---
 # If you modified some value in gpr_settings, you can update gpr with the following code
-for (i in seq(1,length(gdl_list))){
+for (i in seq(1, length(gdl_list))) {
   gdl <- gdl_list[i]
 
   load(paste0("data/1_pressure/", gdl, "_pressure_prob.Rdata"))
@@ -101,11 +103,10 @@ for (i in seq(1,length(gdl_list))){
     filter(gdl_id == gdl)
 
   save(pam,
-       col,
-       gpr,
-       static_prob,
-       static_timeserie,
-       file = paste0("data/3_static/", gdl, "_static_prob.Rdata")
+    col,
+    gpr,
+    static_prob,
+    static_timeserie,
+    file = paste0("data/3_static/", gdl, "_static_prob.Rdata")
   )
 }
-

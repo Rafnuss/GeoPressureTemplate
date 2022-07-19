@@ -1,6 +1,6 @@
 Package: GeoPressureTemplate
 Title: These are the Goal of my Study (One Line, Title Case)
-Version: 0.4
+Version: 0.5
 Authors@R: 
     person("Raphaël", "Nussbaumer", , "rafnuss@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8185-1020"))
@@ -27,6 +27,7 @@ Imports:
     readr,
     readxl,
     rmarkdown,
+    tidyverse,
     distill
 Remotes: 
     rafnuss/GeoPressureR

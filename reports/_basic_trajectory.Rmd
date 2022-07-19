@@ -34,7 +34,7 @@ p <- ggplot() +
   # geom_line(data = pam$pressure, aes(x = date, y = obs), colour = "grey") +
   geom_line(data = do.call("rbind", shortest_path_timeserie), aes(x = date, y = altitude)) +
   geom_line(data = do.call("rbind", shortest_path_timeserie) %>% filter(sta_id > 0), aes(x = date, y = altitude, col = factor(sta_id))) +
-  geom_vline(data = twl, aes(xintercept = twilight, linetype = ifelse(rise, "dashed", "solid"), color="grey"), lwd=0.1) +
+  geom_vline(data = twl, aes(xintercept = twilight, linetype = ifelse(rise, "dashed", "solid"), color = "grey"), lwd = 0.1) +
   theme_bw() +
   scale_colour_manual(values = col) +
   scale_y_continuous(name = "Altitude (m)")

@@ -1,5 +1,6 @@
 # This script generate the reports and the website
 library(rmarkdown)
+library(readxl)
 
 # Define the track to consider
 gdl_list <- c("18LX")
@@ -25,5 +26,18 @@ for (report in report_list) {
 
 # The index page (List of Report) and all the reports are then combined into a website and moved to
 # the docs/ folder to be serve on Github easily.
-# Change _site._yml for the overall look of the website and index.Rmd for the content of the index
+# Change _site._yml for the overall look of the website and index.Rmd for the content of the homepage
+
+# Update _site._yml with str:
+str <- ""
+for (report in report_list) {
+  str <- paste0(str, '- text: "', report, '"\n  menu:\n')
+  for (gdl in gdl_list) {
+    str <- paste0(str, '   - text: "', gdl, '"\n')
+    str <- paste0(str, '     href: "/Val-Piora-Wheatear/', report, "/", gdl, ".html\n")
+  }
+}
+writeLines(str)
+
+# Render site
 render_site("./reports")

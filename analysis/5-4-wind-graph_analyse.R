@@ -15,10 +15,14 @@ load(paste0("data/5_wind_graph/", gdl, "_grl.Rdata"))
 
 # Movement model
 bird <- flight_bird(gpr$scientific_name)
-speed <- seq(0,80)
-prob <- flight_prob(speed, method = "power", bird = bird, low_speed_fix = 20,
-                    fun_power = function(power) { (1 / power)^3 })
-plot(speed, prob, type="l", xlab="Airspeed [km/h]", ylab="Probability")
+speed <- seq(0, 80)
+prob <- flight_prob(speed,
+  method = "power", bird = bird, low_speed_fix = 20,
+  fun_power = function(power) {
+    (1 / power)^3
+  }
+)
+plot(speed, prob, type = "l", xlab = "Airspeed [km/h]", ylab = "Probability")
 
 # Convert to probability
 grl$p <- grl$ps * flight_prob(grl$as, method = "power", bird = bird, low_speed_fix = 20)
@@ -75,16 +79,16 @@ if (debug) {
   save(geopressureviz, file = "~/geopressureviz.RData")
 
   shiny::runApp(system.file("geopressureviz", package = "GeoPressureR"),
-                launch.browser = getOption("browser")
+    launch.browser = getOption("browser")
   )
 }
 
 
 # Save ----
 save(
-      path_sim,
-      shortest_path,
-      static_prob_marginal,
-      shortest_path_timeserie,
-      file = paste0("data/5_wind_graph/", gdl, "_wind_graph.Rdata")
-    )
+  path_sim,
+  shortest_path,
+  static_prob_marginal,
+  shortest_path_timeserie,
+  file = paste0("data/5_wind_graph/", gdl, "_wind_graph.Rdata")
+)

@@ -49,7 +49,7 @@ p <- ggplot() +
   # geom_line(data = pressure_na, aes(x = date, y = obs, color = factor(sta_id)), size = 0.5) +
   geom_line(data = do.call("rbind", shortest_path_timeserie) %>% filter(sta_id > 0), aes(x = date, y = pressure0, col = factor(sta_id))) +
   theme_bw() +
-  scale_colour_manual(values = pam$sta$col) +
+  scale_colour_manual(values = col) +
   scale_y_continuous(name = "Pressure(hPa)")
 
 ggplotly(p, dynamicTicks = T) %>% layout(showlegend = F)
@@ -58,25 +58,27 @@ ggplotly(p, dynamicTicks = T) %>% layout(showlegend = F)
 ## Pressure calibration
 
 ```{r, layout="l-page"}
-sp_pressure = do.call("rbind", shortest_path_timeserie) %>% filter(sta_id > 0)
+sp_pressure <- do.call("rbind", shortest_path_timeserie) %>% filter(sta_id > 0)
 
-sta_plot <- which(difftime(pam$sta$end,pam$sta$start,unit="days")>3)
+sta_plot <- which(difftime(pam$sta$end, pam$sta$start, unit = "days") > 3)
 
-par(mfrow=c(2,3))
-for (i in seq_len(length(sta_plot))){
-  i_s = sta_plot[i]
-  pressure_s = pam$pressure %>% 
-    filter(sta_id==i_s & !isoutliar)
-  
-    err <- pressure_s %>% left_join(sp_pressure, by="date") %>% 
-      mutate(
-        err = obs-pressure-mean(obs-pressure)
-      ) %>% .$err
-    
-    hist(err, freq = F, main = paste0("sta_id=",i_s, " | ",nrow(pressure_s)," dtpts | std=",round(sd(err),2)))
-   xfit <- seq(min(err), max(err), length = 40) 
-    yfit <- dnorm(xfit, mean = mean(err), sd = sd(err)) 
-    lines(xfit, yfit, col = "red")
+par(mfrow = c(2, 3))
+for (i in seq_len(length(sta_plot))) {
+  i_s <- sta_plot[i]
+  pressure_s <- pam$pressure %>%
+    filter(sta_id == i_s & !isoutliar)
+
+  err <- pressure_s %>%
+    left_join(sp_pressure, by = "date") %>%
+    mutate(
+      err = obs - pressure - mean(obs - pressure)
+    ) %>%
+    .$err
+
+  hist(err, freq = F, main = paste0("sta_id=", i_s, " | ", nrow(pressure_s), " dtpts | std=", round(sd(err), 2)))
+  xfit <- seq(min(err), max(err), length = 40)
+  yfit <- dnorm(xfit, mean = mean(err), sd = sd(err))
+  lines(xfit, yfit, col = "red")
 }
 ```
 
@@ -106,7 +108,7 @@ lines(fit_z, col = "red")
 
 The probability map resulting from light data alone can be seen below.
 
-```{r, layout="l-page"}
+```{r, layout="l-page", warning=F}
 li_s <- list()
 l <- leaflet(width = "100%") %>%
   addProviderTiles(providers$Stamen.TerrainBackground) %>%
@@ -133,48 +135,48 @@ l %>%
 We can compare light and pressure location at long stationary stopover (>5 days). By assuming the best match of the pressure to be the truth, we can plot the histogram of the zenith angle and compare to the fit of kernel density at the calibration site. 
 
 ```{r, layout="l-page"}
- raw_geolight <- pam$light %>%
-    transmute(
-      Date = date,
-      Light = obs
-    )
- dur <- unlist(lapply(pressure_prob, function(x) difftime(metadata(x)$temporal_extent[2],metadata(x)$temporal_extent[1], units = "days" )))
-  long_id <- which(dur>5)
+raw_geolight <- pam$light %>%
+  transmute(
+    Date = date,
+    Light = obs
+  )
+dur <- unlist(lapply(pressure_prob, function(x) difftime(metadata(x)$temporal_extent[2], metadata(x)$temporal_extent[1], units = "days")))
+long_id <- which(dur > 5)
 
-  par(mfrow = c(2, 3))
-  for (i_s in long_id){
-    twl_fl <- twl %>%
-      filter(!deleted) %>%
-      filter(twilight>shortest_path_timeserie[[i_s]]$date[1] & twilight<tail(shortest_path_timeserie[[i_s]]$date,1))
-    sun <-  solar(twl_fl$twilight)
-    z_i <- refracted(zenith(sun, shortest_path_timeserie[[i_s]]$lon[1], shortest_path_timeserie[[i_s]]$lat[1]))
-    hist(z_i, freq = F, main = paste0("sta_id=",i_s, " | ",nrow(twl_fl),"twls"))
-    lines(fit_z, col = "red")
-    xlab("Zenith angle")
-  }
+par(mfrow = c(2, 3))
+for (i_s in long_id) {
+  twl_fl <- twl %>%
+    filter(!deleted) %>%
+    filter(twilight > shortest_path_timeserie[[i_s]]$date[1] & twilight < tail(shortest_path_timeserie[[i_s]]$date, 1))
+  sun <- solar(twl_fl$twilight)
+  z_i <- refracted(zenith(sun, shortest_path_timeserie[[i_s]]$lon[1], shortest_path_timeserie[[i_s]]$lat[1]))
+  hist(z_i, freq = F, main = paste0("sta_id=", i_s, " | ", nrow(twl_fl), "twls"))
+  lines(fit_z, col = "red")
+  xlab("Zenith angle")
+}
 ```
 
 Similarly, we can plot the line of sunrise/sunset at the best match of pressure (yellow line) and compare to the raw and labeled light data.
 
 ```{r, layout="l-page"}
-  lightImage(
-    tagdata = raw_geolight,
-    offset = gpr$shift_k / 60 / 60
-  )
-  tsimagePoints(twl$twilight,
-                offset = gpr$shift_k / 60 / 60, pch = 16, cex = 1.2,
-                col = ifelse(twl$deleted, "grey20", ifelse(twl$rise, "firebrick", "cornflowerblue"))
-  )
-  for (ts in shortest_path_timeserie){
-    twl_fl <- twl %>%
-      filter(twilight>ts$date[1] & twilight<tail(ts$date,1))
-    if (nrow(twl_fl)>0){
+lightImage(
+  tagdata = raw_geolight,
+  offset = gpr$shift_k / 60 / 60
+)
+tsimagePoints(twl$twilight,
+  offset = gpr$shift_k / 60 / 60, pch = 16, cex = 1.2,
+  col = ifelse(twl$deleted, "grey20", ifelse(twl$rise, "firebrick", "cornflowerblue"))
+)
+for (ts in shortest_path_timeserie) {
+  twl_fl <- twl %>%
+    filter(twilight > ts$date[1] & twilight < tail(ts$date, 1))
+  if (nrow(twl_fl) > 0) {
     tsimageDeploymentLines(twl_fl$twilight,
-                           lon = ts$lon[1], ts$lat[1],
-                           offset = gpr$shift_k / 60 / 60, lwd = 3,col = adjustcolor("orange", alpha.f = 0.5))
-      
-    }
+      lon = ts$lon[1], ts$lat[1],
+      offset = gpr$shift_k / 60 / 60, lwd = 3, col = adjustcolor("orange", alpha.f = 0.5)
+    )
   }
+}
 ```
 
 ## GeoPressureViz
