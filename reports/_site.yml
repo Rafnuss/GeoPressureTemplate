@@ -9,6 +9,10 @@ navbar:
       menu:
         - text: "18LX"
           href: "/GeoPressureTemplate/basic_trajectory/18LX.html"
+    - text: "Wind Trajectory"
+      menu:
+        - text: "18LX"
+          href: "/GeoPressureTemplate/wind_trajectory/18LX.html"
     - text: "Technical Details"
       menu:
         - text: "18LX"

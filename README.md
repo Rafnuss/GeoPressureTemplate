@@ -124,17 +124,18 @@ Now that you are set-up, it's time to start the serious work. :grimacing: Follow
 |  `4-basic-graph.R` |  [Modeling trajectory with a graph](https://raphaelnussbaumer.com/GeoPressureR/articles/basic-graph.html) |
 |  `5-1-wind-graph_request.R` |  [Improving the graph with wind - Request wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
 |  `5-2-wind-graph_transfer.R` |  [Improving the graph with wind - Download wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
-|  `5-3-wind-graph.R` |  [Improving the graph with wind](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html) |
+|  `5-3-wind-graph_create.R` |  [Improving the graph with wind - Create](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#add-wind-to-graph) |
+|  `5-4-wind-graph_analyse.R` |  [Improving the graph with wind - Outputs](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#output-1-shortest-path-with-wind) |
 |  `99-combined.R` |  Run all steps for multiple tracks. |
 
 ## Generate Report :page_facing_up:
 
 Using the data generated, you can produce standardized reports in html and serve them on your github page repository. 
-You can access the demo for 18LX at [https://raphaelnussbaumer.com/GeoPressureTemplate/].
+You can access the demo for 18LX at https://raphaelnussbaumer.com/GeoPressureTemplate/.
 
-The main idea is to produce report templates (`_name_of_the_report_template.Rmd`) which can be used for multiple tracks at once. We generate the HTML page for each tracks-reports separatly and puts them together into a website which can be serve on Github Page (and accessible for anywone!).
+The main idea is to produce report templates (`_name_of_the_report_template.Rmd`) which can be used for multiple tracks at once. We generate the HTML page for each tracks-reports separately and puts them together into a website which can be serve on Github Page (and accessible for anyone!).
 
-1. Developed your report template. Start from an exisitng one and change `gdl_id: "18LX"` to your species. You can visualize the output by [clicking the `knit` button in Rstudio](https://rmarkdown.rstudio.com/authoring_quick_tour.html).
+1. Developed your report template. Start from an existing one and change `gdl_id: "18LX"` to your species. You can visualize the output by [clicking the `knit` button in Rstudio](https://rmarkdown.rstudio.com/authoring_quick_tour.html).
 2. Edit the website configuration file `_site.yml`. (Search online if you need help)
 3. Look at `make_reports.R` script to see how you can generate the HTML for multiple tracks and reports templates at once. 
 4. Edit `index.Rmd` as you wishes

@@ -207,12 +207,11 @@ if (debug) {
   path$duration <- as.numeric(difftime(pam$sta$end, pam$sta$start, units = "days"))
   path <- subset(path, duration > 2)
 
-  pal <- colorFactor(col, as.factor(seq_len(length(col))))
   leaflet() %>%
     addProviderTiles(providers$Stamen.TerrainBackground) %>%
     addFullscreenControl() %>%
     addPolylines(lng = path$lon, lat = path$lat, opacity = 0.7, weight = 1, color = "#808080") %>%
-    addCircles(lng = path$lon, lat = path$lat, opacity = 1, color = pal(factor(path$sta_id, levels = pam$sta$sta_id)), weight = path$duration^(0.3) * 10)
+    addCircles(lng = path$lon, lat = path$lat, opacity = 1, weight = path$duration^(0.3) * 10)
 
 
   # plot probability map

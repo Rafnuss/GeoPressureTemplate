@@ -40,3 +40,9 @@ vignettes/*.pdf
 .Rproj.user
 .Rdata
 .DS_Store
+
+# Wind data file
+*.nc
+
+# This file is too big
+data/5_wind_graph/18LX_grl.Rdata

@@ -90,23 +90,10 @@ for (i in seq(1, length(gdl_list))) {
     filter(gdl_id == gdl)
 
   save(
+    pressure_timeserie, # can be removed in not in debug mode
     pressure_prob,
     pam,
-    col,
     gpr,
     file = paste0("data/1_pressure/", gdl, "_pressure_prob.Rdata")
-  )
-
-  load(paste0("data/3_static/", gdl, "_static_prob.Rdata"))
-
-  gpr <- read_excel("data/gpr_settings.xlsx") %>%
-    filter(gdl_id == gdl)
-
-  save(pam,
-    col,
-    gpr,
-    static_prob,
-    static_timeserie,
-    file = paste0("data/3_static/", gdl, "_static_prob.Rdata")
   )
 }

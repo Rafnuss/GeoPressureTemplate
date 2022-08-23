@@ -1,0 +1,291 @@
+---
+site: distill::distill_website
+params:
+  gdl_id: "18LX"
+---
+---
+title: `r params$gdl_id`
+description: | 
+  Wind trajectory
+---
+
+```{r setup, message=F}
+library(GeoPressureR)
+library(tidyverse)
+library(leaflet)
+library(leaflet.extras)
+library(raster)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+knitr::opts_chunk$set(echo = FALSE)
+load(paste0("../data/1_pressure//", params$gdl_id, "_pressure_prob.Rdata"))
+load(paste0("../data/2_light/", params$gdl_id, "_light_prob.Rdata"))
+load(paste0("../data/3_static/", params$gdl_id, "_static_prob.Rdata"))
+# load(paste0("../data/4_basic_graph/", params$gdl_id, "_basic_graph.Rdata"))
+load(paste0("../data/5_wind_graph/", params$gdl_id, "_wind_graph.Rdata"))
+load(paste0("../data/5_wind_graph/", params$gdl_id, "_grl.Rdata"))
+col <- rep(RColorBrewer::brewer.pal(8, "Dark2"), times = ceiling(max(pam$sta$sta_id) / 8))
+```
+
+
+
+## Altitude
+
+Altitudes are computed based on pressure measurement of the geolocation, corrected based on the assumed location of the shortest path. This correction accounts therefore for the natural variation of pressure as estimated by ERA-5. The vertical lines indicate the sunrise (dashed) and sunset (solid).
+
+```{r, layout="l-page"}
+p <- ggplot() +
+  # geom_line(data = pam$pressure, aes(x = date, y = obs), colour = "grey") +
+  geom_line(data = do.call("rbind", shortest_path_timeserie), aes(x = date, y = altitude)) +
+  geom_line(data = do.call("rbind", shortest_path_timeserie) %>% filter(sta_id > 0), aes(x = date, y = altitude, col = factor(sta_id))) +
+  geom_vline(data = twl, aes(xintercept = twilight, linetype = ifelse(rise, "dashed", "solid"), color="grey"), lwd=0.1) +
+  theme_bw() +
+  scale_colour_manual(values = col) +
+  scale_y_continuous(name = "Altitude (m)")
+
+ggplotly(p, dynamicTicks = T) %>% layout(showlegend = F)
+```
+
+## Wintering location
+
+```{r, layout="l-page"}
+file <- paste0("figure_print/wintering_location/wintering_location_",params$gdl_id,".png")
+if(file.exists(file)){
+  knitr::include_graphics(file)
+}
+```
+
+## Latitude time
+```{r, layout="l-page"}
+ tmp <- lapply(pressure_prob, function(x) {
+    mt <- metadata(x)
+    df <- data.frame(
+      start = mt$temporal_extent[1],
+      end = mt$temporal_extent[2],
+      sta_id = mt$sta_id
+    )
+  })
+  tmp2 <- do.call("rbind", tmp)
+
+sim_lat <- as.data.frame(t(path_sim$lat)) %>%
+  mutate(sta_id = path_sim$sta_id) %>%
+  pivot_longer(-c(sta_id)) %>%
+  left_join(tmp2,by="sta_id")
+
+sim_lat_p <- sim_lat %>%
+  filter(sta_id==max(sta_id)) %>%
+  mutate(start=end) %>%
+  rbind(sim_lat)
+
+sp_lat <- as.data.frame(shortest_path) %>% left_join(tmp2,by="sta_id")
+
+sp_lat_p <- sp_lat %>%
+  filter(sta_id==max(sta_id)) %>%
+  mutate(start=end) %>%
+  rbind(sp_lat)
+
+p <- ggplot() +
+  geom_step(data=sim_lat_p, aes(x=start, y=value, group=name), alpha=.07) +
+  geom_point(data=sp_lat_p, aes(x=start, y=lat)) +
+  xlab('Date') +
+  ylab('Latitude') +
+  theme_light()
+
+ggplotly(p, dynamicTicks = T)
+```
+
+## Shortest path and simulated path
+
+The large circles indicates the shortest path (overall most likely trajectory) estimated by the graph approach. The size is proportional to the duration of stay. The small dots and grey lines represents 10 possible trajeectories of the bird according to the model.
+
+Click on the full-screen mode button on the top-left of the map to see more details on the map.
+
+
+```{r, layout="l-page"}
+sta_duration <- unlist(lapply(static_prob_marginal, function(x) {
+  as.numeric(difftime(metadata(x)$temporal_extent[2], metadata(x)$temporal_extent[1], units = "days"))
+}))
+pal <- colorFactor(col, as.factor(seq_len(length(col))))
+m <- leaflet(width = "100%") %>%
+  addProviderTiles(providers$Stamen.TerrainBackground) %>%
+  addFullscreenControl() %>%
+  addPolylines(lng = shortest_path$lon, lat = shortest_path$lat, opacity = 1, color = "#808080", weight = 3) %>%
+  addCircles(lng = shortest_path$lon, lat = shortest_path$lat, opacity = 1, color = pal(factor(shortest_path$sta_id, levels = pam$sta$sta_id)), weight = sta_duration^(0.3) * 10)
+
+for (i in seq_len(nrow(path_sim$lon))) {
+  m <- m %>%
+    addPolylines(lng = path_sim$lon[i, ], lat = path_sim$lat[i, ], opacity = 0.5, weight = 1, color = "#808080") %>%
+    addCircles(lng = path_sim$lon[i, ], lat = path_sim$lat[i, ], opacity = .7, weight = 1, color = pal(factor(shortest_path$sta_id, levels = pam$sta$sta_id)))
+}
+m
+```
+
+## Marginal probability map
+
+The marginal probability map estimate the overall probability of position at each stationary period regardless of the trajectory taken by the bird. It is the most useful quantification of the uncertainty of the position of the bird.
+
+```{r, warning=F, layout="l-page"}
+li_s <- list()
+l <- leaflet(width = "100%") %>%
+  addProviderTiles(providers$Stamen.TerrainBackground) %>%
+  addFullscreenControl()
+for (i_r in seq_len(length(static_prob_marginal))) {
+  i_s <- metadata(static_prob_marginal[[i_r]])$sta_id
+  info <- metadata(static_prob_marginal[[i_r]])$temporal_extent
+  info_str <- paste0(i_s, " | ", info[1], "->", info[2])
+  li_s <- append(li_s, info_str)
+  l <- l %>%
+    addRasterImage(static_prob_marginal[[i_r]], colors = "OrRd", opacity = 0.8, group = info_str) %>%
+    addCircles(lng = shortest_path$lon[i_s], lat = shortest_path$lat[i_s], opacity = 1, color = "#000", weight = 10, group = info_str)
+}
+l %>%
+  addLayersControl(
+    overlayGroups = li_s,
+    options = layersControlOptions(collapsed = FALSE)
+  ) %>%
+  hideGroup(tail(li_s, length(li_s) - 1))
+```
+
+
+
+## Wind assistance
+
+```{r, warning=F, layout="l-page"}
+  fun_marker_color <- function(norm){
+    if (norm < 20){
+      "darkpurple"
+    } else if (norm < 35){
+      "darkblue"
+    } else if (norm < 50){
+      "lightblue"
+    } else if (norm < 60){
+      "lightgreen"
+    } else if (norm < 80){
+      "yellow"
+    } else if (norm < 100){
+      "lightred"
+    } else {
+      "darkred"
+    }
+  }
+  fun_NSEW <- function(angle){
+    angle <- angle  %% (pi* 2)
+    angle <- angle*180/pi
+    if (angle < 45/2){
+      "E"
+    } else if (angle < 45*3/2){
+      "NE"
+    } else if (angle < 45*5/2){
+      "N"
+    } else if (angle < 45*7/2){
+      "NW"
+    } else if (angle < 45*9/2){
+      "W"
+    } else if (angle < 45*11/2){
+      "SW"
+    } else if (angle < 45*13/2){
+      "S"
+    }else if (angle < 45*15/2){
+      "SE"
+    } else {
+      "E"
+    }
+  }
+
+  sta_duration <- unlist(lapply(static_prob_marginal,function(x){as.numeric(difftime(metadata(x)$temporal_extent[2],metadata(x)$temporal_extent[1],units="days"))}))
+
+  m <-leaflet(width = "100%") %>%
+    addProviderTiles(providers$Stamen.TerrainBackground) %>%  addFullscreenControl() %>%
+    addPolylines(lng = shortest_path$lon, lat = shortest_path$lat, opacity = 1, color = "#808080", weight = 3) %>%
+    addCircles(lng = shortest_path$lon, lat = shortest_path$lat, opacity = 1, color = "#000", weight = sta_duration^(0.3)*10)
+
+  for (i_s in seq_len(grl$sz[3]-1)){
+    if (grl$flight_duration[i_s]>5){
+      edge <- which(grl$s == shortest_path$id[i_s] & grl$t == shortest_path$id[i_s+1])
+
+      label = paste0( i_s,': ', grl$flight[[i_s]]$start, " - ", grl$flight[[i_s]]$end, "<br>",
+                      "F. dur.: ", round(grl$flight_duration[i_s]), ' h <br>',
+                      "GS: ", round(abs(grl$gs[edge])), ' km/h, ',fun_NSEW(Arg(grl$gs[edge])),'<br>',
+                      "WS: ", round(abs(grl$ws[edge])), ' km/h, ',fun_NSEW(Arg(grl$ws[edge])),'<br>',
+                      "AS: ", round(abs(grl$as[edge])), ' km/h, ',fun_NSEW(Arg(grl$as[edge])),'<br>')
+
+      iconArrow <- makeAwesomeIcon(icon = "arrow-up",
+                                   library = "fa",
+                                   iconColor = "#FFF",
+                                   iconRotate = (90 - Arg(grl$ws[edge])/pi*180) %% 360,
+                                   squareMarker = TRUE,
+                                   markerColor = fun_marker_color(abs(grl$ws[edge])))
+
+      m <- m %>% addAwesomeMarkers(lng = (shortest_path$lon[i_s] + shortest_path$lon[i_s+1])/2,
+                                   lat = (shortest_path$lat[i_s] + shortest_path$lat[i_s+1])/2,
+                                   icon = iconArrow, popup = label)
+    }
+  }
+  m
+```
+
+## Histogram of Speed
+```{r, warning=F, layout="l-page", fig.height=5}
+edge <- t(graph_path2edge(path_sim$id, grl))
+nj <- ncol(edge)
+nsta <- ncol(path_sim$lon)
+
+speed_df <- data.frame(
+  as = abs(grl$as[edge]),
+  gs = abs(grl$gs[edge]),
+  ws = abs(grl$ws[edge]),
+  sta_id_s = rep(head(grl$sta_id,-1), nj),
+  sta_id_t = rep(tail(grl$sta_id,-1), nj),
+  flight_duration = rep(head(grl$flight_duration,-1), nj),
+  dist = geosphere::distGeo(
+    cbind(as.vector(t(path_sim$lon[,1:nsta-1])), as.vector(t(path_sim$lat[,1:nsta-1]))),
+    cbind(as.vector(t(path_sim$lon[,2:nsta])),   as.vector(t(path_sim$lat[,2:nsta])))
+  ) / 1000
+) %>% mutate(
+  name = paste(sta_id_s,sta_id_t, sep="-")
+)
+
+plot1 <- ggplot(speed_df, aes(reorder(name, sta_id_s), gs)) + geom_boxplot() + theme_bw() +scale_x_discrete(name = "")
+plot2 <- ggplot(speed_df, aes(reorder(name, sta_id_s), ws)) + geom_boxplot() + theme_bw() +scale_x_discrete(name = "")
+plot3 <- ggplot(speed_df, aes(reorder(name, sta_id_s), as)) + geom_boxplot() + theme_bw() +scale_x_discrete(name = "")
+plot4 <- ggplot(speed_df, aes(reorder(name, sta_id_s), flight_duration)) + geom_point() + theme_bw() +scale_x_discrete(name = "")
+
+subplot(ggplotly(plot1), ggplotly(plot2), ggplotly(plot3), ggplotly(plot4), nrows=4, titleY=T)
+```
+
+
+## Table of transition
+
+```{r, warning=F, layout="l-page"}
+alt_df = do.call("rbind", shortest_path_timeserie) %>%
+    arrange(date) %>%
+    mutate(
+      sta_id_s = cummax(sta_id),
+      sta_id_t = sta_id_s+1
+    ) %>%
+    filter(sta_id == 0 & sta_id_s > 0 ) %>%
+    group_by(sta_id_s, sta_id_t) %>%
+    summarise(
+      alt_min = min(altitude),
+      alt_max = max(altitude),
+      alt_mean = mean(altitude),
+      alt_med = median(altitude),
+    )
+
+  trans_df <- speed_df  %>%
+    group_by(sta_id_s,sta_id_t,flight_duration) %>%
+    summarise(
+      as_m = mean(as),
+      as_s = sd(as),
+      gs_m = mean(gs),
+      gs_s = sd(gs),
+      ws_m = mean(ws),
+      ws_s = sd(ws),
+      dist_m = mean(dist),
+      dist_s = sd(dist)
+    ) %>%
+    left_join(alt_df)
+
+trans_df %>% kable()
+```

@@ -8,7 +8,7 @@ gdl_list <- c("18LX")
 # gdl_list = set$gdl_id
 
 # Define the report to produce
-report_list <- c("basic_trajectory", "technical_details")
+report_list <- c("basic_trajectory", "technical_details", "wind_trajectory")
 
 # Generate the following report for each tracks
 # This will produce an HTML file for each reports
@@ -34,7 +34,7 @@ for (report in report_list) {
   str <- paste0(str, '- text: "', report, '"\n  menu:\n')
   for (gdl in gdl_list) {
     str <- paste0(str, '   - text: "', gdl, '"\n')
-    str <- paste0(str, '     href: "/Val-Piora-Wheatear/', report, "/", gdl, ".html\n")
+    str <- paste0(str, '     href: "/GeoPressureTemplate/', report, "/", gdl, ".html\n")
   }
 }
 writeLines(str)

@@ -7,9 +7,10 @@ library(igraph)
 # Define which track to work with
 gdl <- "18LX"
 
-debug <- F
+debug <- T
 
 # Load
+load(paste0("data/1_pressure/", gdl, "_pressure_prob.Rdata"))
 load(paste0("data/3_static/", gdl, "_static_prob.Rdata"))
 load(paste0("data/5_wind_graph/", gdl, "_grl.Rdata"))
 
