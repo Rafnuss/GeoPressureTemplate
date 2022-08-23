@@ -4,7 +4,6 @@ params:
   gdl_id: "18LX"
 ---
 ---
-title: `r params$gdl_id`
 description: | 
   Basic trajectory
 ---

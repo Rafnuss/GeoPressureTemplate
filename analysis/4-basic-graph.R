@@ -21,7 +21,7 @@ grl <- graph_create(static_prob,
 # If you get an error with trimming, use geopressureviz from end of 3.static.R
 
 # Add probability of each edge
-grl$p <- grl$ps * flight_prob(grl$gs, method = "gamma", shape = 7, scale = 7, low_speed_fix = grl$low_speed_fix)
+grl$p <- grl$ps * flight_prob(grl$gs, method = "gamma", shape = 7, scale = 7, low_speed_fix = gpr$low_speed_fix)
 
 
 
