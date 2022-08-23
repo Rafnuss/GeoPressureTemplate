@@ -145,7 +145,7 @@ The main idea is to produce report templates (`_name_of_the_report_template.Rmd`
 
 ## Advanced options :link:
 
-- Generate your DOI with [Zenodo](https://zenodo.org/).
+- Generate your DOI with [Zenodo](https://docs.github.com/en/repositories/archiving-a-github-repository/referencing-and-citing-content) (e.g., https://zenodo.org/record/6720386)
 - Generate a citation file with [`usethis::use_citation`](https://usethis.r-lib.org/reference/use_citation.html) and [`cffr`](https://github.com/ropensci/cffr).
 - Use [`renv`](https://rstudio.github.io/renv/index.html) to make your work reproducable.
 - Export your data on [Movebank](https://www.movebank.org/cms/movebank-content/import-custom-tabular-data).
