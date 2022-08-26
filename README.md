@@ -112,6 +112,48 @@ devtools::install()
 - Delete the content of `data/` (but keep the directory tree). Put your PAM data in `data/0_PAM/` in a folder with the GDL_ID code (e.g. `data/0_PAM/18LX/`)
 - Enter the information you already have about your track in the `gpr_setting.xlsx` spreadsheet. You can add new columns if needed.
 
+<details>
+  <summary>See explanations on the parameters of <code>gpr_setting.xlsx</code></summary>
+  
+|parameter          |example/default          |description                                                                                                            |
+|-------------------|-------------------------|-----------------------------------------------------------------------------------------------------------------------|
+|gdl_id             |18LX                     |Track identifier, used to read the raw file in the folder with this name                                               |
+|crop_start         |2017-06-20               |see [`pam_read()`](https://raphaelnussbaumer.com/GeoPressureR/reference/pam_read.html)                                 |
+|crop_end           |2018-05-02               |see [`pam_read()`](https://raphaelnussbaumer.com/GeoPressureR/reference/pam_read.html)                                 |
+|thr_dur            |12                       |                                                                                                                       |
+|extent_N           |50                       |see [`geopressure_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_map.html)                   |
+|extent_W           |-16                      |see [`geopressure_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_map.html)                   |
+|extent_S           |0                        |see [`geopressure_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_map.html)                   |
+|extent_E           |23                       |see [`geopressure_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_map.html)                   |
+|map_scale          |5                        |see [`geopressure_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_map.html)                   |
+|map_max_sample     |300                      |see [`geopressure_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_map.html)                   |
+|map_margin         |30                       |see [`geopressure_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_map.html)                   |
+|prob_map_s         |1                        |see [`geopressure_prob_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_prob_map.html)         |
+|prob_map_s_calib   |                         |Alternative value for  `prob_map_s` for calibration site. Useful for species living in moutain only during calibration |
+|prob_map_thr       |0.9                      |see [`geopressure_prob_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_prob_map.html)         |
+|shift_k            |0                        |see [`find_twilights()`](https://raphaelnussbaumer.com/GeoPressureR/reference/find_twilights.html)                     |
+|kernel_adjust      |1.4                      |see [Calibration of light data](https://raphaelnussbaumer.com/GeoPressureR/articles/light-map.html#calibration)        |
+|calib_lon          |17.05                    |Longitude of the calibration site                                                                                      |
+|calib_lat          |48.9                     |Latitude of the calibrataion site                                                                                      |
+|calib_1_start      |2017-06-20               |Start date of the first calibration period                                                                             |
+|calib_1_end        |2017-08-05               |End date of the first calibration period                                                                               |
+|calib_2_start      |                         |Start date of the second calibration period.                                                                           |
+|calib_2_end        |                         |End date of the second calibration period                                                                              |
+|calib_2_lon        |                         |Longitude of the second calibration site (only use if different than first calibration site)                           |
+|calib_2_lat        |                         |Latitude of the second calibration site (only use if different than first calibration site)                            |
+|prob_light_w       |0.1                      |see [Probability map of light data](https://raphaelnussbaumer.com/GeoPressureR/articles/light-map.html#probability-map)|
+|thr_prob_percentile|0.9                      |see [`graph_create()`](https://raphaelnussbaumer.com/GeoPressureR/reference/graph_create.html)                         |
+|thr_gs             |120                      |see [`graph_create()`](https://raphaelnussbaumer.com/GeoPressureR/reference/graph_create.html)                         |
+|thr_as             |100                      |see [`graph_add_wind()`](https://raphaelnussbaumer.com/GeoPressureR/reference/graph_add_wind.html)                     |
+|low_speed_fix      |15                       |see [`flight_prob()`](https://raphaelnussbaumer.com/GeoPressureR/reference/flight_prob.html)                           |
+|ringNo             |                         |                                                                                                                       |
+|scientific_name    |Acrocephalus arundinaceus|see [`flight_bird()`](https://raphaelnussbaumer.com/GeoPressureR/reference/flight_bird.html)                           |
+|common_name        |Great Reed Warbler       |                                                                                                                       |
+|mass               |                         |see [`flight_bird()`](https://raphaelnussbaumer.com/GeoPressureR/reference/flight_bird.html)                           |
+|wing_span          |                         |see [`flight_bird()`](https://raphaelnussbaumer.com/GeoPressureR/reference/flight_bird.html)                           |
+
+</details>
+
 ## Start analysing the data :chart_with_upwards_trend:
 
 Now that you are set-up, it's time to start the serious work. :grimacing: Follow the order of the `.R` code in the `analysis/` folder. They follow the same order as the vignettes (but with different numerotation).
