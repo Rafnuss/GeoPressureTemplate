@@ -1,11 +1,12 @@
 # This script generate the reports and the website
+library(dplyr)
 library(rmarkdown)
 library(readxl)
 
 # Define the track to consider
 gdl_list <- c("18LX")
-# set <- read_excel("data/gdl_settings.xlsx")
-# gdl_list = set$gdl_id
+# gdl_list <- read_excel("data/gdl_settings.xlsx")
+# gdl_list = gdl_list$gdl_id
 
 # Define the report to produce
 report_list <- c("basic_trajectory", "technical_details", "wind_trajectory")
@@ -34,7 +35,7 @@ for (report in report_list) {
   str <- paste0(str, '- text: "', report, '"\n  menu:\n')
   for (gdl in gdl_list) {
     str <- paste0(str, '   - text: "', gdl, '"\n')
-    str <- paste0(str, '     href: "/GeoPressureTemplate/', report, "/", gdl, ".html\n")
+    str <- paste0(str, '     href: "/GeoPressureTemplate/', report, "/", gdl, '.html\n"')
   }
 }
 writeLines(str)
