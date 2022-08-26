@@ -42,8 +42,9 @@ shiny::runApp(system.file("geopressureviz", package = "GeoPressureR"),
 
 
 # Add Wind
+dir.create("data/5_wind_graph", showWarnings = FALSE)
 # Create the request
-for (i in seq(6, length(gdl_list))) {
+for (i in seq(1, length(gdl_list))) {
   gdl <- gdl_list[i]
   source("analysis/5-1-wind-graph_request.R")
 }
