@@ -27,7 +27,7 @@ for (i_s in seq(1, length(req))) {
   while (is.null(r) && attempt <= 3) {
     attempt <- attempt + 1
     try(
-      r <- wf_transfer(url = req[[i_s]]$request_id, service = "cds", user = cds.user, path = dir.save, filename = filename)
+      r <- wf_transfer(url =  basename(req[[i_s]]$get_url()), service = "cds", user = cds.user, path = dir.save, filename = filename)
     )
   }
   if (is.null(r)) {
