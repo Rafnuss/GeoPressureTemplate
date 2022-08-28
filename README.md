@@ -110,10 +110,28 @@ devtools::install()
 ```
 
 - Delete the content of `data/` (but keep the directory tree). Put your PAM data in `data/0_PAM/` in a folder with the GDL_ID code (e.g. `data/0_PAM/18LX/`)
-- Enter the information you already have about your track in the `gpr_setting.xlsx` spreadsheet. You can add new columns if needed.
+
+
+## Start analysing the data :chart_with_upwards_trend:
+
+Now that you are set-up, it's time to start the serious work. :grimacing: Follow the order of the `.R` code in the `analysis/` folder. They follow the same order as the vignettes (but with different numerotation to be able to analyse multiple track at the same time).
+
+|  GeoPressureTemplate analysis |  GeoPressureR vignettes  |
+|---|---|
+|  `1-pressure.R`  |  [Creating probability maps from pressure data](https://raphaelnussbaumer.com/GeoPressureR/articles/pressure-map.html) |
+|  `2-light.R` |  [Creating probability maps from light data](https://raphaelnussbaumer.com/GeoPressureR/articles/light-map.html) |
+|  `3-static.R` | [Preparing data for trajectory modelling](https://raphaelnussbaumer.com/GeoPressureR/articles/preparing-data.html)  |
+|  `4-basic-graph.R` |  [Modeling trajectory with a graph](https://raphaelnussbaumer.com/GeoPressureR/articles/basic-graph.html) |
+|  `5-1-wind-graph_request.R` |  [Improving the graph with wind - Request wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
+|  `5-2-wind-graph_transfer.R` |  [Improving the graph with wind - Download wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
+|  `5-3-wind-graph_create.R` |  [Improving the graph with wind - Create](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#add-wind-to-graph) |
+|  `5-4-wind-graph_analyse.R` |  [Improving the graph with wind - Outputs](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#output-1-shortest-path-with-wind) |
+|  `99-combined.R` |  Run all steps for multiple tracks. |
+
+In order to keep your code clean, we isolate all the key paramters used in all functions in the `gpr_setting.xlsx` spreadsheet located in the `data/` folder. You can adjust these parameters seperatly for each track or add any informations on your individuals bird that might be useful for your analysis. 
 
 <details>
-  <summary>See explanations on the parameters of <code>gpr_setting.xlsx</code></summary>
+  <summary>Click to see explanations on the parameters of <code>gpr_setting.xlsx</code></summary>
   
 |parameter          |example/default          |description                                                                                                            |
 |-------------------|-------------------------|-----------------------------------------------------------------------------------------------------------------------|
@@ -153,22 +171,6 @@ devtools::install()
 |wing_span          |                         |see [`flight_bird()`](https://raphaelnussbaumer.com/GeoPressureR/reference/flight_bird.html)                           |
 
 </details>
-
-## Start analysing the data :chart_with_upwards_trend:
-
-Now that you are set-up, it's time to start the serious work. :grimacing: Follow the order of the `.R` code in the `analysis/` folder. They follow the same order as the vignettes (but with different numerotation).
-
-|  GeoPressureTemplate analysis |  GeoPressureR vignettes  |
-|---|---|
-|  `1-pressure.R`  |  [Creating probability maps from pressure data](https://raphaelnussbaumer.com/GeoPressureR/articles/pressure-map.html) |
-|  `2-light.R` |  [Creating probability maps from light data](https://raphaelnussbaumer.com/GeoPressureR/articles/light-map.html) |
-|  `3-static.R` | [Preparing data for trajectory modelling](https://raphaelnussbaumer.com/GeoPressureR/articles/preparing-data.html)  |
-|  `4-basic-graph.R` |  [Modeling trajectory with a graph](https://raphaelnussbaumer.com/GeoPressureR/articles/basic-graph.html) |
-|  `5-1-wind-graph_request.R` |  [Improving the graph with wind - Request wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
-|  `5-2-wind-graph_transfer.R` |  [Improving the graph with wind - Download wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
-|  `5-3-wind-graph_create.R` |  [Improving the graph with wind - Create](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#add-wind-to-graph) |
-|  `5-4-wind-graph_analyse.R` |  [Improving the graph with wind - Outputs](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#output-1-shortest-path-with-wind) |
-|  `99-combined.R` |  Run all steps for multiple tracks. |
 
 ## Generate Report :page_facing_up:
 
