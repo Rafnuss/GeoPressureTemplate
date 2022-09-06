@@ -6,12 +6,12 @@ Analysing geolocator data with pressure is full of potential, but the the path i
 
 `GeoPressureTemplate` aims to help researchers analyse their geolocator data with [`GeoPressureR`](https://raphaelnussbaumer.com/GeoPressureR/). It provides the backbone R code containing the folder structure and code to correctly label your data and produce basic trajectory figures. 
 
-In essence, it contains the code from all the [GeoPressureR vignettes](https://raphaelnussbaumer.com/GeoPressureR/articles/) packaged in an `.R` file to make it easy for you to apply it to your own data. 
+In essence, it contains the code from all the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual) packaged in an `.R` file to make it easy for you to apply it to your own data. 
 
 ## What do you need to use this template? :computer:
 
 - Geolocator data containing pressure, light and activity data.
-- Have read the [GeoPressureR vignettes](https://raphaelnussbaumer.com/GeoPressureR/articles/) (:warning: You should be familar with the **full process involved** before starting with your own project)
+- Have read the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual) (:warning: You should be familar with the **full process involved** before starting with your own project)
 - Basic R experience (I'm using the [tidyverse](https://www.tidyverse.org/) syntax here).
 - A [Github account](https://github.com/signup).
 
@@ -114,18 +114,18 @@ devtools::install()
 
 ## Start analysing the data :chart_with_upwards_trend:
 
-Now that you are set-up, it's time to start the serious work. :grimacing: Follow the order of the `.R` code in the `analysis/` folder. They follow the same order as the vignettes (but with different numerotation to be able to analyse multiple track at the same time).
+Now that you are set-up, it's time to start the serious work. :grimacing: Follow the order of the `.R` code in the `analysis/` folder. They follow the same order as the GeoPressureManual (but with different numerotation to be able to analyse multiple track at the same time).
 
-|  GeoPressureTemplate analysis |  GeoPressureR vignettes  |
+|  GeoPressureTemplate analysis |  GeoPressureManual  |
 |---|---|
-|  `1-pressure.R`  |  [Creating probability maps from pressure data](https://raphaelnussbaumer.com/GeoPressureR/articles/pressure-map.html) |
-|  `2-light.R` |  [Creating probability maps from light data](https://raphaelnussbaumer.com/GeoPressureR/articles/light-map.html) |
-|  `3-static.R` | [Preparing data for trajectory modelling](https://raphaelnussbaumer.com/GeoPressureR/articles/preparing-data.html)  |
-|  `4-basic-graph.R` |  [Modeling trajectory with a graph](https://raphaelnussbaumer.com/GeoPressureR/articles/basic-graph.html) |
-|  `5-1-wind-graph_request.R` |  [Improving the graph with wind - Request wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
-|  `5-2-wind-graph_transfer.R` |  [Improving the graph with wind - Download wind data on ERA5](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#download-wind-data) |
-|  `5-3-wind-graph_create.R` |  [Improving the graph with wind - Create](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#add-wind-to-graph) |
-|  `5-4-wind-graph_analyse.R` |  [Improving the graph with wind - Outputs](https://raphaelnussbaumer.com/GeoPressureR/articles/wind-graph.html#output-1-shortest-path-with-wind) |
+|  `1-pressure.R`  |  [1. Pressure map](https://raphaelnussbaumer.com/GeoPressureManual/pressure-map.html) |
+|  `2-light.R` |  [2. Light map](https://raphaelnussbaumer.com/GeoPressureManual/light-map.html) |
+|  `3-static.R` | [3. Static map](https://raphaelnussbaumer.com/GeoPressureManual/static-map.html)  |
+|  `4-basic-graph.R` |  [4. Basic graph](https://raphaelnussbaumer.com/GeoPressureManual/basic-graph.html) |
+|  `5-1-wind-graph_request.R` |  [5. Wind graph - Download wind data](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#download-wind-data) |
+|  `5-2-wind-graph_transfer.R` |  [5. Wind graph - Download wind data](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#download-wind-data) |
+|  `5-3-wind-graph_create.R` |  [5. Wind graph - Create graph](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#create-graph) |
+|  `5-4-wind-graph_analyse.R` |  [5. Wind graph - Outputs](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#compute-the-transition-probability-1) |
 |  `99-combined.R` |  Run all steps for multiple tracks. |
 
 In order to keep your code clean, we isolate all the key paramters used in all functions in the `gpr_setting.xlsx` spreadsheet located in the `data/` folder. You can adjust these parameters seperatly for each track or add any informations on your individuals bird that might be useful for your analysis. 
@@ -150,7 +150,7 @@ In order to keep your code clean, we isolate all the key paramters used in all f
 |prob_map_s_calib   |                         |Alternative value for  `prob_map_s` for calibration site. Useful for species living in moutain only during calibration. |
 |prob_map_thr       |0.9                      |see [`geopressure_prob_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_prob_map.html)         |
 |shift_k            |0                        |see [`find_twilights()`](https://raphaelnussbaumer.com/GeoPressureR/reference/find_twilights.html)                     |
-|kernel_adjust      |1.4                      |see [Calibration of light data](https://raphaelnussbaumer.com/GeoPressureR/articles/light-map.html#calibration)        |
+|kernel_adjust      |1.4                      |see [Calibration of light data](https://raphaelnussbaumer.com/GeoPressureManual/light-map.html#calibrate-zenith-angles)        |
 |calib_lon          |17.05                    |Longitude of the calibration site.                                                                                     |
 |calib_lat          |48.9                     |Latitude of the calibrataion site.                                                                                      |
 |calib_1_start      |2017-06-20               |Start date of the first calibration period.                                                                             |
@@ -159,7 +159,7 @@ In order to keep your code clean, we isolate all the key paramters used in all f
 |calib_2_end        |                         |End date of the second calibration period                                                                              |
 |calib_2_lon        |                         |Longitude of the second calibration site (only use if different than first calibration site).                           |
 |calib_2_lat        |                         |Latitude of the second calibration site (only use if different than first calibration site).                            |
-|prob_light_w       |0.1                      |see [Probability map of light data](https://raphaelnussbaumer.com/GeoPressureR/articles/light-map.html#probability-map)|
+|prob_light_w       |0.1                      |see [Probability map of light data](https://raphaelnussbaumer.com/GeoPressureManual/light-map.html#compute-probability-map)|
 |thr_prob_percentile|0.9                      |see [`graph_create()`](https://raphaelnussbaumer.com/GeoPressureR/reference/graph_create.html)                         |
 |thr_gs             |120                      |see [`graph_create()`](https://raphaelnussbaumer.com/GeoPressureR/reference/graph_create.html)                         |
 |thr_as             |100                      |see [`graph_add_wind()`](https://raphaelnussbaumer.com/GeoPressureR/reference/graph_add_wind.html)                     |
