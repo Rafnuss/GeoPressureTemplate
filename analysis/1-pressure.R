@@ -19,9 +19,23 @@ gdl <- "18LX"
 gpr <- read_excel("data/gpr_settings.xlsx") %>%
   filter(gdl_id == gdl)
 
-# assert gdl in setting
-
 # Read, classify and label ----
+if (debug) {
+  # Use this figure to determine crop and calib period. You can then use it again to check that they are correct.
+  pam_no_crop <- pam <- pam_read(paste0("data/0_PAM/", gpr$gdl_id))
+
+  p <- ggplot() +
+    geom_rect(aes(xmin = gpr$calib_1_start, xmax = gpr$calib_1_end, ymin=min(pam_no_crop$pressure$obs), ymax=max(pam_no_crop$pressure$obs)), fill="grey") +
+    geom_rect(aes(xmin = gpr$calib_2_start, xmax = gpr$calib_2_end, ymin=min(pam_no_crop$pressure$obs), ymax=max(pam_no_crop$pressure$obs)), fill="grey") +
+    geom_line(data = pam_no_crop$pressure, aes(x = date, y = obs), col = "black") +
+    geom_vline(xintercept = gpr$crop_start, color = "green", lwd = 1) +
+    geom_vline(xintercept = gpr$crop_end, color = "red", lwd = 1) +
+    theme_bw() +
+    scale_y_continuous(name = "Pressure (hPa)")
+
+  ggplotly(p, dynamicTicks = T) %>% layout(showlegend = F)
+}
+
 pam <- pam_read(paste0("data/0_PAM/", gpr$gdl_id),
   crop_start = gpr$crop_start,
   crop_end = gpr$crop_end
