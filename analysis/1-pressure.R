@@ -85,12 +85,12 @@ if (debug) {
 
   # Test 2 ----
   pressure_na <- pam$pressure %>%
-    mutate(obs = ifelse(isoutliar | sta_id == 0, NA, obs))
+    mutate(obs = ifelse(isoutlier | sta_id == 0, NA, obs))
 
   p <- ggplot() +
     geom_line(data = pam$pressure, aes(x = date, y = obs), col = "grey") +
     geom_line(data = pressure_na, aes(x = date, y = obs, color = factor(sta_id))) +
-    # geom_point(data = subset(pam$pressure, isoutliar), aes(x = date, y = obs), colour = "black") +
+    # geom_point(data = subset(pam$pressure, isoutlier), aes(x = date, y = obs), colour = "black") +
     theme_bw() +
     scale_color_manual(values = col) +
     scale_y_continuous(name = "Pressure (hPa)")
@@ -103,7 +103,7 @@ if (debug) {
 thr_dur <- gpr$thr_dur # 24*4 # duration in hour. Decrease this value down to gpr$thr_dur
 res <- as.numeric(difftime(pam$pressure$date[2], pam$pressure$date[1], units = "hours"))
 sta_id_keep <- pam$pressure %>%
-  filter(!isoutliar & sta_id > 0) %>%
+  filter(!isoutlier & sta_id > 0) %>%
   count(sta_id) %>%
   filter(n * res > thr_dur) %>%
   .$sta_id
@@ -153,8 +153,8 @@ if (debug) {
   for (i_r in seq_len(length(pressure_timeserie))) {
     if (!is.null(pressure_timeserie[[i_r]])) {
       i_s <- unique(pressure_timeserie[[i_r]]$sta_id)
-      df3 <- merge(pressure_timeserie[[i_r]], subset(pam$pressure, !isoutliar & sta_id == i_s), by = "date")
-      df3$error <- df3$pressure0 - df3$obs
+      df3 <- merge(pressure_timeserie[[i_r]], subset(pam$pressure, !isoutlier & sta_id == i_s), by = "date")
+      df3$error <- df3$pressure0 - df3$obs.x
       hist(df3$error, main = i_s, xlab = "", ylab = "")
       abline(v = 0, col = "red")
     }

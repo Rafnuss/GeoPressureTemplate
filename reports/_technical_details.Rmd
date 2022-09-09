@@ -43,10 +43,10 @@ The labeling of pressure data is illustrated with this figure. The black dots in
 
 ```{r, layout="l-page"}
 pressure_na <- pam$pressure %>%
-  mutate(obs = ifelse(isoutliar | sta_id == 0, NA, obs))
+  mutate(obs = ifelse(isoutlier | sta_id == 0, NA, obs))
 p <- ggplot() +
   geom_line(data = pam$pressure, aes(x = date, y = obs), colour = "grey") +
-  geom_point(data = subset(pam$pressure, isoutliar), aes(x = date, y = obs), colour = "black") +
+  geom_point(data = subset(pam$pressure, isoutlier), aes(x = date, y = obs), colour = "black") +
   # geom_line(data = pressure_na, aes(x = date, y = obs, color = factor(sta_id)), size = 0.5) +
   geom_line(data = do.call("rbind", shortest_path_timeserie) %>% filter(sta_id > 0), aes(x = date, y = pressure0, col = factor(sta_id))) +
   theme_bw() +
@@ -67,7 +67,7 @@ par(mfrow = c(2, 3))
 for (i in seq_len(length(sta_plot))) {
   i_s <- sta_plot[i]
   pressure_s <- pam$pressure %>%
-    filter(sta_id == i_s & !isoutliar)
+    filter(sta_id == i_s & !isoutlier)
 
   err <- pressure_s %>%
     left_join(sp_pressure, by = "date") %>%
