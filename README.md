@@ -68,10 +68,9 @@ GeoPressureTemplate
 │   ├── 2-light.R
 │   ├── 3-static.R
 │   ├── 4-basic-graph.R
-│   ├── 5-1-wind-graph_request.R
-│   ├── 5-2-wind-graph_transfer.R
-│   ├── 5-3-wind-graph_create.R
-│   ├── 5-4-wind-graph_analyse.R
+│   ├── 5-1-wind-graph_download.R
+│   ├── 5-2-wind-graph_create.R
+│   ├── 5-3-wind-graph_analyse.R
 │   └── 99-combined.R
 └── reports                                 # Generate HTML report to be shared (see below for details)
 │   ├── _basic_trajectory.Rmd
@@ -122,10 +121,9 @@ Now that you are set-up, it's time to start the serious work. :grimacing: Follow
 |  `2-light.R` |  [2. Light map](https://raphaelnussbaumer.com/GeoPressureManual/light-map.html) |
 |  `3-static.R` | [3. Static map](https://raphaelnussbaumer.com/GeoPressureManual/static-map.html)  |
 |  `4-basic-graph.R` |  [4. Basic graph](https://raphaelnussbaumer.com/GeoPressureManual/basic-graph.html) |
-|  `5-1-wind-graph_request.R` |  [5. Wind graph - Download wind data](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#download-wind-data) |
-|  `5-2-wind-graph_transfer.R` |  [5. Wind graph - Download wind data](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#download-wind-data) |
-|  `5-3-wind-graph_create.R` |  [5. Wind graph - Create graph](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#create-graph) |
-|  `5-4-wind-graph_analyse.R` |  [5. Wind graph - Outputs](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#compute-the-transition-probability-1) |
+|  `5-1-wind-graph_graph_downloadt.R` |  [5. Wind graph - Download wind data](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#download-wind-data) |
+|  `5-2-wind-graph_create.R` |  [5. Wind graph - Create graph](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#create-graph) |
+|  `5-3-wind-graph_analyse.R` |  [5. Wind graph - Outputs](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#compute-the-transition-probability-1) |
 |  `99-combined.R` |  Run all steps for multiple tracks. |
 
 In order to keep your code clean, we isolate all the key paramters used in all functions in the `gpr_setting.xlsx` spreadsheet located in the `data/` folder. You can adjust these parameters seperatly for each track or add any informations on your individuals bird that might be useful for your analysis. 
