@@ -26,7 +26,7 @@ pressure_prob <- pressure_prob[sta_pres %in% sta_marginal]
 light_prob <- light_prob[sta_light %in% sta_marginal]
 
 geopressureviz <- list(
-  pam_data = pam,
+  pam = pam,
   static_prob = static_prob,
   static_prob_marginal = static_prob_marginal,
   pressure_prob = pressure_prob,

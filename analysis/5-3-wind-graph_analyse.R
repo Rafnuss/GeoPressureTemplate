@@ -70,7 +70,7 @@ if (debug) {
 
 
   geopressureviz <- list(
-    pam_data = pam,
+    pam = pam,
     static_prob = static_prob,
     static_prob_marginal = static_prob_marginal,
     pressure_prob = pressure_prob,

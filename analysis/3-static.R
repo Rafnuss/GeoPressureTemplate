@@ -105,7 +105,7 @@ static_timeserie <- geopressure_ts_path(path, pam$pressure)
 if (debug) {
   # GeopressureViz
   geopressureviz <- list(
-    pam_data = pam,
+    pam = pam,
     static_prob = static_prob,
     pressure_prob = pressure_prob,
     light_prob = light_prob,
