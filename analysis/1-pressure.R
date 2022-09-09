@@ -24,12 +24,21 @@ if (debug) {
   # Use this figure to determine crop and calib period. You can then use it again to check that they are correct.
   pam_no_crop <- pam <- pam_read(paste0("data/0_PAM/", gpr$gdl_id))
 
-  p <- ggplot() +
-    geom_rect(aes(xmin = gpr$calib_1_start, xmax = gpr$calib_1_end, ymin=min(pam_no_crop$pressure$obs), ymax=max(pam_no_crop$pressure$obs)), fill="grey") +
-    geom_rect(aes(xmin = gpr$calib_2_start, xmax = gpr$calib_2_end, ymin=min(pam_no_crop$pressure$obs), ymax=max(pam_no_crop$pressure$obs)), fill="grey") +
-    geom_line(data = pam_no_crop$pressure, aes(x = date, y = obs), col = "black") +
-    geom_vline(xintercept = gpr$crop_start, color = "green", lwd = 1) +
-    geom_vline(xintercept = gpr$crop_end, color = "red", lwd = 1) +
+  p <- ggplot()
+  if (!is.na(gpr$calib_1_start)&!is.na(gpr$calib_1_end)){
+    p <- p + geom_rect(aes(xmin = gpr$calib_1_start, xmax = gpr$calib_1_end, ymin=min(pam_no_crop$pressure$obs), ymax=max(pam_no_crop$pressure$obs)), fill="grey")
+  }
+  if (!is.na(gpr$calib_2_start)&!is.na(gpr$calib_2_end)){
+    p <- p + geom_rect(aes(xmin = gpr$calib_2_start, xmax = gpr$calib_2_end, ymin=min(pam_no_crop$pressure$obs), ymax=max(pam_no_crop$pressure$obs)), fill="grey")
+  }
+  p <- p + geom_line(data = pam_no_crop$pressure, aes(x = date, y = obs), col = "black")
+  if (!is.na(gpr$crop_start)){
+    p <- p + geom_vline(xintercept = gpr$crop_start, color = "green", lwd = 1)
+  }
+  if (!is.na(gpr$crop_end)){
+    p <- p + geom_vline(xintercept = gpr$crop_end, color = "red", lwd = 1)
+  }
+  p <- p +
     theme_bw() +
     scale_y_continuous(name = "Pressure (hPa)")
 
@@ -129,9 +138,9 @@ if (debug) {
   # Test 3 ----
   p <- ggplot() +
     geom_line(data = pam$pressure, aes(x = date, y = obs), colour = "grey") +
-    # geom_point(data = subset(pam$pressure, isoutliar), aes(x = date, y = obs), colour = "black") +
+    geom_point(data = subset(pam$pressure, isoutlier), aes(x = date, y = obs), colour = "black") +
     geom_line(data = pressure_na, aes(x = date, y = obs, color = factor(sta_id)), size = 0.5) +
-    geom_line(data = do.call("rbind", pressure_timeserie), aes(x = date, y = pressure0, col = factor(sta_id)), linetype = 2) +
+    geom_line(data = do.call("rbind", pressure_timeserie) %>% filter(!is.na(sta_id)), aes(x = date, y = pressure0, col = factor(sta_id)), linetype = 2) +
     theme_bw() +
     scale_colour_manual(values = col) +
     scale_y_continuous(name = "Pressure(hPa)")
