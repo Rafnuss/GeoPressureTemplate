@@ -22,7 +22,7 @@ gpr <- read_excel("data/gpr_settings.xlsx") %>%
 # Read, classify and label ----
 if (debug) {
   # Use this figure to determine crop and calib period. You can then use it again to check that they are correct.
-  pam_no_crop <- pam <- pam_read(paste0("data/0_PAM/", gpr$gdl_id))
+  pam_no_crop <- pam_read(paste0("data/0_PAM/", gpr$gdl_id))
 
   p <- ggplot()
   if (!is.na(gpr$calib_1_start)&!is.na(gpr$calib_1_end)){
