@@ -35,7 +35,7 @@ for (report in report_list) {
   str <- paste0(str, '- text: "', report, '"\n  menu:\n')
   for (gdl in gdl_list) {
     str <- paste0(str, '   - text: "', gdl, '"\n')
-    str <- paste0(str, '     href: "/GeoPressureTemplate/', report, "/", gdl, '.html\n"')
+    str <- paste0(str, '     href: "/GeoPressureTemplate/', report, '/', gdl, '.html"\n')
   }
 }
 writeLines(str)

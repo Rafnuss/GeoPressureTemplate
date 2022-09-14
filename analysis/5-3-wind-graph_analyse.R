@@ -40,9 +40,9 @@ g <- graph_from_data_frame(data.frame(
   weight = -log(grl$p)
 ))
 
-retrival <- which.max(as.matrix(static_prob_marginal[[length(static_prob_marginal)]])) + grl$sz[1] * grl$sz[2] * (grl$sz[3] - 1)
-stopifnot(retrival %in% grl$retrival)
-sp <- shortest_paths(g, from = paste(grl$equipement), to = paste(retrival))
+retrieval <- which.max(as.matrix(static_prob_marginal[[length(static_prob_marginal)]])) + grl$sz[1] * grl$sz[2] * (grl$sz[3] - 1)
+stopifnot(retrieval %in% grl$retrieval)
+sp <- shortest_paths(g, from = paste(grl$equipment), to = paste(retrieval))
 
 # Convert igraph representation to lat-lon
 shortest_path <- graph_path2lonlat(as.numeric(sp$vpath[[1]]$name), grl)
