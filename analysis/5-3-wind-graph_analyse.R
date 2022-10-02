@@ -56,31 +56,13 @@ path_sim <- graph_simulation(grl, nj = nj)
 
 
 if (debug) {
-
-  # In depth analysis with GeoPressureViz
-  load(paste0("data/1_pressure/", gdl, "_pressure_prob.Rdata"))
-  load(paste0("data/2_light/", gdl, "_light_prob.Rdata"))
-  load(paste0("data/3_static/", gdl, "_static_prob.Rdata"))
-
-  sta_marginal <- unlist(lapply(static_prob_marginal, function(x) raster::metadata(x)$sta_id))
-  sta_pres <- unlist(lapply(pressure_prob, function(x) raster::metadata(x)$sta_id))
-  sta_light <- unlist(lapply(light_prob, function(x) raster::metadata(x)$sta_id))
-  pressure_prob <- pressure_prob[sta_pres %in% sta_marginal]
-  light_prob <- light_prob[sta_light %in% sta_marginal]
-
-
-  geopressureviz <- list(
+  geopressureviz(
     pam = pam,
     static_prob = static_prob,
     static_prob_marginal = static_prob_marginal,
     pressure_prob = pressure_prob,
     light_prob = light_prob,
     pressure_timeserie = shortest_path_timeserie
-  )
-  save(geopressureviz, file = "~/geopressureviz.RData")
-
-  shiny::runApp(system.file("geopressureviz", package = "GeoPressureR"),
-    launch.browser = getOption("browser")
   )
 }
 

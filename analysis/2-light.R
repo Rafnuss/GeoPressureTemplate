@@ -130,38 +130,43 @@ if (debug) {
   hist(z, freq = F)
   lines(fit_z, col = "red")
 
-  # Compare with pressure
-  load(paste0("data/1_pressure/", gdl, "_pressure_prob.Rdata"))
-  dur <- unlist(lapply(pressure_prob, function(x) difftime(metadata(x)$temporal_extent[2], metadata(x)$temporal_extent[1], units = "days")))
-  long_id <- which(dur > 5)
+  # Compute twilight at the best location of pressure
+  path <- geopressure_map2path(pressure_prob)
+  twl_path <- left_join(twl, path) %>%
+    mutate(
+      twilight = twilight(twilight,
+                          lon = lon, lat = lat, rise = rise, zenith = 96)
+    ) %>%
+    filter(!is.na(twilight))
 
-  par(mfrow = c(2, 3))
-  for (i_s in long_id) {
-    twl_fl <- twl %>%
-      filter(!deleted) %>%
-      filter(twilight > pressure_timeserie[[i_s]]$date[1] & twilight < tail(pressure_timeserie[[i_s]]$date, 1))
-    sun <- solar(twl_fl$twilight)
-    z_i <- refracted(zenith(sun, pressure_timeserie[[i_s]]$lon[1], pressure_timeserie[[i_s]]$lat[1]))
-    hist(z_i, freq = F, main = paste0("sta_id=", i_s, " n=", nrow(twl_fl)))
-    lines(fit_z, col = "red")
-  }
-
-  # Light comparison
+  # Twilight comparison with pressure based position (probably not correct for short stationay period)
   lightImage(
     tagdata = raw_geolight,
     offset = gpr$shift_k / 60 / 60
   )
   tsimagePoints(twl$twilight,
-    offset = gpr$shift_k / 60 / 60, pch = 16, cex = 1.2,
-    col = ifelse(twl$deleted, "grey20", ifelse(twl$rise, "firebrick", "cornflowerblue"))
+                offset = -gpr$shift_k / 60 / 60, pch = 16, cex = 1.2,
+                col = ifelse(twl$deleted, "grey20", ifelse(twl$rise, "firebrick", "cornflowerblue"))
   )
-  for (i_s in long_id) {
+  tsimageDeploymentLines(twl_path$twilight,
+                         lon = twl_path$lon, twl_path$lat,
+                         offset = -gpr$shift_k / 60 / 60, lwd = 3, col = adjustcolor("orange", alpha.f = 0.5)
+  )
+
+  # Check histogram of zenith angle for each stationary period based on pressure.
+  # Filter long stationary period
+  sta_id_long <- pam$sta %>%
+    filter(difftime(end,start,units = "days")>5) %>%
+    .$sta_id
+
+  par(mfrow = c(2, 3))
+  for (i_s in sta_id_long) {
     twl_fl <- twl %>%
-      filter(twilight > pressure_timeserie[[i_s]]$date[1] & twilight < tail(pressure_timeserie[[i_s]]$date, 1))
-    tsimageDeploymentLines(twl_fl$twilight,
-      lon = pressure_timeserie[[i_s]]$lon[1], pressure_timeserie[[i_s]]$lat[1],
-      offset = gpr$shift_k / 60 / 60, lwd = 3, col = adjustcolor("orange", alpha.f = 0.5)
-    )
+      filter(!deleted) %>%
+      filter(sta_id==i_s)
+    z_i <- refracted(zenith(solar(twl_fl$twilight), path$lon[path$sta_id==i_s], path$lat[path$sta_id==i_s]))
+    hist(z_i, freq = F, main = paste0("sta_id=", i_s, " n=", nrow(twl_fl)))
+    lines(fit_z, col = "red")
   }
 }
 
@@ -236,7 +241,8 @@ if (debug) {
 }
 
 # Save ----
-save(twl,
+save(
+  twl,
   light_prob,
   z,
   fit_z,

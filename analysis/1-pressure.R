@@ -134,13 +134,17 @@ if (debug) {
 
   # Query timeserie of pressure based on these path
   pressure_timeserie <- geopressure_ts_path(path, pam_short$pressure, include_flight = c(0, 1))
+  pressure_ts_bind <- do.call("rbind", pressure_timeserie) %>%
+    filter(!is.na(sta_id))
 
   # Test 3 ----
   p <- ggplot() +
     geom_line(data = pam$pressure, aes(x = date, y = obs), colour = "grey") +
     geom_point(data = subset(pam$pressure, isoutlier), aes(x = date, y = obs), colour = "black") +
-    geom_line(data = pressure_na, aes(x = date, y = obs, color = factor(sta_id)), size = 0.5) +
-    geom_line(data = do.call("rbind", pressure_timeserie) %>% filter(!is.na(sta_id)), aes(x = date, y = pressure0, col = factor(sta_id)), linetype = 2) +
+    geom_line(data = pam$pressure %>%
+                mutate(obs = ifelse(isoutlier | sta_id == 0, NA, obs)),
+              aes(x = date, y = obs, color = factor(sta_id)), size = 0.5) +
+    geom_line(data = pressure_ts_bind %>% filter(sta_id > 0), aes(x = date, y = pressure0, col = factor(sta_id)), linetype = 2) +
     theme_bw() +
     scale_colour_manual(values = col) +
     scale_y_continuous(name = "Pressure(hPa)")
@@ -149,16 +153,19 @@ if (debug) {
 
 
   # Test 4 ----
-  par(mfrow = c(5, 6), mar = c(1, 1, 3, 1))
-  for (i_r in seq_len(length(pressure_timeserie))) {
-    if (!is.null(pressure_timeserie[[i_r]])) {
-      i_s <- unique(pressure_timeserie[[i_r]]$sta_id)
-      df3 <- merge(pressure_timeserie[[i_r]], subset(pam$pressure, !isoutlier & sta_id == i_s), by = "date")
-      df3$error <- df3$pressure0 - df3$obs.x
-      hist(df3$error, main = i_s, xlab = "", ylab = "")
-      abline(v = 0, col = "red")
-    }
-  }
+  # You might also want to adjust the value of s in `geopressure_prob_map()` based on the SD value
+  # of these histogram gpr$prob_map_s
+  pam$pressure %>%
+    left_join(pressure_ts_bind %>% dplyr::select(c("date","pressure0")), by="date") %>%
+    mutate(diff=ifelse(is.na(pressure0), 0, obs-pressure0)) %>%
+    filter(sta_id > 0 & !isoutlier) %>%
+    group_by(sta_id) %>%
+    mutate(sta_id = paste0(sta_id, " (SD=",round(sd(diff),2)," ; N=",n(),")")) %>%
+    ggplot( aes(x=diff)) +
+    geom_histogram(aes(y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..]), binwidth=.4) +
+    facet_wrap(~sta_id) +
+    scale_x_continuous(name = "Pressure Geolocator - best match ERA5 (hPa)") +
+    scale_y_continuous(name = "Normalized histogram")
 
   # Map the most likely position
   sta_duration <- unlist(lapply(pressure_prob, function(x) {
