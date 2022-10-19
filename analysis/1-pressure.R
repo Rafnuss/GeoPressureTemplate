@@ -79,7 +79,7 @@ if (debug) {
       duration = difftime(end, start, units = "hours"),
       next_flight_duration = difftime(lead(start), end, units = "hours")
     ) %>%
-    filter(duration < 3) %>%
+    filter(duration < 3 & next_flight_duration <= 1) %>%
     arrange(duration)
 
 
