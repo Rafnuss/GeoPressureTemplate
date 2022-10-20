@@ -52,7 +52,15 @@ pam <- pam_read(paste0("data/0_PAM/", gpr$gdl_id),
 
 # Auto classification + writing, only done the first time
 if (!file.exists(paste0("data/1_pressure/labels/", gpr$gdl_id, "_act_pres-labeled.csv"))) {
-  pam <- pam_classify(pam)
+  # Check if track ha acceleration data https://raphaelnussbaumer.com/GeoPressureManual/pressure-map.html#no-acceleration-data
+  if ("acceleration" %in% names(pam)){
+    pam <- pam_classify(pam)
+  } else {
+    pam$acceleration = pam$pressure
+    pam$acceleration$obs = 0
+    pam$acceleration$obs[1] = 1
+    pam$acceleration$ismig = FALSE
+  }
   trainset_write(pam, "data/1_pressure/labels/")
   browseURL("https://trainset.geocene.com/")
   invisible(readline(prompt = paste0(
