@@ -1,6 +1,6 @@
 # GeoPressureTemplate
 
-Analysing geolocator data with pressure is full of potential, but the the path is long and the journey can be challenging. `GeoPressureTemplate` is a [Github repository template](https://docs.github.com/articles/creating-a-repository-from-a-template/) for a startup R project to make that journey easier.
+Analyzing geolocator data with pressure is full of potential, but the the path is long and the journey can be challenging. `GeoPressureTemplate` is a [Github repository template](https://docs.github.com/articles/creating-a-repository-from-a-template/) for a start-up R project to make that journey easier.
 
 ## What is this template and who is it for? :mag_right:
 
@@ -11,7 +11,7 @@ In essence, it contains the code from all the [GeoPressureManual](https://raphae
 ## What do you need to use this template? :computer:
 
 - Geolocator data containing pressure, light and activity data.
-- Have read the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual) (:warning: You should be familar with the **full process involved** before starting with your own project)
+- Have read the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual) (:warning: You should be familiar with the **full process involved** before starting with your own project)
 - Basic R experience (I'm using the [tidyverse](https://www.tidyverse.org/) syntax here).
 - A [Github account](https://github.com/signup).
 
@@ -20,7 +20,7 @@ In essence, it contains the code from all the [GeoPressureManual](https://raphae
 
 Following the recommendations of [rrrpkg](https://github.com/ropensci/rrrpkg), the project contains:
 1. Standard description files at the root (`DESCRIPTION`, `.Rproj`, `README.md`, `LICENCES`,...).
-2. `data/` folder containing the raw geolocator data, the pressure and light labelled files and the data generated with the code from `analysis/`. Note that you could instead keep the geolocator and labelization files seperately in a `raw-data/` folder, following `usethis()` standard.
+2. `data/` folder containing the raw geolocator data, the pressure and light labelled files and the data generated with the code from `analysis/`. Note that you could instead keep the geolocator and labelization files separately in a `raw-data/` folder, following `usethis()` standard.
 3. `analysis/` contains all the `.R` code used for your project.
 4. `report/` reads the data generated and produces sharable results (figures, html page, manuscript, etc...).
 <details>
@@ -113,7 +113,7 @@ devtools::install()
 
 ## Start analysing the data :chart_with_upwards_trend:
 
-Now that you are set-up, it's time to start the serious work. :grimacing: Follow the order of the `.R` code in the `analysis/` folder. They follow the same order as the GeoPressureManual (but with different numerotation to be able to analyse multiple track at the same time).
+Now that you are set-up, it's time to start the serious work. :grimacing: Follow the order of the `.R` code in the `analysis/` folder. They follow the same order as the GeoPressureManual (but with different numeration to be able to analyse multiple track at the same time).
 
 |  GeoPressureTemplate analysis |  GeoPressureManual  |
 |---|---|
@@ -126,7 +126,7 @@ Now that you are set-up, it's time to start the serious work. :grimacing: Follow
 |  `5-3-wind-graph_analyse.R` |  [5. Wind graph - Outputs](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#compute-the-transition-probability-1) |
 |  `99-combined.R` |  Run all steps for multiple tracks. |
 
-In order to keep your code clean, we isolate all the key paramters used in all functions in the `gpr_setting.xlsx` spreadsheet located in the `data/` folder. You can adjust these parameters seperatly for each track or add any informations on your individuals bird that might be useful for your analysis. 
+In order to keep your code clean, we isolate all the key parameters used in all functions in the `gpr_setting.xlsx` spreadsheet located in the `data/` folder. You can adjust these parameters separately for each track or add any information on your individuals bird that might be useful for your analysis. 
 
 <details>
   <summary>Click to see explanations on the parameters of <code>gpr_setting.xlsx</code></summary>
@@ -145,12 +145,12 @@ In order to keep your code clean, we isolate all the key paramters used in all f
 |map_max_sample     |300                      |see [`geopressure_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_map.html)                   |
 |map_margin         |30                       |see [`geopressure_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_map.html)                   |
 |prob_map_s         |1                        |see [`geopressure_prob_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_prob_map.html)         |
-|prob_map_s_calib   |                         |Alternative value for  `prob_map_s` for calibration site. Useful for species living in moutain only during calibration. |
+|prob_map_s_calib   |                         |Alternative value for  `prob_map_s` for calibration site. Useful for species living in mountain only during calibration. |
 |prob_map_thr       |0.9                      |see [`geopressure_prob_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_prob_map.html)         |
 |shift_k            |0                        |see [`find_twilights()`](https://raphaelnussbaumer.com/GeoPressureR/reference/find_twilights.html)                     |
 |kernel_adjust      |1.4                      |see [Calibration of light data](https://raphaelnussbaumer.com/GeoPressureManual/light-map.html#calibrate-zenith-angles)        |
 |calib_lon          |17.05                    |Longitude of the calibration site.                                                                                     |
-|calib_lat          |48.9                     |Latitude of the calibrataion site.                                                                                      |
+|calib_lat          |48.9                     |Latitude of the calibration site.                                                                                      |
 |calib_1_start      |2017-06-20               |Start date of the first calibration period.                                                                             |
 |calib_1_end        |2017-08-05               |End date of the first calibration period.                                                                               |
 |calib_2_start      |                         |Start date of the second calibration period.                                                                           |
@@ -162,7 +162,6 @@ In order to keep your code clean, we isolate all the key paramters used in all f
 |thr_gs             |120                      |see [`graph_create()`](https://raphaelnussbaumer.com/GeoPressureR/reference/graph_create.html)                         |
 |thr_as             |100                      |see [`graph_add_wind()`](https://raphaelnussbaumer.com/GeoPressureR/reference/graph_add_wind.html)                     |
 |low_speed_fix      |15                       |see [`flight_prob()`](https://raphaelnussbaumer.com/GeoPressureR/reference/flight_prob.html)                           |
-|ringNo             |                         |Ring number if available (not used).                                                                                                                        |
 |scientific_name    |Acrocephalus arundinaceus|see [`flight_bird()`](https://raphaelnussbaumer.com/GeoPressureR/reference/flight_bird.html)                           |
 |common_name        |Great Reed Warbler       |                                                                                                                       |
 |mass               |                         |see [`flight_bird()`](https://raphaelnussbaumer.com/GeoPressureR/reference/flight_bird.html)                           |
@@ -182,12 +181,12 @@ The main idea is to produce report templates (`_name_of_the_report_template.Rmd`
 3. Look at `make_reports.R` script to see how you can generate the HTML for multiple tracks and reports templates at once. 
 4. Edit `index.Rmd` as you wishes
 5. Run `{r} render_site('./reports')` (also provided at the bottom of  `make_reports.R`) to generate the full website in `docs/`.
-6. Push your changes on Gihub and create your [Github Page](https://rstudio.github.io/distill/publish_website.html#github-pages).
+6. Push your changes on Github and create your [Github Page](https://rstudio.github.io/distill/publish_website.html#github-pages).
 
 
 ## Advanced options :link:
 
 - Generate your DOI with [Zenodo](https://docs.github.com/en/repositories/archiving-a-github-repository/referencing-and-citing-content) (e.g., https://zenodo.org/record/6720386)
 - Generate a citation file with [`usethis::use_citation`](https://usethis.r-lib.org/reference/use_citation.html) and [`cffr`](https://github.com/ropensci/cffr).
-- Use [`renv`](https://rstudio.github.io/renv/index.html) to make your work reproducable.
+- Use [`renv`](https://rstudio.github.io/renv/index.html) to make your work reproducible.
 - Export your data on [Movebank](https://www.movebank.org/cms/movebank-content/import-custom-tabular-data).

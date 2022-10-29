@@ -35,7 +35,7 @@ dir.create("data/5_wind_graph", showWarnings = FALSE)
 for (i in seq(1, length(gdl_list))) {
   gdl <- gdl_list[i]
   source("analysis/5-1-wind-graph_download.R")
-  # Use job to avoid blocking your console.
+  # You can also make this request with a background job in Rstudio (https://solutions.rstudio.com/r/jobs/)
   # rstudioapi::jobRunScript("analysis/5-1-wind-graph_download.R",
   #                          name = paste0("wind_graph_download_", gdl),
   #                          workingDir = ".",

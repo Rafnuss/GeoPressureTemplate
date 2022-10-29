@@ -18,7 +18,7 @@ gdl <- "18LX"
 load(paste0("data/1_pressure/", gdl, "_pressure_prob.Rdata"))
 load(paste0("data/2_light/", gdl, "_light_prob.Rdata"))
 
-# Defint the threashold of the stationay period to consider
+# Define the threshold of the stationary period to consider
 thr_sta_dur <- gpr$thr_dur # in hours
 
 sta_pres <- unlist(lapply(pressure_prob, function(x) raster::metadata(x)$sta_id))
@@ -52,11 +52,6 @@ static_prob <- mapply(function(light, pressure, flight) {
   # define static prob as the product of light and pressure prob
   static_prob <- light * pressure
 
-  # replace na by zero
-  # tmp <- values(static_prob)
-  # tmp[is.na(tmp)] <- 0
-  # values(static_prob) <- tmp
-
   # define metadata
   metadata(static_prob) <- metadata(pressure)
   metadata(static_prob)$flight <- flight
@@ -84,7 +79,7 @@ tmp[!is.na(tmp)] <- 0
 tmp[lat_calib_id, lon_calib_id] <- 1
 values(static_prob[[1]]) <- tmp
 
-if (!is.na(gpr$calib_2_start) & abs(difftime(gpr$calib_2_end, gpr$crop_end, units = "days"))<3) {
+if (!is.na(gpr$calib_2_start) & abs(difftime(gpr$calib_2_end, gpr$crop_end, units = "days")) < 3) {
   if (!is.na(gpr$calib_2_lat)) {
     lon_calib_id <- which.min(abs(gpr$calib_2_lon - lon))
     lat_calib_id <- which.min(abs(gpr$calib_2_lat - lat))
@@ -123,7 +118,7 @@ if (debug) {
   # impact your code
   pam_diff <- pam
   pam_diff$pressure <- pam_diff$pressure %>%
-    left_join(path_modified_ts_bind %>% dplyr::select(c("date","pressure0")), by="date") %>%
+    left_join(path_modified_ts_bind %>% dplyr::select(c("date", "pressure0")), by = "date") %>%
     rename(obs_ref = pressure0)
 
   trainset_write(pam_diff, "data/1_pressure/labels/", filename = paste0(pam$id, "_act_pres"))
@@ -135,7 +130,8 @@ if (debug) {
   twl_path <- left_join(twl, path_modified) %>%
     mutate(
       twilight = twilight(twilight,
-                          lon = lon, lat = lat, rise = rise, zenith = 96)
+        lon = lon, lat = lat, rise = rise, zenith = 96
+      )
     ) %>%
     filter(!is.na(twilight))
 
@@ -145,14 +141,14 @@ if (debug) {
         series = ifelse(twl$rise, "Rise", "Set"),
         timestamp = strftime(twl$twilight, "%Y-%m-%dT00:00:00Z", tz = "UTC"),
         value = (as.numeric(format(twl$twilight, "%H")) * 60 + as.numeric(format(twl$twilight, "%M"))
-                 + gpr$shift_k / 60 + 60 * 12) %% (60 * 24),
+          + gpr$shift_k / 60 + 60 * 12) %% (60 * 24),
         label = ifelse(is.na(twl$delete), "", ifelse(twl$delete, "Delete", ""))
       ),
       data.frame(
         series = ifelse(twl_path$rise, "Set_ref", "Rise_ref"),
         timestamp = strftime(twl_path$twilight, "%Y-%m-%dT00:00:00Z", tz = "UTC"),
         value = (as.numeric(format(twl_path$twilight, "%H")) * 60 + as.numeric(format(twl_path$twilight, "%M"))
-                 + gpr$shift_k / 60 + 60 * 12) %% (60 * 24),
+          + gpr$shift_k / 60 + 60 * 12) %% (60 * 24),
         label = ""
       )
     ),

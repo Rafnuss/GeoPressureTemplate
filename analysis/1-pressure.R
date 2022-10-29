@@ -108,7 +108,7 @@ if (debug) {
 
 
 # Filter stationary period based on the number of pressure datapoint available
-thr_dur <- gpr$thr_dur # 24*4 # duration in hour. Decrease this value down to gpr$thr_dur
+thr_dur <- gpr$thr_dur # duration in hour. Decrease this value zero if possible
 res <- as.numeric(difftime(pam$pressure$date[2], pam$pressure$date[1], units = "hours"))
 sta_id_keep <- pam$pressure %>%
   filter(!isoutlier & sta_id > 0) %>%
@@ -122,7 +122,6 @@ pam_short$pressure <- pam_short$pressure %>%
   mutate(sta_id = ifelse(sta_id %in% sta_id_keep, sta_id, NA))
 
 # Query pressure map
-# We overwrite the setting parameter for resolution to make query faster at first
 pressure_maps <- geopressure_map(pam_short$pressure,
   extent = c(gpr$extent_N, gpr$extent_W, gpr$extent_S, gpr$extent_E),
   scale = gpr$map_scale,
