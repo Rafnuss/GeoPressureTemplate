@@ -51,7 +51,7 @@ for (i in seq(1, length(gdl_list))) {
 # Compute marginal, simulate path, shortest path
 for (i in seq(1, length(gdl_list))) {
   gdl <- gdl_list[i]
-  source("analysis/5-4-wind-graph_analyse.R")
+  source("analysis/5-3-wind-graph_analyse.R")
 }
 
 

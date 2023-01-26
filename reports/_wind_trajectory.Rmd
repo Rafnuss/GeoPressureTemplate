@@ -25,7 +25,7 @@ load(paste0("../data/3_static/", params$gdl_id, "_static_prob.Rdata"))
 # load(paste0("../data/4_basic_graph/", params$gdl_id, "_basic_graph.Rdata"))
 load(paste0("../data/5_wind_graph/", params$gdl_id, "_wind_graph.Rdata"))
 load(paste0("../data/5_wind_graph/", params$gdl_id, "_grl.Rdata"))
-col <- rep(RColorBrewer::brewer.pal(8, "Dark2"), times = ceiling(max(pam$sta$sta_id) / 8))
+col <- rep(RColorBrewer::brewer.pal(8, "Dark2"), times = ceiling(max(pam$sta$sta_id) + 1 / 8))
 ```
 
 
