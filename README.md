@@ -1,16 +1,16 @@
 # GeoPressureTemplate
 
-Analyzing geolocator data with pressure is full of potential, but the the path is long and the journey can be challenging. `GeoPressureTemplate` is a [Github repository template](https://docs.github.com/articles/creating-a-repository-from-a-template/) for a start-up R project to make that journey easier.
+Analyzing geolocator data with pressure is full of potential, but the the path is long and the journey can be challenging. `GeoPressureTemplate` is a [Github repository template](https://docs.github.com/articles/creating-a-repository-from-a-template/) containing a start-up R project to make that journey easier.
 
 ## What is this template and who is it for? :mag_right:
 
-`GeoPressureTemplate` aims to help researchers analyse their geolocator data with [`GeoPressureR`](https://raphaelnussbaumer.com/GeoPressureR/). It provides the backbone R code containing the folder structure and code to correctly label your data and produce basic trajectory figures. 
+`GeoPressureTemplate` aims to help researchers analyse their geolocator data with [`GeoPressureR`](https://raphaelnussbaumer.com/GeoPressureR/). It provides the backbone R code containing the folder structure and R script to store your data, analyse it and produce trajectory figures. 
 
-In essence, it contains the code from all the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual) packaged in an `.R` file to make it easy for you to apply it to your own data. 
+In essence, it contains the code from all the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual) packaged in `.R` files to make it easy for you to apply it to your own data. 
 
 ## What do you need to use this template? :computer:
 
-- Geolocator data containing pressure, light and activity data.
+- Geolocator data (called `tag`) containing at least pressure data, but optionally also light and acceleration data.
 - Have read the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual) (:warning: You should be familiar with the **full process involved** before starting with your own project)
 - Basic R experience (I'm using the [tidyverse](https://www.tidyverse.org/) syntax here).
 - A [Github account](https://github.com/signup).
@@ -32,7 +32,7 @@ GeoPressureTemplate
 ├── README.md            		                # top-level description of content and guide to users
 ├── GeoPressureTemplate.Rproj               # R project file
 ├── data                                    # Folder structured by order of use
-│   ├── 0_PAM                               # Folder with raw geolocator data grouped by gdl_id
+│   ├── 0_tag                               # Folder with raw geolocator data grouped by gdl_id
 │   │   ├── 18LX
 │   │   │   ├── 18LX_20180725.acceleration
 │   │   │   ├── 18LX_20180725.glf
@@ -108,7 +108,7 @@ GeoPressureTemplate
 devtools::install()
 ```
 
-- Delete the content of `data/` (but keep the directory tree). Put your PAM data in `data/0_PAM/` in a folder with the GDL_ID code (e.g. `data/0_PAM/18LX/`)
+- Delete the content of `data/` (but keep the directory tree). Put your tag data in `data/0_tag/` in a folder with the `tag_id` code (e.g. `data/0_tag/18LX/`)
 
 
 ## Start analysing the data :chart_with_upwards_trend:
@@ -134,8 +134,8 @@ In order to keep your code clean, we isolate all the key parameters used in all 
 |parameter          |example/default          |description                                                                                                            |
 |-------------------|-------------------------|-----------------------------------------------------------------------------------------------------------------------|
 |gdl_id             |18LX                     |Track identifier, used to read the raw file in the folder with this name (see [directory structure](https://github.com/Rafnuss/GeoPressureTemplate#project-structure-file_folder)).                                              |
-|crop_start         |2017-06-20               |see [`pam_read()`](https://raphaelnussbaumer.com/GeoPressureR/reference/pam_read.html)                                 |
-|crop_end           |2018-05-02               |see [`pam_read()`](https://raphaelnussbaumer.com/GeoPressureR/reference/pam_read.html)                                 |
+|crop_start         |2017-06-20               |see [`tag_read()`](https://raphaelnussbaumer.com/GeoPressureR/reference/tag_read.html)                                 |
+|crop_end           |2018-05-02               |see [`tag_read()`](https://raphaelnussbaumer.com/GeoPressureR/reference/tag_read.html)                                 |
 |thr_dur            |12                       |Ignore stationary periods shorter than `thr_dur` (in hours). For complex track, start with high value 24-48 and work your way down to 0 until the labelization is done correctly.                                                                                                                         |
 |extent_N           |50                       |see [`geopressure_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_map.html)                   |
 |extent_W           |-16                      |see [`geopressure_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_map.html)                   |
@@ -147,7 +147,7 @@ In order to keep your code clean, we isolate all the key parameters used in all 
 |prob_map_s         |1                        |see [`geopressure_prob_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_prob_map.html)         |
 |prob_map_s_calib   |                         |Alternative value for  `prob_map_s` for calibration site. Useful for species living in mountain only during calibration. |
 |prob_map_thr       |0.9                      |see [`geopressure_prob_map()`](https://raphaelnussbaumer.com/GeoPressureR/reference/geopressure_prob_map.html)         |
-|shift_k            |0                        |see [`find_twilights()`](https://raphaelnussbaumer.com/GeoPressureR/reference/find_twilights.html)                     |
+|twl_offset            |0                        |see [`find_twilights()`](https://raphaelnussbaumer.com/GeoPressureR/reference/find_twilights.html)                     |
 |kernel_adjust      |1.4                      |see [Calibration of light data](https://raphaelnussbaumer.com/GeoPressureManual/light-map.html#calibrate-zenith-angles)        |
 |calib_lon          |17.05                    |Longitude of the calibration site.                                                                                     |
 |calib_lat          |48.9                     |Latitude of the calibration site.                                                                                      |

@@ -1,0 +1,27 @@
+---
+title: "Template for GeoPressureR"
+description: |
+  List of Reports
+site: distill::distill_website
+---
+
+This is an example of the reports generated based on the [GeoPressureTemplate](https://github.com/Rafnuss/GeoPressureTemplate). You can navigate from this page to all the report generated. 
+
+```{r, results = "asis", echo = FALSE}
+# List all the html file found on in the reports/html folder
+f <- list.files(path = ".", patter = "*.html", recursive = TRUE)
+
+f_dirname <- lapply(f, dirname)
+f_basename <- lapply(f, basename)
+
+for (i_f_dir in unique(f_dirname)) {
+  cat(paste("## ", tools::toTitleCase(stringr::str_replace_all(i_f_dir, "_", " "))))
+  cat("\n")
+  for (i_f in seq_len(length(f))) {
+    if (f_dirname[[i_f]] == i_f_dir) {
+      cat(paste("* <a href='", f[[i_f]], "'>", sub("\\.html$", "", f_basename[[i_f]]), "</a>"), sep = "\n")
+    }
+  }
+  cat("\n")
+}
+```

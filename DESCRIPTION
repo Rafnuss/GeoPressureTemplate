@@ -6,29 +6,21 @@ Authors@R:
     person("Raphaël", "Nussbaumer", , "rafnuss@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8185-1020"))
 License: GPL (>= 3)
-Version: 0.7
+Version: 1.0.0.1
 Depends: 
     R (>= 3.5.0)
 Imports: 
-    dplyr,
-    ecmwfr,
     GeoPressureR,
     ggplot2,
-    igraph,
+    config,
     knitr,
     leaflet,
     leaflet.extras,
     leaflet.providers,
-    lubridate,
-    ncdf4,
     plotly,
-    raster,
-    RColorBrewer,
-    readr,
-    readxl,
     rmarkdown,
-    tidyverse,
     distill
+    yaml,
 Remotes: 
     rafnuss/GeoPressureR
 VignetteBuilder: 

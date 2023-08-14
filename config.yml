@@ -1,0 +1,46 @@
+default:
+  #-- SET MAP
+  extent: !expr c(-16, 23, 0, 50)
+  scale: 5
+  include_min_duration: 12
+  #-- GEOPRESSURE
+  max_sample: 250
+  margin: 20
+  sd: 1
+  thr_mask: 0.9
+  # log_linear_pooling_weight:
+  #-- GEOLIGHT
+  # twl_thr:
+  twl_offset: 0
+  # twl_calib_adjust:
+  # twl_llp:
+  #-- GRAPH
+  thr_likelihood: 0.99
+  thr_gs: 150
+  thr_as: 90
+  #-- MOVEMENT MODEL
+  movement_shape:
+  movement_scale:
+  movement_location:
+  movement_low_speed_fix: 15
+
+18LX:
+  id: "18LX"
+  crop_start: "2017-06-20"
+  crop_end: "2018-05-02"
+  known: !expr data.frame(stap_id = 1,
+                    known_lon = 17.05,
+                    known_lat = 48.9)
+  #-- GEOLIGHT
+  # twl_offset:
+  #-- MOVEMENT MODEL
+  movement_type: "as"
+  scientific_name: "Acrocephalus arundinaceus"
+
+PlKS:
+  id: "PlKS"
+  crop_start:
+  crop_end: formals(tag_create)$crop_end
+  #-- MOVEMENT MODEL
+  movement_type: "as"
+  # movement_method:

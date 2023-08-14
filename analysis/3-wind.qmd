@@ -1,0 +1,80 @@
+---
+title: Add wind
+format: html
+editor: visual
+---
+
+This script will help you download the wind data for a `tag` and define the movement model
+
+```{r, setup}
+# Choose the id
+id <- "18LX"
+
+# Set the directory to the project root
+knitr::opts_knit$set(root.dir = "..")
+library(GeoPressureR)
+library(glue)
+library(job)
+```
+
+## Load tag
+
+Start from an existing `tag`
+
+```{r}
+load(glue("./data/interim/{id}.RData"))
+```
+
+## Set-up copernicus credential
+
+If you don't have one, create account at <https://cds.climate.copernicus.eu/user/15631/edit> and retrieve your API key and UID number
+
+```{r, eval = F}
+Sys.setenv(cds_key = "Insert_your_CDS_API_KEY_here")
+Sys.setenv(cds_user = "Insert_your_CDS_UID_here")
+```
+
+## Download wind data
+
+```{r, eval=F}
+job({
+  tag_download_wind(tag)
+})
+```
+
+Check requests at <https://cds.climate.copernicus.eu/cdsapp#!/yourrequests>
+
+## Define movement model
+
+### Add wind data
+
+If you haven't computed a graph yet
+
+```{r, eval = F}
+graph <- graph_create(
+  tag,
+  thr_likelihood = config::get("thr_likelihood", id),
+  thr_gs = config::get("thr_gs", id)
+)
+```
+
+```{r}
+graph <- graph_add_wind(
+  graph,
+  pressure = tag$pressure,
+  thr_as = config::get("thr_as", id)
+)
+```
+
+### Set movement model
+
+Check that the movement model defined in `config.yml` is adequate.
+
+```{r}
+graph <- graph_set_movement(graph,
+  bird = bird_create(config::get("scientific_name", id)),
+  power2prob = config::get("movement_low_speed_fix", id),
+  low_speed_fix = config::get("movement_low_speed_fix", id)
+)
+plot_graph_movement(graph)
+```

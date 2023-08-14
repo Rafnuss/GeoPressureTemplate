@@ -1,0 +1,30 @@
+name: "GeoPressureTemplate"
+description: |
+  Template for GeoPressureR
+output_dir: "../docs"
+title: "Template for GeoPressureR"
+navbar:
+  left:
+    - text: "Basic Trajectory"
+      menu:
+        - text: "18LX"
+          href: "/GeoPressureTemplate/basic_trajectory/18LX.html"
+    - text: "Wind Trajectory"
+      menu:
+        - text: "18LX"
+          href: "/GeoPressureTemplate/wind_trajectory/18LX.html"
+    - text: "Technical Details"
+      menu:
+        - text: "18LX"
+          href: "/GeoPressureTemplate/technical_details/18LX.html"
+  right:
+    - icon: fa-envelope fa-lg
+      href: mailto:<rafnuss@gmail.com>
+    - icon: fa-github fa-lg
+      href: https://github.com/Rafnuss/GeoPressureTemplate
+
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 2
+    code_folding: true

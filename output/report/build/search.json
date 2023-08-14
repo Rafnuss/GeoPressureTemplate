@@ -1,0 +1,13 @@
+{
+  "articles": [
+    {
+      "path": "index.html",
+      "title": "Template for GeoPressureR",
+      "description": "List of Reports\n",
+      "author": [],
+      "contents": "\nThis is an example of the reports generated based on the GeoPressureTemplate.\nYou can navigate from this page to all the report generated.\n\n\nShow code\n\n# List all the html file found on in the reports/html folder\nf <- list.files(path = \".\", patter = \"*.html\", recursive = TRUE)\n\nf_dirname <- lapply(f, dirname)\nf_basename <- lapply(f, basename)\n\nfor (i_f_dir in unique(f_dirname)) {\n  cat(paste(\"## \", tools::toTitleCase(stringr::str_replace_all(i_f_dir, \"_\", \" \"))))\n  cat(\"\\n\")\n  for (i_f in seq_len(length(f))) {\n    if (f_dirname[[i_f]] == i_f_dir) {\n      cat(paste(\"* <a href='\", f[[i_f]], \"'>\", sub(\"\\\\.html$\", \"\", f_basename[[i_f]]), \"<\/a>\"), sep = \"\\n\")\n    }\n  }\n  cat(\"\\n\")\n}\n\nBasic Trajectory\n 18LX \nTechnical Details\n 18LX \nWind Trajectory\n 18LX \n\n\n\n\n",
+      "last_modified": "2022-09-08T20:48:46-04:00"
+    }
+  ],
+  "collections": []
+}

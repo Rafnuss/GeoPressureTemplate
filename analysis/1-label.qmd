@@ -1,0 +1,192 @@
+---
+title: Tag Label
+format: html
+editor: visual
+---
+
+# Tag labelling
+
+This script will guide you through the tag labeling and creation of the pressure map
+
+::: callout-tip
+*Delete this block when you have read!*
+
+-   The script is meant to be adapted according to your needs, so feel free to delete or modify: you can still check [the original version online]().
+-   At the same time, keep this file general to all your tags.
+-   It is assume that you have followed the GeoPressureManual entirely. Make sure you have done that!
+-   In particular, the instruction on how to understand the output of this script and what do are provided in [the labeling instruction of the GeoPressureManual]().
+-   The script is not meant to be run with "Run all". Use the "play" button of each chunk to run the script line-by-line.
+-   Nothing is saved at the end of the script and it is meant to be like that. Only label file and config.yml should be edited. Use `geopressure.R` for the final run.
+:::
+
+```{r, setup}
+# Choose the id 
+id <- "18LX"
+
+# Set the directory to the project root
+# knitr::opts_knit$set(root.dir = "..")
+library(GeoPressureR)
+library(ggplot2)
+```
+
+## Edit `config.yml`
+
+::: callout-tip
+*Delete this block when you have read!*
+
+**Edit the the default config** according to your study: Use `default` for all parameters which are the same for *all* your tracks. Edit the yml chunk below with the parameters which are species specific so that you can copy-past it for each new track.
+:::
+
+``` yaml
+18LX:
+  id: "18LX"
+  crop_start: "2017-06-20"
+  crop_end: "2018-05-02"
+  known: !expr data.frame(stap_id = 1,
+                    known_lon = 17.05,
+                    known_lat = 48.9)
+  scientific_name: "Acrocephalus arundinaceus" # only if you have different species, otherwise add to default
+```
+
+Check that the config is correct
+
+```{r}
+stopifnot(id == config::get("id", config = id))
+```
+
+## Sensor data and crop date
+
+Check if the crop dates (in red) are correct.
+
+```{r}
+tag_no_crop <- tag_create(config::get("id", id))
+
+plot(tag_no_crop, type = "pressure", plot_plotly = F) +
+  geom_vline(
+    xintercept = c(as.POSIXct(config::get("crop_start", id)),
+                   as.POSIXct(config::get("crop_end", id))),
+    color = "red", lwd = 1
+  )
+```
+
+You might want to change `type` to check the values of the other sensors (acceleration or light)
+
+Create tag with crop date
+
+```{r tag_create}
+tag <- tag_create(config::get("id", id),
+  crop_start = config::get("crop_start", id),
+  crop_end = config::get("crop_end", id)
+)
+```
+
+::: callout-tip
+*Delete this block when you have read!*
+
+The parameters defined by config have been chosen for a standard project. Feel free to add and remove parameters according to your needs.
+
+For instance, if you are using Migrate Technology file, you might need to set `pressure_file` in the default config file.
+:::
+
+## Create label and edit on Trainset
+
+```{r}
+tag_label_write(tag)
+```
+
+Open `csv` and edit on <https://trainset.raphaelnussbaumer.com/>.
+
+## Check 1-2
+
+Read the label file and perform [check 1]().
+
+```{r tag_label}
+tag <- tag_label(tag)
+```
+
+::: callout-tip
+*Delete this block when you have read!*
+
+Edit and export label on trainset and simply run the same chunk until you're happy with it! This principle (edit your label file and re-run the same chunk) is valid through these interactive script. It's the main purpose of them, you can run different block of code together in order.
+:::
+
+Perform [check 2]()
+
+```{r}
+plot(tag, type = "pressure")
+```
+
+## Check 3-5: Compute `pressurepath`
+
+Compute pressure map on a coarse grid to perform check 3-5.
+
+```{r}
+tag <- tag_set_map(tag,
+                  extent = config::get("extent", id),
+                  scale = 1,
+                  known = config::get("known", id),
+                  include_min_duration = 24
+                  ) |> 
+  geopressure_map(max_sample = 50)
+```
+
+Compute `pressurepath`
+
+```{r}
+pressurepath <- pressurepath_create(tag)
+```
+
+Perform [check 3]()
+
+```{r}
+plot_pressurepath(pressurepath)
+```
+
+Perform [check 4]()
+
+```{r}
+plot_pressurepath(pressurepath, type = "hist")
+```
+
+Perform [check 5]()
+
+```{r, eval = F}
+geopressureviz(tag,
+  pressurepath = pressurepath,
+)
+```
+
+## Update of `tag` and `pressurepath`
+
+::: callout-tip
+*Delete this block when you have read!*
+
+You can use `tag_upate()` and `pressurepath_update()` every time you've edited and exported a new label label file from trainset. You might want to start from a new tag and pressurepath variable if you encounter any problem.
+:::
+
+```{r}
+tag <- tag_update(tag)
+pressurepath <- pressurepath_update(pressurepath, tag)
+```
+
+## Pressurepath on the most likely path
+
+::: callout-tip
+*Delete this block when you have read!*
+
+This section is only applicable after you've computed the pressurepath on the most likely path (see `geopressurer.R`).
+:::
+
+Check marginal map, most-likely path and
+
+```{r, eval = F}
+geopressureviz(id)
+```
+
+Run check 3-5
+
+```{r}
+load(glue("./data/interim/{id}.RData"))
+plot_pressurepath(pressurepath, type = "ts")
+plot_pressurepath(pressurepath, type = "hist")
+```
