@@ -2,134 +2,112 @@
 
 Analyzing geolocator data with pressure is full of potential, but the the path is long and the journey can be challenging. `GeoPressureTemplate` is a [Github repository template](https://docs.github.com/articles/creating-a-repository-from-a-template/) containing a start-up R project to make that journey easier.
 
-## What is this template and who is it for? :mag_right:
+## :mag_right: What is this template and who is it for? 
 
 `GeoPressureTemplate` aims to help researchers analyse their geolocator data with [`GeoPressureR`](https://raphaelnussbaumer.com/GeoPressureR/). It provides the backbone R code containing the folder structure and R script to store your data, analyse it and produce trajectory figures. 
 
-In essence, it contains the code from all the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual) packaged in `.R` files to make it easy for you to apply it to your own data. 
+In essence, it contains the code from all the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual) packaged in `.qmd` `.R` files to make it easy for you to apply it to your own data. 
 
-## What do you need to use this template? :computer:
+## :computer: What do you need to use this template? 
 
 - Geolocator data (called `tag`) containing at least pressure data, but optionally also light and acceleration data.
 - Have read the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual) (:warning: You should be familiar with the **full process involved** before starting with your own project)
-- Basic R experience (I'm using the [tidyverse](https://www.tidyverse.org/) syntax here).
-- A [Github account](https://github.com/signup).
 
 
-## Project structure :file_folder:
+## :file_folder: Project structure 
 
-Following the recommendations of [rrrpkg](https://github.com/ropensci/rrrpkg), the project contains:
-1. Standard description files at the root (`DESCRIPTION`, `.Rproj`, `README.md`, `LICENCES`,...).
-2. `data/` folder containing the raw geolocator data, the pressure and light labelled files and the data generated with the code from `analysis/`. Note that you could instead keep the geolocator and labelization files separately in a `raw-data/` folder, following `usethis()` standard.
-3. `analysis/` contains all the `.R` code used for your project.
-4. `report/` reads the data generated and produces sharable results (figures, html page, manuscript, etc...).
-<details>
-  <summary>See directory tree</summary>
+Following a mix of [rrrpkg](https://github.com/ropensci/rrrpkg#getting-started-with-a-research-compendium), [rrtools](https://github.com/benmarwick/rrtools#4-rrtoolsuse_analysis) and [cookiecutter data science](http://drivendata.github.io/cookiecutter-data-science/#directory-structure) the project contains: 
 
 ```
 GeoPressureTemplate
 ├── DESCRIPTION          		                # project metadata and dependencies
 ├── README.md            		                # top-level description of content and guide to users
 ├── GeoPressureTemplate.Rproj               # R project file
-├── data                                    # Folder structured by order of use
-│   ├── 0_tag                               # Folder with raw geolocator data grouped by gdl_id
+├── LICENCES.md                             # specify the conditions of use and reuse of the code, data & text
+├── data                                    
+│   ├── raw_tag                             # Raw geolocator data grouped by tag id
 │   │   ├── 18LX
 │   │   │   ├── 18LX_20180725.acceleration
 │   │   │   ├── 18LX_20180725.glf
-│   │   │   ├── 18LX_20180725.pressure 
-│   │   │   └── ...
-│   │   └── 22BT
-│   │       └── ...
-│   ├── 1_pressure                          # Data generated with analyis/1-pressure.R
-│   │   ├── 18LX_pressure_prob.Rdata
-│   │   └── labels
-│   │       ├── 18LX_act_pres-labeled.csv
-│   │       ├── 18LX_act_pres.csv
-│   │       └── ...                    
-│   ├── 2_light                             # Data generated with analyis/2-light.R
-│   │   ├── 18LX_light_prob.Rdata
-│   │   └── labels
-│   │       ├── 18LX_light-labeled.csv
-│   │       ├── 18LX_light.csv
-│   │       └── ...    
-│   ├── 3_static                            # Data generated with analyis/3-static.R
-│   │   ├── 18LX_static_prob.Rdata
-│   │   └── ...
-│   ├── 4_basic_graph                       # Data generated with analyis/3-basic_graph.R
-│   │   ├── 18LX_basic_graph.Rdata
-│   │   └── ...
-│   ├── 5_wind_graph
-│   │   └── ERA5_wind
-│   │       ├──
-│   │       └── ...
-│   └── gpr_settings.xlsx
+│   │   │   └── 18LX_20180725.pressure 
+│   ├── tag_label                         # labelization generated for and from TRAINSET
+│   │   ├── 18LX-labeled.csv
+│   │   └── 18LX.csv               
+│   ├── twilight_label                          # labelization generated for and from TRAINSET
+│   │   ├── 18LX-labeled.csv
+│   │   └── 18LX.csv
+│   └── wind                         # Data generated with analyis/3-static.R
+│       └── 18LX
+│           ├── 18LX_1.nc
+│           └── ...
 ├── analysis                                # R code used to analyse your data. Follow the order
-│   ├── 1-pressure.R
-│   ├── 2-light.R
-│   ├── 3-static.R
-│   ├── 4-basic-graph.R
-│   ├── 5-1-wind-graph_download.R
-│   ├── 5-2-wind-graph_create.R
-│   ├── 5-3-wind-graph_analyse.R
-│   └── 99-combined.R
-└── reports                                 # Generate HTML report to be shared (see below for details)
-│   ├── _basic_trajectory.Rmd
-│   ├── _site.yml
-│   ├── _technical_details.Rmd
-│   ├── basic_trajectory
-│   │   └── 18LX.html
-│   ├── technical_details
-│   │   └── 18LX.html
-│   ├── index.Rmd
-│   └── make_reports.R
-└── docs                                      # Folder where your reports will be served as a website on Github Page
-    └── ...
+│   ├── 1-label.qmd
+│   ├── 2-twilight.qmd
+│   ├── 3-wind.qmd
+│   ├── 4-geopressure.R
+│   └── 5-create_figures.R
+└── output                                 # Generate HTML report to be shared (see below for details)
+    ├── _basic_trajectory.Rmd
+    ├── _site.yml
+    ├── _technical_details.Rmd
+    ├── basic_trajectory
+    │   └── 18LX.html
+    ├── technical_details
+    │   └── 18LX.html
+    ├── index.Rmd
+    └── make_reports.R
 ```
-</details>
 
-## Where to start? :bulb:
+## :bulb: Where to start? 
 
-### Create your project 
+### :hammer_and_wrench: Create your project 
+
+**Option 1: with a github repository (recommended)**
+
+![image](https://github.com/Rafnuss/GeoPressureTemplate/assets/7571260/09e6f2a5-e49c-439c-88ef-b1a84da7eb57)
 
 - Create your project repo by clicking on "[Use this template](https://github.com/Rafnuss/GeoPressureTemplate/generate)" button on the Github page.
 - Choose a project name (`my_tracking_study_name`) specific to your research. Note that `my_tracking_study_name`  will become the name of your folder on your computer too. Add a description of your study.
 - Clone the repository on your computer
 - Done! :tada:
 
-### Make yourself at home :house:
+**Option 2: without a github repository**
 
-- Rename `GeoPressureTemplate.Rproj` to `my_tracking_study_name.Rproj`.
-- Open the R project file with RStudio. 
-- Edit the `DESCRIPTION` file (see https://r-pkgs.org/description.html for details).
+![image](https://github.com/Rafnuss/GeoPressureTemplate/assets/7571260/93e9f230-273d-4b45-acda-4a1e6443cf42)
+
+- Download the code as a zip by clicking on [Code and Download ZIP](https://github.com/Rafnuss/GeoPressureTemplate/archive/refs/heads/v3.zip)
+- Unzip and rename the folder name to your own project name.
+- Done! :tada:
+
+
+### :house: Make yourself at home 
+
+- Rename `GeoPressureTemplate.Rproj` to your study name (e.g., `my_tracking_study_name.Rproj`).
+- Edit the `DESCRIPTION` file (see <https://r-pkgs.org/description.html> for details).
 - Delete the content of `README.md` and start writing your research objectives, describing your basic data, method etc.
 - Install the dependencies needed with
-
 ```
 devtools::install()
 ```
+- Replace the content of `data/` with your tag data
+- Optionally, modify the `LICENCES.md` file (see <https://r-pkgs.org/license.html> for details).
 
-- Delete the content of `data/` (but keep the directory tree). Put your tag data in `data/0_tag/` in a folder with the `tag_id` code (e.g. `data/0_tag/18LX/`)
-
-
-## Start analysing the data :chart_with_upwards_trend:
+## :chart_with_upwards_trend: Analyse the data 
 
 Now that you are set-up, it's time to start the serious work. :grimacing: Follow the order of the `.R` code in the `analysis/` folder. They follow the same order as the GeoPressureManual (but with different numeration to be able to analyse multiple track at the same time).
 
-|  GeoPressureTemplate analysis |  GeoPressureManual  |
-|---|---|
-|  `1-pressure.R`  |  [1. Pressure map](https://raphaelnussbaumer.com/GeoPressureManual/pressure-map.html) |
-|  `2-light.R` |  [2. Light map](https://raphaelnussbaumer.com/GeoPressureManual/light-map.html) |
-|  `3-static.R` | [3. Static map](https://raphaelnussbaumer.com/GeoPressureManual/static-map.html)  |
-|  `4-basic-graph.R` |  [4. Basic graph](https://raphaelnussbaumer.com/GeoPressureManual/basic-graph.html) |
-|  `5-1-wind-graph_graph_downloadt.R` |  [5. Wind graph - Download wind data](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#download-wind-data) |
-|  `5-2-wind-graph_create.R` |  [5. Wind graph - Create graph](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#create-graph) |
-|  `5-3-wind-graph_analyse.R` |  [5. Wind graph - Outputs](https://raphaelnussbaumer.com/GeoPressureManual/wind-graph.html#compute-the-transition-probability-1) |
-|  `99-combined.R` |  Run all steps for multiple tracks. |
+### 1. Tag label
 
-In order to keep your code clean, we isolate all the key parameters used in all functions in the `gpr_setting.xlsx` spreadsheet located in the `data/` folder. You can adjust these parameters separately for each track or add any information on your individuals bird that might be useful for your analysis. 
+`1-label.qmd` 
 
-<details>
-  <summary>Click to see explanations on the parameters of <code>gpr_setting.xlsx</code></summary>
+https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html#four-steps-to-check-labelling
+
+
+### 2. Twilight label (optional)
+
+### 3. Wind (optional
+
+### 4. GeoPressure
   
 |parameter          |example/default          |description                                                                                                            |
 |-------------------|-------------------------|-----------------------------------------------------------------------------------------------------------------------|
@@ -167,7 +145,6 @@ In order to keep your code clean, we isolate all the key parameters used in all 
 |mass               |                         |see [`flight_bird()`](https://raphaelnussbaumer.com/GeoPressureR/reference/flight_bird.html)                           |
 |wing_span          |                         |see [`flight_bird()`](https://raphaelnussbaumer.com/GeoPressureR/reference/flight_bird.html)                           |
 
-</details>
 
 ## Generate Report :page_facing_up:
 
@@ -184,9 +161,11 @@ The main idea is to produce report templates (`_name_of_the_report_template.Rmd`
 6. Push your changes on Github and create your [Github Page](https://rstudio.github.io/distill/publish_website.html#github-pages).
 
 
-## Advanced options :link:
+## Publication
 
-- Generate your DOI with [Zenodo](https://docs.github.com/en/repositories/archiving-a-github-repository/referencing-and-citing-content) (e.g., https://zenodo.org/record/6720386)
+For peer-review publication, it is essential that the data and code are accessible to reviewer. Because inaccurate labeling can lead to wrong trajectory, we highly encourage you to publish your data and code on Zenodo. This is made very easy using this github repository and [this guide](https://docs.github.com/en/repositories/archiving-a-github-repository/referencing-and-citing-content). This process will generate a DOI for your data and code which can be used in your repository. Here is an ey (e.g., <https://zenodo.org/record/7471405>)
+
+
+## :link: Advanced options 
 - Generate a citation file with [`usethis::use_citation`](https://usethis.r-lib.org/reference/use_citation.html) and [`cffr`](https://github.com/ropensci/cffr).
 - Use [`renv`](https://rstudio.github.io/renv/index.html) to make your work reproducible.
-- Export your data on [Movebank](https://www.movebank.org/cms/movebank-content/import-custom-tabular-data).
