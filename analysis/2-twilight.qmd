@@ -21,11 +21,9 @@ This script walk you through the labeling of twilight and creation of the light 
 :::
 
 ```{r, setup}
-# Choose the id 
 id <- "18LX"
 
-# Set the directory to the project root
-knitr::opts_knit$set(root.dir = "..")
+knitr::opts_knit$set(root.dir = normalizePath(".."))
 library(GeoPressureR)
 library(ggplot2)
 library(glue)

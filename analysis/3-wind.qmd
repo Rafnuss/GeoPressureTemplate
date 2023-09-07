@@ -10,8 +10,7 @@ This script will help you download the wind data for a `tag` and define the move
 # Choose the id
 id <- "18LX"
 
-# Set the directory to the project root
-knitr::opts_knit$set(root.dir = "..")
+knitr::opts_knit$set(root.dir = normalizePath(".."))
 library(GeoPressureR)
 library(glue)
 library(job)

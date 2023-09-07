@@ -24,7 +24,10 @@ This script will guide you through the tag labeling and creation of the pressure
 id <- "18LX"
 
 # Set the directory to the project root
-# knitr::opts_knit$set(root.dir = "..")
+# see Working directory bullet point in https://bookdown.org/yihui/rmarkdown/notebook.html#executing-code
+knitr::opts_knit$set(root.dir = normalizePath(".."))
+# Alternatively, you can change the global RStudio settings in menu "Tools/Global Options...", on the "R Markdown" panel, choose "Project" for "Evaluate chunks in directory:"
+
 library(GeoPressureR)
 library(ggplot2)
 ```
