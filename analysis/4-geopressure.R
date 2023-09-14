@@ -15,20 +15,24 @@ for (id in list_id) {
   tag <- tag_create(
     id = config::get("id", id),
     crop_start = config::get("crop_start", id),
-    crop_end = config::get("crop_end", id)
+    crop_end = config::get("crop_end", id),
+    quiet = TRUE
   ) |>
-    tag_label() |>
+    tag_label(quiet = TRUE) |>
     tag_set_map(
       extent = config::get("extent", id),
       scale = config::get("scale", id),
-      known = config::get("known", id)
+      known = config::get("known", id),
+      include_min_duration =  config::get("include_min_duration", id)
     )
 
   # Compute the pressure map
   tag <- geopressure_map(
     tag,
-    thr_likelihood = config::get("thr_likelihood", id),
-    thr_gs = config::get("thr_gs", id)
+    max_sample = config::get("max_sample", id),
+    margin = config::get("sd", id),
+    sd = config::get("margin", id),
+    thr_mask = config::get("thr_mask", id)
   )
 
   # If you have light data
@@ -40,7 +44,9 @@ for (id in list_id) {
   }
 
   # Create the graph
-  graph <- graph_create(tag)
+  graph <- graph_create(tag,
+                        thr_likelihood = config::get("thr_likelihood", id),
+                        thr_gs = config::get("thr_gs", id))
 
   # Define movement model
   if (config::get("movement_type", id) == "as") {
@@ -54,7 +60,6 @@ for (id in list_id) {
     graph <- graph_set_movement(
       graph,
       bird = bird_create(config::get("scientific_name", id)),
-      power2prob = config::get("movement_low_speed_fix", id),
       low_speed_fix = config::get("movement_low_speed_fix", id)
     )
   } else {

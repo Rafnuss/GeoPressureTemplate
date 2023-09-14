@@ -11,13 +11,9 @@ This script walk you through the labeling of twilight and creation of the light 
 
 **If you don't have light data, delete this file!**
 
--   The script is meant to be adapted according to your needs, so feel free to delete or modify: you can still check [the original version online]().
--   At the same time, keep this file general to all your tags.
--   It is assume that you have followed the GeoPressureManual entirely. Make sure you have done that!
--   In particular, the instruction on how to understand the output of this script and what do are provided in [the labeling instruction of the GeoPressureManual]().
--   The script is not meant to be run with "Run all". Use the "play" button of each chunk to run the script line-by-line.
--   Nothing is saved at the end of the script and it is meant to be like that. Only label file and config.yml should be edited. Use `geopressure.R` for the final run.
-
+-  These scripts should be adapted based on your project, but the same script should run for all your tags. You can always check [the original version online](https://github.com/Rafnuss/GeoPressureTemplate/blob/main/analysis/1-label.qmd).
+-   Make sure you've read the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual), in particular the [twilight labelling instructions](https://raphaelnussbaumer.com/GeoPressureManual/light-map.html#manual-labelling-of-twilight), before running this script
+-   Nothing is saved at the end of the script and it is meant to be like that. Only twilight label file and config.yml should be edited. Use `geopressure.R` for the final run.
 :::
 
 ```{r, setup}
@@ -31,26 +27,20 @@ library(glue)
 
 ## Create tag
 
-Start from an existing `tag`
+Make sure you have already created the label file with the "1-label.qmd" script. 
 
 ```{r}
-load(glue("./data/interim/{id}.RData"))
-```
-
-or generate from a new ones
-
-```{r, eval=F}
-tag <- tag_create(config::get("id", id),
+tag <- tag_create(
+  id = config::get("id", id),
   crop_start = config::get("crop_start", id),
   crop_end = config::get("crop_end", id)
 ) |>
-  tag_label() |>
+  tag_label(quiet = TRUE) |>
   tag_set_map(
     extent = config::get("extent", id),
     scale = config::get("scale", id),
     known = config::get("known", id)
   )
-
 ```
 
 ## Create Twilight
@@ -62,7 +52,6 @@ tag <- twilight_create(
   tag,
   twl_offset = config::get("twl_offset", id)
 )
-
 plot(tag, type = "twilight")
 ```
 
@@ -71,6 +60,8 @@ plot(tag, type = "twilight")
 ```{r}
 twilight_label_write(tag)
 ```
+
+Open `csv` on <https://trainset.raphaelnussbaumer.com/>.
 
 Read and check the twilight annotation
 
@@ -106,6 +97,6 @@ plot(tag, type = "map_light")
 
 ### Check with pressure and trajectory
 
-```{r, eval=F}
+```{r}
 geopressureviz(tag)
 ```

@@ -4,38 +4,52 @@ format: html
 editor: visual
 ---
 
-This script will help you download the wind data for a `tag` and define the movement model
+This script will help you download the wind data for a `tag` and define the movement model.
+
+::: callout-tip
+*Delete this block when you have read!*
+
+-   These scripts should be adapted based on your project, but the same script should run for all your tags. You can always check [the original version online](https://github.com/Rafnuss/GeoPressureTemplate/blob/main/analysis/1-label.qmd).
+-   Make sure you've read the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual), in particular the [instructions on wind data](https://raphaelnussbaumer.com/GeoPressureManual/trajectory-with-wind.html#download-wind-data), before running this script
+-   Nothing is saved at the end of the script and it is meant to be like that. Only wind file and config.yml should be edited. Use `geopressure.R` for the final run.
+:::
 
 ```{r, setup}
-# Choose the id
 id <- "18LX"
 
 knitr::opts_knit$set(root.dir = normalizePath(".."))
 library(GeoPressureR)
-library(glue)
 library(job)
 ```
 
-## Load tag
+::: callout-tip
+*Delete this block when you have read!*
+## Set Copernicus credentials
 
-Start from an existing `tag`
+If you don't yet have one, create a Copernicus account at <https://cds.climate.copernicus.eu/user/15631/edit> and retrieve your API key and UID number
 
 ```{r}
-load(glue("./data/interim/{id}.RData"))
-```
-
-## Set-up copernicus credential
-
-If you don't have one, create account at <https://cds.climate.copernicus.eu/user/15631/edit> and retrieve your API key and UID number
-
-```{r, eval = F}
 Sys.setenv(cds_key = "Insert_your_CDS_API_KEY_here")
 Sys.setenv(cds_user = "Insert_your_CDS_UID_here")
+```
+:::
+
+## Create tag
+
+Make sure you have already created the label file with the "1-label.qmd" script.
+
+```{r, eval=F}
+tag <- tag_create(
+  id = config::get("id", id),
+  crop_start = config::get("crop_start", id),
+  crop_end = config::get("crop_end", id)
+) |>
+  tag_label(quiet = TRUE)
 ```
 
 ## Download wind data
 
-```{r, eval=F}
+```{r}
 job({
   tag_download_wind(tag)
 })
@@ -47,9 +61,7 @@ Check requests at <https://cds.climate.copernicus.eu/cdsapp#!/yourrequests>
 
 ### Add wind data
 
-If you haven't computed a graph yet
-
-```{r, eval = F}
+```{r}
 graph <- graph_create(
   tag,
   thr_likelihood = config::get("thr_likelihood", id),

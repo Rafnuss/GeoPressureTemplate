@@ -20,7 +20,6 @@ Imports:
     plotly,
     rmarkdown,
     distill
-    yaml,
 Remotes: 
     rafnuss/GeoPressureR
 VignetteBuilder: 
