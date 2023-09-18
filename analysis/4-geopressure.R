@@ -66,7 +66,7 @@ for (id in list_id) {
     # without windspeed
     graph <- graph_set_movement(
       graph,
-      method = bird_create(config::get("method", id)),
+      method = config::get("method", id),
       shape = config::get("movement_shape", id),
       scale = config::get("movement_scale", id),
       location = config::get("movement_location", id),
