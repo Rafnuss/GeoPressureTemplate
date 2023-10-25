@@ -6,8 +6,10 @@
 library(GeoPressureR)
 
 # Define tag id that you want to compute
-list_id <- tail(names(yaml::yaml.load_file("config.yml", eval.expr = FALSE)), -1)
-# list_id <- c("18LX", "")
+# id <- "18LX" # Run a single tag
+# list_id <- c("18LX", "") # run specific tags
+list_id <- tail(names(yaml::yaml.load_file("config.yml", eval.expr = FALSE)), -1) # run all tag
+
 
 for (id in list_id) {
 
@@ -38,7 +40,8 @@ for (id in list_id) {
   # If you have light data
   # *Feel free to simply delete these lines*
   if ("light" %in% names(tag)) {
-    tag <- twilight_create(tag) |>
+    tag <- twilight_create(tag,
+                           twl_offset = config::get("twl_offset", id)) |>
       twilight_label_read() |>
       geolight_map()
   }
@@ -66,10 +69,6 @@ for (id in list_id) {
     # without windspeed
     graph <- graph_set_movement(
       graph,
-      method = config::get("method", id),
-      shape = config::get("movement_shape", id),
-      scale = config::get("movement_scale", id),
-      location = config::get("movement_location", id),
       low_speed_fix = config::get("movement_low_speed_fix", id)
     )
   }
@@ -81,7 +80,7 @@ for (id in list_id) {
 
   # Computing the pressurepath on the most likely path is very useful for checkling labeling, and
   # estimating the altitude of your bird.
-  # pressurepath <- pressurepath_create(path_most_likely)
+  # pressurepath <- pressurepath_create(tag, path_most_likely)
 
   edge_simulation <- path2edge(path_simulation, graph)
   edge_most_likely <- path2edge(path_most_likely, graph)
@@ -96,6 +95,6 @@ for (id in list_id) {
     edge_simulation,
     edge_most_likely,
     # pressurepath,
-    file = glue("./data/interim/{id}.RData")
+    file = glue::glue("./data/interim/{id}.RData")
   )
 }
