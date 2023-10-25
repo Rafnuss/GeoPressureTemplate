@@ -30,8 +30,8 @@ for (id in list_id) {
   tag <- geopressure_map(
     tag,
     max_sample = config::get("max_sample", id),
-    margin = config::get("sd", id),
-    sd = config::get("margin", id),
+    margin = config::get("margin", id),
+    sd = config::get("sd", id),
     thr_mask = config::get("thr_mask", id)
   )
 
