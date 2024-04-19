@@ -42,9 +42,16 @@ Make sure you have already created the label file with the "1-label.qmd" script.
 tag <- tag_create(
   id = config::get("id", id),
   crop_start = config::get("crop_start", id),
-  crop_end = config::get("crop_end", id)
+  crop_end = config::get("crop_end", id),
+  quiet = TRUE
 ) |>
-  tag_label(quiet = TRUE)
+  tag_label(quiet = TRUE) |>
+  tag_set_map(
+      extent = config::get("extent", id),
+      scale = config::get("scale", id),
+      known = config::get("known", id),
+      include_min_duration =  config::get("include_min_duration", id)
+    )
 ```
 
 ## Download wind data
