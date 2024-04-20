@@ -19,7 +19,7 @@ default:
   include_min_duration: 0 # in hours
   #-- GEOPRESSURE ?geopressure_map()
   max_sample: 250
-  margin: 20 # in hPa
+  margin: 20 # in m
   sd: 1
   thr_mask: 0.9
   # log_linear_pooling_weight:
