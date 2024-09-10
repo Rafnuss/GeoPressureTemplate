@@ -1,7 +1,7 @@
 ---
 title: Tag Label
-format: html
-editor: visual
+editor: source
+description: https://raphaelnussbaumer.com/GeoPressureManual/geopressuretemplate-label.html
 ---
 
 This script will guide you through the tag labelling of pressure and/or acceleration data and creation of the pressure map.
@@ -11,20 +11,21 @@ This script will guide you through the tag labelling of pressure and/or accelera
 
 -   These scripts should be adapted based on your project, but the same script should run for all your tags. You can always check [the original version online](https://github.com/Rafnuss/GeoPressureTemplate/blob/main/analysis/1-label.qmd).
 -   Make sure you've read the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual), in particular the [labelling instructions](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html), before running this script
--   Nothing is saved at the end of the script and it is meant to be like that. Only tag label file and config.yml should be edited. Use `geopressure.R` for the final run.
+-   Nothing is saved at the end of the script and it is meant to be like that. The goal in this script is to (1) create the tag labels (`./data/tag-label/`) and (2) adapt `config.yml`.
 :::
 
-```{r, setup}
+```{r setup, message=FALSE}
 # Choose the id
 id <- "18LX"
 
 # Set the directory to the project root
 # see Working directory bullet point in https://bookdown.org/yihui/rmarkdown/notebook.html#executing-code
-knitr::opts_knit$set(root.dir = normalizePath(".."))
+knitr::opts_knit$set(root.dir = here::here())
 # Alternatively, you can change the global RStudio settings in menu "Tools/Global Options...", on the "R Markdown" panel, choose "Project" for "Evaluate chunks in directory:"
 
 library(GeoPressureR)
 library(ggplot2)
+library(plotly)
 ```
 
 ## Edit `config.yml`
@@ -34,52 +35,62 @@ library(ggplot2)
 
 Edit the default config according to your study: Use `default` for all parameters which are the same for *all* your tracks and add any parameter that is tag specific.
 
-To define specific parameters, create a new section with the tag name, e.g.,
+`config.yml` is structured in the following level as defined by the indentation and `:`
+
+``` yaml
+tag_id:
+  function_name:
+    arguments: value
+```
+
+Note that the values are written in json format (and not `R`), so for a vector/array you need to use `[, ]` and for an array of objects (named lists), you need to use `-` and indentation. Here is an exemple:
 
 ``` yaml
 18LX:
-  id: "18LX"
-  crop_start: "2017-06-20"
-  crop_end: "2018-05-02"
-  known: !expr data.frame(stap_id = 1,
-                    known_lon = 17.05,
-                    known_lat = 48.9)
-  scientific_name: "Acrocephalus arundinaceus" # only if you have different species, otherwise add to default
+  tag_set_map:
+    extent: [-16, 23, 0, 50]
+    known: 
+      - stap_id: 1
+        known_lon: 7.05
+        known_lat: 48.9
+  bird:
+    species_name: "Acrocephalus arundinaceus" # only if you have different species, otherwise add to default
 ```
 :::
 
 Check that the config is correct.
 
 ```{r}
-getwd()
-stopifnot(id == config::get("id", config = id))
+str(config::get(config = id))
 ```
 
 ## Sensor data and crop date
 
 Check if the crop dates (in red) are correct.
 
-```{r}
-tag_no_crop <- tag_create(config::get("id", id))
-
-plot(tag_no_crop, type = "pressure", plot_plotly = F) +
-  geom_vline(
-    xintercept = c(
-      as.POSIXct(config::get("crop_start", id)),
-      as.POSIXct(config::get("crop_end", id))
-    ),
-    color = "red", lwd = 1
-  )
+```{r crop_date}
+ggplotly(
+  tag_create(id, quiet = TRUE) |>
+    plot(type = "pressure", plot_plotly = FALSE) +
+    geom_vline(
+      xintercept = as.numeric(c(
+        as.POSIXct(config::get("tag_create", id)$crop_start),
+        as.POSIXct(config::get("tag_create", id)$crop_end)
+      )),
+      color = "red", lwd = 1
+    )
+)
 ```
 
-You might want to change `type` to check the values of the other sensors (acceleration or light).
+You might want to change `type` to check the values of the other sensors (e.g., `acceleration` or `light`).
 
-Create tag with crop date
+Create tag with cropped date
 
 ```{r tag_create}
-tag <- tag_create(config::get("id", id),
-  crop_start = config::get("crop_start", id),
-  crop_end = config::get("crop_end", id)
+tag <- tag_create(
+  id,
+  crop_start = config::get("tag_create", id)$crop_start,
+  crop_end = config::get("tag_create", id)$crop_end
 )
 ```
 
@@ -115,17 +126,17 @@ plot(tag, type = "pressure")
 
 Compute pressure map on a coarse grid to perform checks 3-5.
 
-```{r}
+```{r, cache = TRUE}
 tag <- tag_set_map(tag,
-  extent = config::get("extent", id),
+  extent = config::get("tag_set_map", id)$extent,
   scale = 1,
-  known = config::get("known", id),
+  known = config::get("tag_set_map", id)$known,
   include_min_duration = 24
 ) |>
-  geopressure_map(max_sample = 50)
+  geopressure_map()
 ```
 
-```{r}
+```{r, cache = TRUE}
 pressurepath <- pressurepath_create(tag)
 ```
 
@@ -138,12 +149,12 @@ plot_pressurepath(pressurepath)
 **Check 4**
 
 ```{r}
-plot_pressurepath(pressurepath, type = "hist")
+plot_pressurepath(pressurepath, type = "histogram")
 ```
 
 ## Run [GeoPressureViz checks](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html#geopressureviz-checks)
 
-```{r}
+```{r, eval = FALSE}
 geopressureviz(
   tag,
   # path = pressurepath,
@@ -160,10 +171,10 @@ geopressureviz(
 You can use `tag_upate()` and `pressurepath_update()` every time you edit and export a new label file from Trainset. You might want to start from a new tag and pressurepath variable if you encounter any problem.
 :::
 
-```{r}
+```{r, eval = FALSE}
 tag <- tag_update(tag)
 ```
 
-```{r}
+```{r, eval = FALSE}
 pressurepath <- pressurepath_update(pressurepath, tag)
 ```

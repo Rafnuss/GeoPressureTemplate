@@ -1,45 +1,42 @@
 ---
 title: Twilight Label
-format: html
-editor: visual
+editor: source
+description: https://raphaelnussbaumer.com/GeoPressureManual/geopressuretemplate-twilight.html
 ---
-
-This script walk you through the labeling of twilight and creation of the light map.
 
 ::: callout-tip
 *Delete this block when you have read!*
 
 **If you don't have light data, delete this file!**
 
--  These scripts should be adapted based on your project, but the same script should run for all your tags. You can always check [the original version online](https://github.com/Rafnuss/GeoPressureTemplate/blob/main/analysis/1-label.qmd).
+-   These scripts should be adapted based on your project, but the same script should run for all your tags. You can always check [the original version online](https://github.com/Rafnuss/GeoPressureTemplate/blob/main/analysis/1-label.qmd).
 -   Make sure you've read the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual), in particular the [twilight labelling instructions](https://raphaelnussbaumer.com/GeoPressureManual/light-map.html#manual-labelling-of-twilight), before running this script
 -   Nothing is saved at the end of the script and it is meant to be like that. Only twilight label file and config.yml should be edited. Use `geopressure.R` for the final run.
 :::
 
-```{r, setup}
+```{r setup}
 id <- "18LX"
 
-knitr::opts_knit$set(root.dir = normalizePath(".."))
+knitr::opts_knit$set(root.dir = here::here())
 library(GeoPressureR)
 library(ggplot2)
-library(glue)
 ```
 
 ## Create tag
 
-Make sure you have already created the label file with the "1-label.qmd" script. 
+Make sure you have already created the label file with the "1-label.qmd" script.
 
 ```{r}
 tag <- tag_create(
-  id = config::get("id", id),
-  crop_start = config::get("crop_start", id),
-  crop_end = config::get("crop_end", id)
+  id,
+  crop_start = config::get("tag_create", id)$crop_start,
+  crop_end = config::get("tag_create", id)$crop_end
 ) |>
   tag_label(quiet = TRUE) |>
   tag_set_map(
-    extent = config::get("extent", id),
-    scale = config::get("scale", id),
-    known = config::get("known", id)
+    extent = config::get("tag_set_map", id)$extent,
+    scale = config::get("tag_set_map", id)$scale,
+    known = config::get("tag_set_map", id)$known
   )
 ```
 
@@ -50,7 +47,7 @@ Generate the twilight automatically. Check that `twl_offset` allows for night/da
 ```{r}
 tag <- twilight_create(
   tag,
-  twl_offset = config::get("twl_offset", id)
+  twl_offset = config::get("twilight_create", id)$twl_offset
 )
 plot(tag, type = "twilight")
 ```
@@ -72,7 +69,7 @@ plot(tag, type = "twilight")
 
 ## Compute likelihood map
 
-```{r}
+```{r, cache = TRUE}
 tag <- geolight_map(tag)
 ```
 
@@ -83,10 +80,10 @@ tag <- geolight_map(tag)
 ### Check calibration
 
 ```{r}
-barW <- median(diff(tag$param$twl_calib$x)) / 2
-plot(tag$param$twl_calib)
-rect(xleft = tag$param$twl_calib$x - barW, ybottom = 0, xright = tag$param$twl_calib$x + barW, ytop = tag$param$twl_calib$y, col = gray(0.5))
-lines(tag$param$twl_calib, col = "red")
+barW <- median(diff(tag$param$geolight_map$twl_calib$x)) / 2
+plot(tag$param$geolight_map$twl_calib, xlim = c(85, 100))
+rect(xleft = tag$param$geolight_map$twl_calib$x - barW, ybottom = 0, xright = tag$param$geolight_map$twl_calib$x + barW, ytop = tag$param$geolight_map$twl_calib$y, col = gray(0.5))
+lines(tag$param$geolight_map$twl_calib, col = "red")
 ```
 
 ### Check light map
@@ -97,6 +94,6 @@ plot(tag, type = "map_light")
 
 ### Check with pressure and trajectory
 
-```{r}
+```{r, eval = FALSE}
 geopressureviz(tag)
 ```
