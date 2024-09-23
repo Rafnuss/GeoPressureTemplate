@@ -1,0 +1,167 @@
+---
+title: Tag Label (Advanced)
+editor: source
+---
+
+This script is meant to be used by familiar users of GeoPressureTemplate. For new user, please use `1-label.qmd` . The script actually covers both `1-label.qmd` and `2-twilight.qmd` .
+
+```{r setup}
+knitr::opts_knit$set(root.dir = normalizePath(".."))
+library(GeoPressureR)
+library(ggplot2)
+library(plotly)
+
+id <- "18LX"
+```
+
+## Sensor data and crop date
+
+```{r crop_date}
+ggplotly(
+  tag_create(id, quiet = TRUE) |>
+    plot(type = "pressure", plot_plotly = FALSE) +
+    geom_vline(
+      xintercept = as.numeric(c(
+        as.POSIXct(config::get("tag_create", id)$crop_start),
+        as.POSIXct(config::get("tag_create", id)$crop_end)
+      )),
+      color = "red", lwd = 1
+    )
+)
+```
+
+Create the tag
+
+```{r}
+tag <- tag_create(
+  id,
+  crop_start = config::get("tag_create", id)$crop_start,
+  crop_end = config::get("tag_create", id)$crop_end
+)
+```
+
+## Label tag
+
+```{r write_label}
+tag_label_write(tag)
+```
+
+Edit on https://trainset.raphaelnussbaumer.com/
+
+```{r read_label}
+tag <- tag_label(tag)
+```
+
+Plot pressure timeseries
+
+```{r}
+plot(tag, type = "pressure")
+```
+
+## Compute pressure map
+
+```{r pressure_map}
+tag <- tag_set_map(tag,
+  extent = config::get("tag_set_map", id)$extent,
+  scale = config::get("tag_set_map", id)$scale,
+  known = config::get("tag_set_map", id)$known,
+  include_stap_id = config::get("tag_set_map", id)$include_stap_id,
+  include_min_duration = config::get("tag_set_map", id)$include_min_duration
+) |>
+  geopressure_map(
+    max_sample = config::get("geopressure_map", id)$max_sample,
+    margin = config::get("geopressure_map", id)$margin,
+    sd = config::get("geopressure_map", id)$sd,
+    thr_mask = config::get("geopressure_map", id)$thr_mask,
+    log_linear_pooling_weight = config::get("geopressure_map", id)$log_linear_pooling_weight
+  )
+```
+
+## Geopressureviz
+
+Directly plot the likelihood map and draw the path. Query the pressure only for the stap that need to be checked.
+
+```{r}
+geopressureviz(
+  tag,
+  path = tag2path(tag, interp = 1) # interpolate positions of stap lasting < 1 day.
+  # path = pressurepath # Use this once computed (see below)
+)
+```
+
+## Twilight
+
+Adjust `twl_offset`.
+
+```{r}
+tag <- twilight_create(
+  tag,
+  twl_offset = config::get("twilight_create", id)$twl_offset
+)
+plot(tag, type = "twilight")
+```
+
+Write label
+
+```{r}
+twilight_label_write(tag)
+```
+
+Edit on https://trainset.raphaelnussbaumer.com/.
+
+Check labelled twilights together with the expected twilight lines from the path drawn on geopressureviz
+
+```{r twilight_read}
+tag <- twilight_label_read(tag)
+plot(tag,
+  type = "twilight",
+  twilight_line = path2twilight(tag2path(tag, interp=2)),
+  plot_plotly=T
+)
+```
+
+Compute light map
+
+```{r light_map}
+tag <- geolight_map(
+  tag,
+  twl_calib_adjust = config::get("geolight_map", id)$twl_calib_adjust,
+  twl_llp = config::get("geolight_map", id)$twl_llp
+)
+```
+
+```{r}
+barW <- median(diff(tag$param$geolight_map$twl_calib$x)) / 2
+plot(tag$param$geolight_map$twl_calib, xlim = c(85, 100))
+rect(xleft = tag$param$geolight_map$twl_calib$x - barW, ybottom = 0, xright = tag$param$geolight_map$twl_calib$x + barW, ytop = tag$param$geolight_map$twl_calib$y, col = gray(0.5))
+lines(tag$param$geolight_map$twl_calib, col = "red")
+```
+
+Refine the path and label based on pressure and light combined.
+
+```{r}
+geopressureviz(
+  tag,
+  path = path_geopressureviz # start from the existing drawn path
+)
+```
+
+
+## Compute pressurepath
+
+Final check with the time-consuming `pressurepath`
+
+```{r pressurepath}
+pressurepath <- pressurepath_create(
+  tag,
+  path = path_geopressureviz
+)
+```
+
+Plot
+
+```{r}
+plot_pressurepath(pressurepath)
+plot_pressurepath(pressurepath, type = "histogram")
+plot_pressurepath(pressurepath, type = "altitude")
+```

@@ -1,4 +1,4 @@
-Package: GeoPressureTemplate
+Package: YourProjectName
 Title: These are the Goal of my Study (One Line, Title Case)
 URL: https://github.com/Rafnuss/GeoPressureTemplate
 Description: More detailed description of my research objective with my dataset available (one paragraph).
@@ -6,7 +6,7 @@ Authors@R:
     person("Raphaël", "Nussbaumer", , "rafnuss@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8185-1020"))
 License: CC BY 4.0
-Version: 1.0.0.1
+Version: 1.1
 Depends: 
     R (>= 3.5.0)
 Imports: 
@@ -14,16 +14,12 @@ Imports:
     ggplot2,
     config,
     knitr,
-    leaflet,
-    leaflet.extras,
-    leaflet.providers,
     plotly,
-    rmarkdown,
-    distill
+    rmarkdown
 Remotes: 
     rafnuss/GeoPressureR
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.2
