@@ -35,8 +35,8 @@ Create the tag
 ```{r}
 tag <- tag_create(
   id,
-  crop_start = config::get("crop_start", id),
-  crop_end = config::get("crop_end", id)
+  crop_start = config::get("tag_create", id)$crop_start,
+  crop_end = config::get("tag_create", id)$crop_end
 )
 ```
 
@@ -46,7 +46,7 @@ tag <- tag_create(
 tag_label_write(tag)
 ```
 
-Edit on [https://trainset.raphaelnussbaumer.com/].
+Edit on https://trainset.raphaelnussbaumer.com/
 
 ```{r read_label}
 tag <- tag_label(tag)
@@ -62,18 +62,18 @@ plot(tag, type = "pressure")
 
 ```{r pressure_map}
 tag <- tag_set_map(tag,
-  extent = config::get("extent", id),
-  scale = config::get("scale", id),
-  known = config::get("known", id),
-  include_stap_id = config::get("include_stap_id", id),
-  include_min_duration = config::get("include_min_duration", id)
+  extent = config::get("tag_set_map", id)$extent,
+  scale = config::get("tag_set_map", id)$scale,
+  known = config::get("tag_set_map", id)$known,
+  include_stap_id = config::get("tag_set_map", id)$include_stap_id,
+  include_min_duration = config::get("tag_set_map", id)$include_min_duration
 ) |>
   geopressure_map(
-    max_sample = config::get("max_sample", id),
-    margin = config::get("margin", id),
-    sd = config::get("sd", id),
-    thr_mask = config::get("thr_mask", id),
-    log_linear_pooling_weight = config::get("log_linear_pooling_weight", id)
+    max_sample = config::get("geopressure_map", id)$max_sample,
+    margin = config::get("geopressure_map", id)$margin,
+    sd = config::get("geopressure_map", id)$sd,
+    thr_mask = config::get("geopressure_map", id)$thr_mask,
+    log_linear_pooling_weight = config::get("geopressure_map", id)$log_linear_pooling_weight
   )
 ```
 
@@ -96,7 +96,7 @@ Adjust `twl_offset`.
 ```{r}
 tag <- twilight_create(
   tag,
-  twl_offset = config::get("twl_offset", id)
+  twl_offset = config::get("twilight_create", id)$twl_offset
 )
 plot(tag, type = "twilight")
 ```
@@ -107,7 +107,7 @@ Write label
 twilight_label_write(tag)
 ```
 
-Edit on [https://trainset.raphaelnussbaumer.com/].
+Edit on https://trainset.raphaelnussbaumer.com/.
 
 Check labelled twilights together with the expected twilight lines from the path drawn on geopressureviz
 
@@ -115,7 +115,8 @@ Check labelled twilights together with the expected twilight lines from the path
 tag <- twilight_label_read(tag)
 plot(tag,
   type = "twilight",
-  twilight_line = path2twilight(geopressureviz_path)
+  twilight_line = path2twilight(tag2path(tag, interp=2)),
+  plot_plotly=T
 )
 ```
 
@@ -124,9 +125,16 @@ Compute light map
 ```{r light_map}
 tag <- geolight_map(
   tag,
-  twl_calib_adjust = config::get("twl_calib_adjust", id),
-  twl_llp = config::get("twl_llp", id)
+  twl_calib_adjust = config::get("geolight_map", id)$twl_calib_adjust,
+  twl_llp = config::get("geolight_map", id)$twl_llp
 )
+```
+
+```{r}
+barW <- median(diff(tag$param$geolight_map$twl_calib$x)) / 2
+plot(tag$param$geolight_map$twl_calib, xlim = c(85, 100))
+rect(xleft = tag$param$geolight_map$twl_calib$x - barW, ybottom = 0, xright = tag$param$geolight_map$twl_calib$x + barW, ytop = tag$param$geolight_map$twl_calib$y, col = gray(0.5))
+lines(tag$param$geolight_map$twl_calib, col = "red")
 ```
 
 Refine the path and label based on pressure and light combined.
@@ -134,7 +142,7 @@ Refine the path and label based on pressure and light combined.
 ```{r}
 geopressureviz(
   tag,
-  path = geopressureviz_path # start from the existing drawn path
+  path = path_geopressureviz # start from the existing drawn path
 )
 ```
 
@@ -146,7 +154,7 @@ Final check with the time-consuming `pressurepath`
 ```{r pressurepath}
 pressurepath <- pressurepath_create(
   tag,
-  path = geopressureviz_path
+  path = path_geopressureviz
 )
 ```
 

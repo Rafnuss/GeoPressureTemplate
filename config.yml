@@ -62,13 +62,14 @@ default:
     crop_end: "2018-05-02"
   tag_set_map:
     known:
-      - stap_id: [1, -1] # -1 -> last stap
-        known_lon: 17.05
-        known_lat: 48.9
-  bird:
-    species_name: "Acrocephalus arundinaceus"
+      stap_id: [1, -1] # -1 -> last stap
+      known_lon: 17.05
+      known_lat: 48.9
+  bird_create:
+    scientific_name: "Acrocephalus arundinaceus"
   graph_set_movement:
     type: "as"
+
 
 
 CB619:
