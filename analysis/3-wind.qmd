@@ -41,23 +41,7 @@ cds_token =  "{Personal Access Token}"
 Make sure you have already created the label file with the "1-label.qmd" script.
 
 ```{r, cache = TRUE, message=FALSE}
-tag <- tag_create(
-  id,
-  crop_start = config::get("tag_create", id)$crop_start,
-  crop_end = config::get("tag_create", id)$crop_end,
-  quiet = TRUE
-) |>
-  tag_label(quiet = TRUE) |>
-  tag_set_map(
-    extent = config::get("tag_set_map", id)$extent,
-    scale = config::get("tag_set_map", id)$scale,
-    known = config::get("tag_set_map", id)$known,
-    include_min_duration = config::get("tag_set_map", id)$include_min_duration
-  ) |>
-  geopressure_map() |>
-  twilight_create() |>
-  twilight_label_read() |>
-  geolight_map()
+tag <- geopressuretemplate_tag(id, quiet=F)
 ```
 
 ## Download wind data
@@ -98,7 +82,7 @@ Check that the movement model defined in `config.yml` is adequate.
 
 ```{r}
 graph <- graph_set_movement(graph,
-  bird = bird_create(config::get("bird", id)$species_name)
+  bird = bird_create(config::get("bird_create", id)$species_name)
 )
 ```
 
