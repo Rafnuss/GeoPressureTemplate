@@ -27,9 +27,9 @@ library(job)
 ::: callout-tip
 *Delete this block when you have read!* 
 
-If you don't yet have one, create a Copernicus account at <https://cds.climate.copernicus.eu/user/15631/edit> and retrieve your API key and UID number.
+If you don't yet have one, create a ECMWF account at <https://www.ecmwf.int/> and retrieve your personal access token.
 
-Once created, you can retrieve your API key on https://cds.climate.copernicus.eu/user/ and save them in your environment file (i.e., `.Renviron`). You can open this file with `usethis::edit_r_environ()` and add:
+Once created, you can retrieve your Personal Access Token on <https://cds.climate.copernicus.eu/profile> and save them in your environment file (i.e., `.Renviron`). You can open this file with `usethis::edit_r_environ()` and add:
 
 ```bash
 cds_token =  "{Personal Access Token}"
@@ -70,7 +70,7 @@ job({
 })
 ```
 
-Check requests at <https://cds.climate.copernicus.eu/cdsapp#!/yourrequests>
+Check requests at <https://cds.climate.copernicus.eu/requests>
 
 ## Define movement model
 
