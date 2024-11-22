@@ -82,7 +82,7 @@ Check that the movement model defined in `config.yml` is adequate.
 
 ```{r}
 graph <- graph_set_movement(graph,
-  bird = bird_create(config::get("bird_create", id)$species_name)
+  bird = bird_create(config::get("bird_create", id)$scientific_name)
 )
 ```
 
