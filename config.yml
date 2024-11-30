@@ -55,7 +55,6 @@ default:
     outputs: ["marginal", "most_likely", "simulation"]
     pressurepath: ["most_likely"] # "geopressureviz"
 
-
 18LX:
   tag_create:
     crop_start: "2017-06-20"
@@ -70,9 +69,13 @@ default:
   graph_set_movement:
     type: "as"
 
-
-
 CB619:
+  tag_set_map:
+    extent: [-100, -68, 0, 40] # Usually best define in default if same for all tags
+    known:
+      stap_id: [1, -1]
+      known_lon: -82.304972
+      known_lat: 37.286812
   graph_set_movement:
     movement:
       type: "gs"
