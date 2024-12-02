@@ -6,7 +6,7 @@ Authors@R:
     person("Raphaël", "Nussbaumer", , "rafnuss@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8185-1020"))
 License: CC BY 4.0
-Version: 1.1
+Version: 1.2
 Depends: 
     R (>= 3.5.0)
 Imports: 
