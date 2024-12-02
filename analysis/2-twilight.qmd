@@ -1,5 +1,5 @@
 ---
-title: Twilight Label
+title: Twilight label
 editor: source
 description: https://raphaelnussbaumer.com/GeoPressureManual/geopressuretemplate-twilight.html
 ---

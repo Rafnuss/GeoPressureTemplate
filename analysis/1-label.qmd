@@ -1,5 +1,5 @@
 ---
-title: Tag Label
+title: Tag label
 editor: source
 description: https://raphaelnussbaumer.com/GeoPressureManual/geopressuretemplate-label.html
 ---
