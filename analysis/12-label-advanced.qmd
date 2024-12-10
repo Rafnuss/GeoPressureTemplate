@@ -85,6 +85,7 @@ Directly plot the likelihood map and draw the path. Query the pressure only for 
 geopressureviz(
   tag,
   path = tag2path(tag, interp = 1) # interpolate positions of stap lasting < 1 day.
+  # path = path_geopressureviz # if already run geopressureviz
   # path = pressurepath # Use this once computed (see below)
 )
 ```
