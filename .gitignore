@@ -41,8 +41,8 @@ vignettes/*.pdf
 .Rdata
 .DS_Store
 
-
-# This file is too big
-# data/tag-raw/*
-data/interim/*
+# GeoPressureR
+# data/tag-raw/* # Uncomment to avoid making the raw data available
+data/interim/* # Comment to keep the Rdata file on github
 data/wind/*
+data/datapackage/*
