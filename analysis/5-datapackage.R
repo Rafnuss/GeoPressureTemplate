@@ -42,7 +42,8 @@ pkg <- pkg %>% add_gldp_geopressuretemplate(".")
 check_gldp(pkg)
 
 # Write datapackage
-write_package(pkg, file.path("~/", pkg$name))
+dir.create("data/datapackage", showWarnings = FALSE)
+write_package(pkg, "data/datapackage/")
 
 # Upload on Zenodo
 # https://zenodo.org/uploads/new
