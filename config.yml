@@ -15,6 +15,9 @@ default:
   tag_create: # ?tag_create()
     # crop_start: NULL # Generally set at the tag level
     # crop_end: NULL
+  tag_label: # ? tag_label()
+    warning_flight_duration: 2 # hours
+    warning_stap_duration: 6 # hours
   tag_set_map: # ?tag_set_map()
     extent: [-16, 23, 0, 50] # [W, E, S, N]
     scale: 5 # 1 (min) -> 1° ; 2 -> 0.5° ; 5 -> 0.25° ; 10 (max) -> 0.1°
@@ -51,7 +54,7 @@ default:
     variable: ["altitude", "surface_pressure"]
     # solar_dep: 0
   geopressuretemplate: # ?geopressuretemplate()
-    likelihood: ["map_pressure", "map_light"] #  for nothing
+    likelihood: ["map_pressure", "map_light"]
     outputs: ["marginal", "most_likely", "simulation"]
     pressurepath: ["most_likely"] # "geopressureviz"
 
