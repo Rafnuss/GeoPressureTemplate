@@ -48,6 +48,7 @@ default:
     # scale: 7
     # location: 40 # only for logistic
     # low_speed_fix: 15 # km/h
+    # zero_speed_ratio: 1
   graph_simulation: # ?graph_simulation()
     nj: 10
   pressurepath_create: # ?pressurepath_create()
