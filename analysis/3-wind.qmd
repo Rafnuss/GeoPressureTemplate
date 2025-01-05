@@ -24,7 +24,7 @@ library(job)
 
 ## Set Copernicus credentials
 
-::: callout-tip
+::: callout-caution
 *Delete this block when you have read!* 
 
 1. If you don't yet have one, create a ECMWF account at <https://www.ecmwf.int/>. 
@@ -39,7 +39,7 @@ library(job)
 ecmwfr::wf_set_key("abcd1234-foo-bar-98765431-XXXXXXXXXX")
 ```
 
-For more information read the [](https://bluegreen-labs.github.io/ecmwfr/#use-ecmwf-data-store-services)
+For more information visit [the ecmwfr documentation](https://bluegreen-labs.github.io/ecmwfr/).
 :::
 
 ## Create tag
