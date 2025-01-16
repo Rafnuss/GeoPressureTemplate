@@ -1,12 +1,12 @@
 Package: YourProjectName
 Title: These are the Goal of my Study (One Line, Title Case)
-URL: https://github.com/Rafnuss/GeoPressureTemplate
-Description: More detailed description of my research objective with my dataset available (one paragraph).
+Version: 0.0.0.9000
 Authors@R: 
-    person("Raphaël", "Nussbaumer", , "rafnuss@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-8185-1020"))
-License: CC BY 4.0
-Version: 1.2
+    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-xxxx-xxxx-xxxx"))
+Description: More detailed description of my research objective and data (one paragraph).
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
 Depends: 
     R (>= 3.5.0)
 Imports: 
