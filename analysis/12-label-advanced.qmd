@@ -6,7 +6,7 @@ editor: source
 This script is meant to be used by familiar users of GeoPressureTemplate. For new user, please use `1-label.qmd` . The script actually covers both `1-label.qmd` and `2-twilight.qmd` .
 
 ```{r setup}
-knitr::opts_knit$set(root.dir = normalizePath(".."))
+knitr::opts_knit$set(root.dir = here::here())
 library(GeoPressureR)
 library(ggplot2)
 library(plotly)
@@ -116,8 +116,8 @@ Check labelled twilights together with the expected twilight lines from the path
 tag <- twilight_label_read(tag)
 plot(tag,
   type = "twilight",
-  twilight_line = path2twilight(tag2path(tag, interp=2)),
-  plot_plotly=T
+  twilight_line = path2twilight(tag2path(tag, interp = 2)),
+  plot_plotly = T
 )
 ```
 

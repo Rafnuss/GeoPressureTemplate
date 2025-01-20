@@ -10,13 +10,19 @@ License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
 Depends: 
     R (>= 3.5.0)
 Imports: 
-    GeoPressureR,
-    GeoLocatoR,
-    ggplot2,
     config,
+    ecmwfr,
+    GeoLocatoR,
+    GeoPressureR,
+    ggplot2,
+    here,
     knitr,
-    plotly,
-    rmarkdown
+    plotly
+Suggests:
+    frictionless,
+    job,
+    keyring,
+    zen4R
 Remotes: 
     rafnuss/GeoPressureR,
     rafnuss/GeoLocatoR

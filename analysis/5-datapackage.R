@@ -1,4 +1,6 @@
 library(GeoLocatoR)
+library(zen4R)
+library(frictionless)
 
 ## Publish Data Package
 # Introduction: hhttps://raphaelnussbaumer.com/GeoPressureManual/geolocator-intro.html
@@ -63,15 +65,10 @@ pkg$relatedIdentifiers <- list(
 # Add data
 pkg <- pkg %>% add_gldp_geopressuretemplate()
 
-# Add tags and observations
-tags(pkg) <- read_csv("data/tags.csv")
-observations(pkg) <- read_csv( "data/observations.csv")
 
 # Check package
-# plot(pkg)
+plot(pkg)
 validate_gldp(pkg)
-
-
 
 
 #################
@@ -85,7 +82,7 @@ pkg$id <- "https://doi.org/10.5281/zenodo.{ZENODO_ID - 1}"
 pkg <- pkg %>% update_gldp_bibliographic_citation()
 
 dir.create("data/datapackage", showWarnings = FALSE)
-frictionless::write_package(pkg, "data/datapackage/")
+write_package(pkg, "data/datapackage/")
 
 # Use the information in datapackage.json to fill the zenodo form.
 
@@ -104,14 +101,15 @@ pkg$id <- paste0("https://doi.org/", z$getConceptDOI())
 pkg <- pkg %>%
   update_gldp()
 
-write_package(pkg, directory = "data/datapackage/")
 for (f in list.files(pkg$version)) {
   zenodo$uploadFile(file.path(pkg$version, f), z)
 }
 
 
 #################
-# Update zenodo
+# Update metadata from Zenodo
+# If you modify the metadata on zenodo, you can update your pkg with those information with
+
 z_updated <- zenodo$getDepositionByConceptDOI(z$getConceptDOI())
 pkg <- zenodoRecord2gldp(z_updated, pkg)
 

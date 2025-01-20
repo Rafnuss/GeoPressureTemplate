@@ -47,7 +47,7 @@ For more information visit [the ecmwfr documentation](https://bluegreen-labs.git
 Make sure you have already created the label file with the "1-label.qmd" script.
 
 ```{r, cache = TRUE, message=FALSE}
-tag <- geopressuretemplate_tag(id, quiet=F)
+tag <- geopressuretemplate_tag(id, quiet = F)
 ```
 
 ## Download wind data
