@@ -71,7 +71,7 @@ default:
   bird_create:
     scientific_name: "Acrocephalus arundinaceus"
   graph_set_movement:
-    type: "as"
+    type: "as" # Needs wind to work, use "gs" otherwise
 
 CB619:
   tag_set_map:
