@@ -29,7 +29,7 @@ library(job)
 
 1. If you don't yet have one, create a ECMWF account at <https://www.ecmwf.int/>. 
 
-2. Accept the licence agreement on [cds.climate.copernicus.eu/profile](https://cds.climate.copernicus.eu/profile) going on the "Licences" tab and select the "Licence to use Copernicus Products".
+2. Accept the licence agreement on [ https://cds.climate.copernicus.eu/datasets/reanalysis-era5-pressure-levels?tab=download#manage-licences] going on the "Licences" tab and select the "Licence to use Copernicus Products".
 
 3. Retrieve your API Token on <https://cds.climate.copernicus.eu/profile>.
 
