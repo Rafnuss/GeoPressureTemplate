@@ -101,8 +101,8 @@ pkg$id <- paste0("https://doi.org/", z$getConceptDOI())
 pkg <- pkg %>%
   update_gldp()
 
-for (f in list.files(pkg$version)) {
-  zenodo$uploadFile(file.path(pkg$version, f), z)
+for (f in list.files("data/datapackage/")) {
+  zenodo$uploadFile(file.path("data/datapackage/", f), z)
 }
 
 
