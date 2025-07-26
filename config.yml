@@ -5,14 +5,14 @@
 # the config R package <https://rstudio.github.io/config/>.
 #
 # This file is meant to be adapted based on your needs: feel free to add parameters either in the
-# default (applied to all tags) or for each tag seperatly (overwrite default). It is recommended to
+# default (applied to all tags) or for each tag separately (overwrite default). It is recommended to
 # specify all parameters used, even if you use the default value.
 #
 # You can check the documentation of each function to learn what each of these parameters are doing
 # as well as reading https://raphaelnussbaumer.com/GeoPressureManual/geopressuretemplate-workflow.html
 
 default:
-  tag_create: # ?tag_create()
+  tag_create:# ?tag_create()
     # crop_start: NULL # Generally set at the tag level
     # crop_end: NULL
   tag_label: # ? tag_label()
@@ -29,7 +29,7 @@ default:
     sd: 1
     thr_mask: 0.9
     log_linear_pooling_weight: !expr \(n) log(n)/n
-  twilight_create: # ?twilight_create()
+  twilight_create:# ?twilight_create()
     # twl_thr: NULL
     # twl_offset: NULL # in hours
   geolight_map: # ?geolight_map()
@@ -42,7 +42,7 @@ default:
   graph_add_wind:
     thr_as: 90 # km/h
   graph_set_movement: # ?graph_set_movement()
-    # type: "gs"
+    type: "gs" # modify manually to "as" when you have downloaded wind data
     # method: "gamma"
     # shape: 7 # only for gamma
     # scale: 7

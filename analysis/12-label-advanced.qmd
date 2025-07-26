@@ -3,7 +3,7 @@ title: Tag label (Advanced)
 editor: source
 ---
 
-This script is meant to be used by familiar users of GeoPressureTemplate. For new user, please use `1-label.qmd` . The script actually covers both `1-label.qmd` and `2-twilight.qmd` .
+This script is meant to be used by familiar users of GeoPressureTemplate. For new users, please use `1-label.qmd`. The script actually covers both `1-label.qmd` and `2-twilight.qmd`.
 
 ```{r setup}
 knitr::opts_knit$set(root.dir = here::here())

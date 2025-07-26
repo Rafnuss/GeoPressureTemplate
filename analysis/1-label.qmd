@@ -4,14 +4,14 @@ editor: source
 description: https://raphaelnussbaumer.com/GeoPressureManual/geopressuretemplate-label.html
 ---
 
-This script will guide you through the tag labelling of pressure and/or acceleration data and creation of the pressure map.
+This script will guide you through the tag labeling of pressure and/or acceleration data and creation of the pressure map.
 
 ::: callout-tip
 *Delete this block when you have read!*
 
 -   These scripts should be adapted based on your project, but the same script should run for all your tags. You can always check [the original version online](https://github.com/Rafnuss/GeoPressureTemplate/blob/main/analysis/1-label.qmd).
--   Make sure you've read the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual), in particular the [labelling instructions](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html), before running this script
--   Nothing is saved at the end of the script and it is meant to be like that. The goal in this script is to (1) create the tag labels (`./data/tag-label/`) and (2) adapt `config.yml`.
+-   Make sure you've read the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual), in particular the [labeling instructions](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html), before running this script
+-   Nothing is saved at the end of the script and it is meant to be like that. The goal of this script is to (1) create the tag labels (`./data/tag-label/`) and (2) adapt `config.yml`.
 :::
 
 ```{r setup, message=FALSE}
@@ -43,7 +43,7 @@ tag_id:
     arguments: value
 ```
 
-Note that the values are written in json format (and not `R`), so for a vector/array you need to use `[, ]` and for an array of objects (named lists), you need to use `-` and indentation. Here is an exemple:
+Note that the values are written in JSON format (and not `R`), so for a vector/array you need to use `[, ]` and for an array of objects (named lists), you need to use `-` and indentation. Here is an example:
 
 ``` yaml
 18LX:
@@ -102,7 +102,7 @@ tag_label_write(tag)
 
 Open `csv` and edit on <https://trainset.raphaelnussbaumer.com/>.
 
-## Run [simple labelling checks](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html#simple-checks)
+## Run [simple labeling checks](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html#simple-checks)
 
 **Check 1**
 

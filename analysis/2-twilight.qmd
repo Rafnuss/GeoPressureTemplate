@@ -10,7 +10,7 @@ description: https://raphaelnussbaumer.com/GeoPressureManual/geopressuretemplate
 **If you don't have light data, delete this file!**
 
 -   These scripts should be adapted based on your project, but the same script should run for all your tags. You can always check [the original version online](https://github.com/Rafnuss/GeoPressureTemplate/blob/main/analysis/1-label.qmd).
--   Make sure you've read the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual), in particular the [twilight labelling instructions](https://raphaelnussbaumer.com/GeoPressureManual/light-map.html#manual-labelling-of-twilight), before running this script
+-   Make sure you've read the [GeoPressureManual](https://raphaelnussbaumer.com/GeoPressureManual), in particular the [twilight labeling instructions](https://raphaelnussbaumer.com/GeoPressureManual/light-map.html#manual-labelling-of-twilight), before running this script
 -   Nothing is saved at the end of the script and it is meant to be like that. Only twilight label file and config.yml should be edited. Use `geopressure.R` for the final run.
 :::
 

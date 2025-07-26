@@ -3,7 +3,7 @@ library(zen4R)
 library(frictionless)
 
 ## Publish Data Package
-# Introduction: hhttps://raphaelnussbaumer.com/GeoPressureManual/geolocator-intro.html
+# Introduction: https://raphaelnussbaumer.com/GeoPressureManual/geolocator-intro.html
 # Detailed instruction: https://raphaelnussbaumer.com/GeoPressureManual/geolocator-create.html
 
 # Create the datapackage
@@ -26,11 +26,11 @@ pkg$contributors <- list( # required
   )
 )
 
-# There are no embargo by default (1970-01-01)
+# There is no embargo by default (1970-01-01)
 pkg$embargo <- "2030-01-01"
 
-# Licences
-# Code licenses are often not the same as data licences.
+# Licenses
+# Code licenses are often not the same as data licenses.
 pkg$licenses = list(list(
   name = "CC-BY-4.0",
   title = "Creative Commons Attribution 4.0",
@@ -44,7 +44,7 @@ pkg$licenses = list(list(
 pkg$keywords <- c("Woodland Kingfisher", "intra-african", "multi-sensor geolocator")
 
 # Funding sources
-pkg$grants <- c("Swiss Ornithological Intitute")
+pkg$grants <- c("Swiss Ornithological Institute")
 
 # Related Identifiers
 # e.g. papers, project pages, derived datasets, etc.

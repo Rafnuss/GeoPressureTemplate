@@ -27,13 +27,13 @@ library(job)
 ::: callout-caution
 *Delete this block when you have read!* 
 
-1. If you don't yet have one, create a ECMWF account at <https://www.ecmwf.int/>. 
+1. If you don't yet have one, create an ECMWF account at <https://www.ecmwf.int/>. 
 
 2. Accept the licence agreement on [ https://cds.climate.copernicus.eu/datasets/reanalysis-era5-pressure-levels?tab=download#manage-licences] going on the "Licences" tab and select the "Licence to use Copernicus Products".
 
 3. Retrieve your API Token on <https://cds.climate.copernicus.eu/profile>.
 
-4. Saves the token to your local keychain with `ecmwfr` (which calls the API Token `key`) :
+4. Save the token to your local keychain with `ecmwfr` (which calls the API Token `key`):
 
 ```{r}
 ecmwfr::wf_set_key("abcd1234-foo-bar-98765431-XXXXXXXXXX")
@@ -52,7 +52,7 @@ tag <- geopressuretemplate_tag(id, quiet = F)
 
 ## Download wind data
 
-The [job package](https://lindeloev.github.io/job) allows to download the wind data in the background and let your R console free to use.
+The [job package](https://lindeloev.github.io/job) allows you to download the wind data in the background and let your R console free to use.
 
 ```{r, eval = FALSE}
 job({
@@ -63,6 +63,15 @@ job({
 Check requests at <https://cds.climate.copernicus.eu/requests>
 
 ## Define movement model
+
+::: callout-danger
+Make sure to update the type from `"gs"` to `"as"` in `config.yml`:
+
+```yml
+graph_set_movement:
+  type: "as"
+```
+:::
 
 ### Add wind data
 
