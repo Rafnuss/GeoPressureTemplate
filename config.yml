@@ -12,7 +12,7 @@
 # as well as reading https://raphaelnussbaumer.com/GeoPressureManual/geopressuretemplate-workflow.html
 
 default:
-  tag_create:# ?tag_create()
+  tag_create: # ?tag_create()
     # crop_start: NULL # Generally set at the tag level
     # crop_end: NULL
   tag_label: # ? tag_label()
@@ -29,7 +29,7 @@ default:
     sd: 1
     thr_mask: 0.9
     log_linear_pooling_weight: !expr \(n) log(n)/n
-  twilight_create:# ?twilight_create()
+  twilight_create: # ?twilight_create()
     # twl_thr: NULL
     # twl_offset: NULL # in hours
   geolight_map: # ?geolight_map()
