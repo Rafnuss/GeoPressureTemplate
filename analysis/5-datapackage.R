@@ -93,7 +93,7 @@ keyring::key_set_with_value("ZENODO_PAT", password = "{your_zenodo_token}")
 zenodo <- ZenodoManager$new(token = keyring::key_get(service = "ZENODO_PAT"))
 
 # Create a zenodo from data package
-z <- gldp2zenodoRecord(pkg)
+z <- gldp_to_zenodo(pkg)
 
 z <- zenodo$depositRecord(z, reserveDOI = TRUE, publish = FALSE)
 
@@ -111,7 +111,7 @@ for (f in list.files("data/datapackage/")) {
 # If you modify the metadata on zenodo, you can update your pkg with those information with
 
 z_updated <- zenodo$getDepositionByConceptDOI(z$getConceptDOI())
-pkg <- zenodoRecord2gldp(z_updated, pkg)
+pkg <- zenodo_to_gldp(z_updated, pkg)
 
 
 ## Make sure to submit to Zenodo community: https://zenodo.org/communities/geolocator-dp/
