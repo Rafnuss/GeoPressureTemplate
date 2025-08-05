@@ -142,6 +142,6 @@ tag <- tag_create(id,
 tag <- geopressure_map(tag, quiet = TRUE)
 ```
 
-```{r, eval = FALE}
+```{r, eval = FALSE}
 geopressureviz(tag, path = tag2path(tag, interp = 1))
 ```
