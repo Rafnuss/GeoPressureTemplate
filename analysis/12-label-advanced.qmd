@@ -30,6 +30,8 @@ ggplotly(
 )
 ```
 
+## Label tag
+
 Create the tag
 
 ```{r}
@@ -40,7 +42,6 @@ tag <- tag_create(
 )
 ```
 
-## Label tag
 
 ```{r write_label}
 tag_label_write(tag)
@@ -60,21 +61,13 @@ plot(tag, type = "pressure")
 
 ## Compute pressure map
 
-```{r pressure_map}
-tag <- tag_set_map(tag,
-  extent = config::get("tag_set_map", id)$extent,
-  scale = config::get("tag_set_map", id)$scale,
-  known = config::get("tag_set_map", id)$known,
-  include_stap_id = config::get("tag_set_map", id)$include_stap_id,
-  include_min_duration = config::get("tag_set_map", id)$include_min_duration
-) |>
-  geopressure_map(
-    max_sample = config::get("geopressure_map", id)$max_sample,
-    margin = config::get("geopressure_map", id)$margin,
-    sd = config::get("geopressure_map", id)$sd,
-    thr_mask = config::get("geopressure_map", id)$thr_mask,
-    log_linear_pooling_weight = config::get("geopressure_map", id)$log_linear_pooling_weight
-  )
+```{r geopressuretemplate_tag}
+geopressuretemplate_tag(
+  id = id,
+  tag_set_map = list(scale = 1, include_min_duration = 24),
+  geopressuretemplate = list(likelihood = "map_pressure"),
+  quiet = TRUE
+)
 ```
 
 ## Geopressureviz
@@ -83,8 +76,8 @@ Directly plot the likelihood map and draw the path. Query the pressure only for 
 
 ```{r}
 geopressureviz(
-  tag,
-  path = tag2path(tag, interp = 1) # interpolate positions of stap lasting < 1 day.
+  id,
+  # path = tag2path(tag, interp = 1) # interpolate positions of stap lasting < 1 day.
   # path = path_geopressureviz # if already run geopressureviz
   # path = pressurepath # Use this once computed (see below)
 )
@@ -141,10 +134,12 @@ lines(tag$param$geolight_map$twl_calib, col = "red")
 Refine the path and label based on pressure and light combined.
 
 ```{r}
-geopressureviz(
-  tag,
-  path = path_geopressureviz # start from the existing drawn path
+geopressuretemplate_tag(
+  id = id,
+  tag_set_map = list(scale = 1),
+  quiet = TRUE
 )
+geopressureviz(id)
 ```
 
 
@@ -152,16 +147,8 @@ geopressureviz(
 
 Final check with the time-consuming `pressurepath`
 
-```{r pressurepath}
-pressurepath <- pressurepath_create(
-  tag,
-  path = path_geopressureviz
-)
-```
-
-Plot
-
 ```{r}
+load(glue::glue("./data/interim/{id}.RData"))
 plot_pressurepath(pressurepath)
 plot_pressurepath(pressurepath, type = "histogram")
 plot_pressurepath(pressurepath, type = "altitude")

@@ -30,7 +30,8 @@ Make sure you have already created the label file with the "1-label.qmd" script.
 tag <- tag_create(
   id,
   crop_start = config::get("tag_create", id)$crop_start,
-  crop_end = config::get("tag_create", id)$crop_end
+  crop_end = config::get("tag_create", id)$crop_end,
+  quiet = TRUE
 ) |>
   tag_label(quiet = TRUE) |>
   tag_set_map(

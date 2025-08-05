@@ -102,7 +102,7 @@ tag_label_write(tag)
 
 Open `csv` and edit on <https://trainset.raphaelnussbaumer.com/>.
 
-## Run [simple labeling checks](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html#simple-checks)
+## Run [initial labeling checks](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html#initial-checks)
 
 **Check 1**
 
@@ -122,59 +122,26 @@ Edit and export label on Trainset and simply run the same chunk until you're hap
 plot(tag, type = "pressure")
 ```
 
-## Run [Pressurepath checks](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html#pressurepath-checks)
+## Run [GeoPressureViz checks](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html#geopressureviz-check)
 
-Compute pressure map on a coarse grid to perform checks 3-5.
+Improve the label file until you can draw a coherent trajectory on GeoPressureViz.
 
-```{r, cache = TRUE}
-tag <- tag_set_map(tag,
-  extent = config::get("tag_set_map", id)$extent,
-  scale = 1,
-  known = config::get("tag_set_map", id)$known,
-  include_min_duration = 24
+```{r}
+tag <- tag_create(id,
+  crop_start = config::get("tag_create", id)$crop_start,
+  crop_end = config::get("tag_create", id)$crop_end,
+  quiet = TRUE
 ) |>
-  geopressure_map()
+  tag_label(quiet = TRUE) |>
+  tag_set_map(
+    extent = config::get("tag_set_map", id)$extent,
+    scale = 1, # Use a coarse scale at first 1° is usually enough
+    known = config::get("tag_set_map", id)$known
+  )
+
+tag <- geopressure_map(tag, quiet = TRUE)
 ```
 
-```{r, cache = TRUE}
-pressurepath <- pressurepath_create(tag)
-```
-
-**Check 3**
-
-```{r}
-plot_pressurepath(pressurepath)
-```
-
-**Check 4**
-
-```{r}
-plot_pressurepath(pressurepath, type = "histogram")
-```
-
-## Run [GeoPressureViz checks](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html#geopressureviz-checks)
-
-```{r, eval = FALSE}
-geopressureviz(
-  tag,
-  # path = pressurepath,
-  # path = most_likely_path,
-  # marginal = marginal
-)
-```
-
-## Update of `tag` and `pressurepath`
-
-::: callout-tip
-*Delete this block when you have read!*
-
-You can use `tag_upate()` and `pressurepath_update()` every time you edit and export a new label file from Trainset. You might want to start from a new tag and pressurepath variable if you encounter any problem.
-:::
-
-```{r, eval = FALSE}
-tag <- tag_update(tag)
-```
-
-```{r, eval = FALSE}
-pressurepath <- pressurepath_update(pressurepath, tag)
+```{r, eval = FALE}
+geopressureviz(tag, path = tag2path(tag, interp = 1))
 ```
