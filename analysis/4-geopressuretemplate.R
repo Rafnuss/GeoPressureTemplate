@@ -4,6 +4,10 @@
 
 library(GeoPressureR)
 
+# Get all the tag_id
+list_id <- tail(names(yaml::yaml.load_file("config.yml", eval.expr = FALSE)), -1)
+
+
 ## OPTION 1: Run workflow step-by-step for a single tag
 id <- "18LX" # Run a single tag
 geopressuretemplate_config(id)
@@ -12,16 +16,7 @@ graph <- geopressuretemplate_graph(id)
 geopressuretemplate_pressurepath(id)
 
 
-## OPTION 2: Run entire workflow for all tags
-list_id <- tail(names(yaml::yaml.load_file("config.yml", eval.expr = FALSE)), -1)
-
-for (id in list_id){
-  cli::cli_h1("Run for {id}")
-  geopressuretemplate(id)
-}
-
-
-## OPTION 3: All tracks, step-by-step
+## OPTION 2: All tracks, step-by-step
 
 # 1. Compute likelihood map
 for (id in list_id){
@@ -51,3 +46,10 @@ for (id in list_id){
   cli::cli_h1("Run pressurepath for {id}")
   geopressuretemplate_pressurepath(id)
 }
+
+
+## OPTION 3: Run entire workflow for all tags
+for (id in list_id){
+  geopressuretemplate(id)
+}
+

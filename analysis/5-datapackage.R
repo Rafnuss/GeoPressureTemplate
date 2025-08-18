@@ -7,7 +7,7 @@ library(frictionless)
 # Detailed instruction: https://raphaelnussbaumer.com/GeoPressureManual/geolocator-create.html
 
 # Create the datapackage
-pkg <- create_gldp_geopressuretemplate(".")
+pkg <- create_gldp_geopressuretemplate()
 
 #################
 # Create Metadata
@@ -63,7 +63,7 @@ pkg$relatedIdentifiers <- list(
 
 #################
 # Add data
-pkg <- pkg %>% add_gldp_geopressuretemplate()
+pkg <-  add_gldp_geopressuretemplate(pkg)
 
 
 # Check package
