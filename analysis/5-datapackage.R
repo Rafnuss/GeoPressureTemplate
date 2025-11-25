@@ -23,7 +23,6 @@ z <- zenodo$getDepositionByConceptDOI("10.5281/zenodo.{ZENODO_ID - 1}")
 pkg <- zenodo_to_gldp(z)
 
 
-
 # Add data
 pkg <- add_gldp_geopressuretemplate(pkg)
 

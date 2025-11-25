@@ -77,7 +77,8 @@ ggplotly(
         as.POSIXct(config::get("tag_create", id)$crop_start),
         as.POSIXct(config::get("tag_create", id)$crop_end)
       )),
-      color = "red", lwd = 1
+      color = "red",
+      lwd = 1
     )
 )
 ```
@@ -127,7 +128,8 @@ plot(tag, type = "pressure")
 Improve the label file until you can draw a coherent trajectory on GeoPressureViz.
 
 ```{r}
-tag <- tag_create(id,
+tag <- tag_create(
+  id,
   crop_start = config::get("tag_create", id)$crop_start,
   crop_end = config::get("tag_create", id)$crop_end,
   quiet = TRUE

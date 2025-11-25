@@ -83,7 +83,13 @@ tag <- geolight_map(tag)
 ```{r}
 barW <- median(diff(tag$param$geolight_map$twl_calib$x)) / 2
 plot(tag$param$geolight_map$twl_calib, xlim = c(85, 100))
-rect(xleft = tag$param$geolight_map$twl_calib$x - barW, ybottom = 0, xright = tag$param$geolight_map$twl_calib$x + barW, ytop = tag$param$geolight_map$twl_calib$y, col = gray(0.5))
+rect(
+  xleft = tag$param$geolight_map$twl_calib$x - barW,
+  ybottom = 0,
+  xright = tag$param$geolight_map$twl_calib$x + barW,
+  ytop = tag$param$geolight_map$twl_calib$y,
+  col = gray(0.5)
+)
 lines(tag$param$geolight_map$twl_calib, col = "red")
 ```
 
