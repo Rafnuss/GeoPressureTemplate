@@ -10,20 +10,25 @@ library(frictionless)
 # Initialize Zenodo manager
 zenodo <- ZenodoManager$new(token = keyring::key_get(service = "ZENODO_PAT"))
 
-
-# Create a new Zenodo from GeoPressureTemplate
+# Option 1: Create a new Zenodo from GeoPressureTemplate
 pkg <- create_gldp_geopressuretemplate()
 z <- gldp_to_zenodo(pkg)
 z <- zenodo$depositRecord(z, reserveDOI = TRUE, publish = FALSE)
 browseURL(z$links$self_html)
 
 
-# Retrieve a package from Zenodo (DOI)
+# Option 2: Retrieve a package from Zenodo (DOI)
 z <- zenodo$getDepositionByConceptDOI("10.5281/zenodo.{ZENODO_ID - 1}")
 pkg <- zenodo_to_gldp(z)
 
+# Add data from your local geopressuretemplate folder (interim and/or raw data)
+pkg_without_tagobs <- add_gldp_geopressuretemplate(pkg)
 
-# Add data
+# Create the tags and observations table if not available
+write.csv(tags(pkg_without_tagobs), file = "data/tags.csv", row.names = FALSE)
+write.csv(observations(pkg_without_tagobs), file = "data/observations.csv", row.names = FALSE)
+
+# Add final data including tags and observations tables
 pkg <- add_gldp_geopressuretemplate(pkg)
 
 # Check package
