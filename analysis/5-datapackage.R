@@ -41,8 +41,3 @@ validate_gldp(pkg)
 # Write datapackage
 dir.create("data/datapackage", showWarnings = FALSE)
 write_package(pkg, "data/datapackage/")
-
-# Upload to Zenodo
-for (f in list.files("data/datapackage/")) {
-  zenodo$uploadFile(file.path("data/datapackage/", f), z)
-}
