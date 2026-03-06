@@ -29,7 +29,7 @@ for (id in list_id) {
 # 3. (optional) Add wind if not done before
 for (id in list_id) {
   cli::cli_h1("Run tag_download_wind for {id}")
-  load(glue::glue("./data/interim/{id}.RData"))
+  load_interim(id)
   tag_download_wind(tag)
 }
 
