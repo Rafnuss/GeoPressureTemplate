@@ -5,7 +5,7 @@ Authors@R:
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-xxxx-xxxx-xxxx"))
 Description: More detailed description of my research objective and data (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+License: `usethis::use_mit_license()`, `usethis::use_gpl3_license()` or friends to pick a
     license
 Depends: 
     R (>= 3.5.0)
