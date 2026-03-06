@@ -35,6 +35,7 @@ default:
   geolight_map: # ?geolight_map()
     twl_calib_adjust: 1.4
     twl_llp: !expr \(n) log(n)/n
+    fitted_location_duration: Inf
   graph_create: # ?graph_create()
     thr_likelihood: 0.99
     thr_gs: 150 # km/h

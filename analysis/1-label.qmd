@@ -95,13 +95,13 @@ tag <- tag_create(
 )
 ```
 
-## Create label and edit on Trainset
+## Label on trainset shiny app
+
+Label pressure and acceleration. Then click on save to create the label csv file in `/18LX-labeled.csv`
 
 ```{r}
-tag_label_write(tag)
+trainset(tag)
 ```
-
-Open `csv` and edit on <https://trainset.raphaelnussbaumer.com/>.
 
 ## Run [initial labeling checks](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html#initial-checks)
 
@@ -114,7 +114,7 @@ tag <- tag_label(tag)
 ::: callout-tip
 *Delete this block when you have read!*
 
-Edit and export label on Trainset and simply run the same chunk until you're happy with it! This principle (edit your label file and re-run the same chunk) is valid throughout this script.
+Edit and export label in trainset and simply run the same chunk until you're happy with it! This principle (edit your label file and re-run the same chunk) is valid throughout this script.
 :::
 
 **Check 2**
