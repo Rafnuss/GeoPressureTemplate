@@ -31,9 +31,7 @@ ggplotly(
 )
 ```
 
-## Label tag
-
-Create the tag
+## Create the tag
 
 ```{r}
 tag <- tag_create(
@@ -43,21 +41,10 @@ tag <- tag_create(
 )
 ```
 
+## Label the tag
 
-```{r write_label}
-tag_label_write(tag)
-```
-
-Edit on https://trainset.raphaelnussbaumer.com/
-
-```{r read_label}
-tag <- tag_label(tag)
-```
-
-Plot pressure timeseries
-
-```{r}
-plot(tag, type = "pressure")
+```{r label_trainset}
+trainset(tag)
 ```
 
 ## Compute pressure map
@@ -65,7 +52,7 @@ plot(tag, type = "pressure")
 ```{r geopressuretemplate_tag}
 geopressuretemplate_tag(
   id = id,
-  tag_set_map = list(scale = 1, include_min_duration = 24),
+  tag_set_map = list(scale = 1, include_min_duration = 6),
   geopressuretemplate = list(likelihood = "map_pressure"),
   quiet = TRUE
 )
@@ -86,6 +73,12 @@ geopressureviz(
 
 ## Twilight
 
+Load the interim file
+
+```{r}
+load_interim(id)
+```
+
 Adjust `twl_offset`.
 
 ```{r}
@@ -96,13 +89,11 @@ tag <- twilight_create(
 plot(tag, type = "twilight")
 ```
 
-Write label
+Label with geolightviz
 
 ```{r}
-twilight_label_write(tag)
+geolightviz(tag)
 ```
-
-Edit on https://trainset.raphaelnussbaumer.com/.
 
 Check labelled twilights together with the expected twilight lines from the path drawn on geopressureviz
 
@@ -122,41 +113,34 @@ Compute light map
 tag <- geolight_map(
   tag,
   twl_calib_adjust = config::get("geolight_map", id)$twl_calib_adjust,
-  twl_llp = config::get("geolight_map", id)$twl_llp
+  twl_llp = config::get("geolight_map", id)$twl_llp,
+  fitted_location_duration = config::get(
+    "geolight_map",
+    id
+  )$fitted_location_duration
 )
 ```
 
 ```{r}
-barW <- median(diff(tag$param$geolight_map$twl_calib$x)) / 2
-plot(tag$param$geolight_map$twl_calib, xlim = c(85, 100))
-rect(
-  xleft = tag$param$geolight_map$twl_calib$x - barW,
-  ybottom = 0,
-  xright = tag$param$geolight_map$twl_calib$x + barW,
-  ytop = tag$param$geolight_map$twl_calib$y,
-  col = gray(0.5)
-)
-lines(tag$param$geolight_map$twl_calib, col = "red")
+plot_twl_calib(tag)
+plot_twl_calib(tag, path = tag2path(tag, interp = 2))
 ```
+
+## GeoPressureViz
 
 Refine the path and label based on pressure and light combined.
 
 ```{r}
-geopressuretemplate_tag(
-  id = id,
-  tag_set_map = list(scale = 1),
-  quiet = TRUE
-)
-geopressureviz(id)
+geopressureviz(tag)
 ```
-
 
 ## Compute pressurepath
 
-Final check with the time-consuming `pressurepath`
+Final check with the time-consuming `pressurepath`, usually performed in `4-geopressuretemplate.R` with full resolution interim file.
 
 ```{r}
-load(glue::glue("./data/interim/{id}.RData"))
+# geopressuretemplate_pressurepath(id)
+load_interim(id)
 plot_pressurepath(pressurepath)
 plot_pressurepath(pressurepath, type = "histogram")
 plot_pressurepath(pressurepath, type = "altitude")

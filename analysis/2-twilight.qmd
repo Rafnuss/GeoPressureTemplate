@@ -53,44 +53,35 @@ tag <- twilight_create(
 plot(tag, type = "twilight")
 ```
 
-## Annotate twilight
+## Annotate twilight in GeoLightViz
 
 ```{r}
-twilight_label_write(tag)
-```
-
-Open `csv` on <https://trainset.raphaelnussbaumer.com/>.
-
-Read and check the twilight annotation
-
-```{r}
-tag <- twilight_label_read(tag)
-plot(tag, type = "twilight")
+#| eval: false
+geolightviz(tag)
 ```
 
 ## Compute likelihood map
 
-```{r, cache = TRUE}
-tag <- geolight_map(tag)
+```{r}
+tag <- geolight_map(
+  tag,
+  twl_calib_adjust = config::get("geolight_map", id)$twl_calib_adjust,
+  twl_llp = config::get("geolight_map", id)$twl_llp,
+  fitted_location_duration = config::get(
+    "geolight_map",
+    id
+  )$fitted_location_duration
+)
 ```
 
-`twl_calib_adjust` and `twl_llp` can generally be left to default, but add to `config.yml` if needed.
+`twl_calib_adjust`, `fitted_location_duration` and `twl_llp` can generally be left to default, but can be modified in `config.yml` if needed.
 
 ## Check
 
 ### Check calibration
 
 ```{r}
-barW <- median(diff(tag$param$geolight_map$twl_calib$x)) / 2
-plot(tag$param$geolight_map$twl_calib, xlim = c(85, 100))
-rect(
-  xleft = tag$param$geolight_map$twl_calib$x - barW,
-  ybottom = 0,
-  xright = tag$param$geolight_map$twl_calib$x + barW,
-  ytop = tag$param$geolight_map$twl_calib$y,
-  col = gray(0.5)
-)
-lines(tag$param$geolight_map$twl_calib, col = "red")
+plot_twl_calib(tag)
 ```
 
 ### Check light map
@@ -101,6 +92,7 @@ plot(tag, type = "map_light")
 
 ### Check with pressure and trajectory
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
 geopressureviz(tag)
 ```

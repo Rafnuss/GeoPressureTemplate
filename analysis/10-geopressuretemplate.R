@@ -1,11 +1,9 @@
 # https://raphaelnussbaumer.com/GeoPressureManual/geopressuretemplate-workflow.html
 library(GeoPressureR)
+library(GeoLocatoR)
 
 # Get all the tag_id
-list_id <- tail(
-  names(yaml::yaml.load_file("config.yml", eval.expr = FALSE)),
-  -1
-)
+list_id <- config2tibble()$id
 
 
 ## OPTION 1: Run workflow step-by-step for a single tag
@@ -26,10 +24,10 @@ for (id in list_id) {
 # 2. (optional) Manual check of labeling
 # geopressureviz("18LX")
 
-# 3. (optional) Add wind if not done before
+# 3. (optional) Add wind
+# ecmwfr::wf_set_key("abcd1234-foo-bar-98765431-XXXXXXXXXX") <https://cds.climate.copernicus.eu/profile>
 for (id in list_id) {
-  cli::cli_h1("Run tag_download_wind for {id}")
-  load(glue::glue("./data/interim/{id}.RData"))
+  load_interim(id)
   tag_download_wind(tag)
 }
 
