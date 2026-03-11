@@ -61,7 +61,7 @@ Note that the values are written in JSON format (and not `R`), so for a vector/a
 Check that the config is correct.
 
 ```{r}
-str(config::get(config = id))
+geopressuretemplate_config(id)
 ```
 
 ## Sensor data and crop date
@@ -73,10 +73,10 @@ ggplotly(
   tag_create(id, quiet = TRUE) |>
     plot(type = "pressure", plot_plotly = FALSE) +
     geom_vline(
-      xintercept = as.numeric(c(
+      xintercept = c(
         as.POSIXct(config::get("tag_create", id)$crop_start),
         as.POSIXct(config::get("tag_create", id)$crop_end)
-      )),
+      ),
       color = "red",
       lwd = 1
     )
@@ -125,7 +125,7 @@ tag <- tag_create(
     scale = 1, # Use a coarse scale at first 1° is usually enough
     known = config::get("tag_set_map", id)$known
   ) |>
-  geopressure_map(tag)
+  geopressure_map()
 ```
 
 ```{r}
