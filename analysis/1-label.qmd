@@ -97,53 +97,38 @@ tag <- tag_create(
 
 ## Label on trainset shiny app
 
-Label pressure and acceleration. Then click on save to create the label csv file in `/18LX-labeled.csv`
+Label pressure and acceleration, then click **Save** to write `./data/tag-label/{id}-labeled.csv`.
 
 ```{r}
+#| eval: false
 trainset(tag)
 ```
 
-## Run [initial labeling checks](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html#initial-checks)
+## Run labeling checks in trainset
 
-**Check 1**
-
-```{r}
-tag <- tag_label(tag)
-```
-
-::: callout-tip
-*Delete this block when you have read!*
-
-Edit and export label in trainset and simply run the same chunk until you're happy with it! This principle (edit your label file and re-run the same chunk) is valid throughout this script.
-:::
-
-**Check 2**
-
-```{r}
-plot(tag, type = "pressure")
-```
+Use the **Check** button in the trainset app header to run the built-in checks while you label.
 
 ## Run [GeoPressureViz checks](https://raphaelnussbaumer.com/GeoPressureManual/labelling-tracks.html#geopressureviz-check)
 
 Improve the label file until you can draw a coherent trajectory on GeoPressureViz.
 
 ```{r}
+#| eval: false
 tag <- tag_create(
   id,
   crop_start = config::get("tag_create", id)$crop_start,
-  crop_end = config::get("tag_create", id)$crop_end,
-  quiet = TRUE
+  crop_end = config::get("tag_create", id)$crop_end
 ) |>
-  tag_label(quiet = TRUE) |>
+  tag_label() |>
   tag_set_map(
     extent = config::get("tag_set_map", id)$extent,
     scale = 1, # Use a coarse scale at first 1° is usually enough
     known = config::get("tag_set_map", id)$known
-  )
-
-tag <- geopressure_map(tag, quiet = TRUE)
+  ) |>
+  geopressure_map(tag)
 ```
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
 geopressureviz(tag, path = tag2path(tag, interp = 1))
 ```

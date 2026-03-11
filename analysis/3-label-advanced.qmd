@@ -31,9 +31,7 @@ ggplotly(
 )
 ```
 
-## Label tag
-
-Create the tag
+## Create the tag
 
 ```{r}
 tag <- tag_create(
@@ -43,19 +41,10 @@ tag <- tag_create(
 )
 ```
 
+## Label the tag
 
 ```{r label_trainset}
 trainset(tag)
-```
-
-```{r read_label}
-tag <- tag_label(tag)
-```
-
-Plot pressure timeseries
-
-```{r}
-plot(tag, type = "pressure")
 ```
 
 ## Compute pressure map
@@ -63,7 +52,7 @@ plot(tag, type = "pressure")
 ```{r geopressuretemplate_tag}
 geopressuretemplate_tag(
   id = id,
-  tag_set_map = list(scale = 1, include_min_duration = 24),
+  tag_set_map = list(scale = 1, include_min_duration = 6),
   geopressuretemplate = list(likelihood = "map_pressure"),
   quiet = TRUE
 )
@@ -106,7 +95,6 @@ Label with geolightviz
 geolightviz(tag)
 ```
 
-
 Check labelled twilights together with the expected twilight lines from the path drawn on geopressureviz
 
 ```{r twilight_read}
@@ -138,7 +126,6 @@ plot_twl_calib(tag)
 plot_twl_calib(tag, path = tag2path(tag, interp = 2))
 ```
 
-
 ## GeoPressureViz
 
 Refine the path and label based on pressure and light combined.
@@ -146,7 +133,6 @@ Refine the path and label based on pressure and light combined.
 ```{r}
 geopressureviz(tag)
 ```
-
 
 ## Compute pressurepath
 

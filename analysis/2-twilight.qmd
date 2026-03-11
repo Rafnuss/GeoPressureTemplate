@@ -56,19 +56,13 @@ plot(tag, type = "twilight")
 ## Annotate twilight in GeoLightViz
 
 ```{r}
+#| eval: false
 geolightviz(tag)
-```
-
-Read and check the twilight annotation
-
-```{r}
-tag <- twilight_label_read(tag)
-plot(tag, type = "twilight")
 ```
 
 ## Compute likelihood map
 
-```{r, cache = TRUE}
+```{r}
 tag <- geolight_map(
   tag,
   twl_calib_adjust = config::get("geolight_map", id)$twl_calib_adjust,
@@ -98,6 +92,7 @@ plot(tag, type = "map_light")
 
 ### Check with pressure and trajectory
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
 geopressureviz(tag)
 ```
